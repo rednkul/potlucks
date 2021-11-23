@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Reviews
-
+from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Reviews, Product, ProductImages
 
 # Register your models here.
 
@@ -10,9 +9,24 @@ admin.site.site_header = "Администрируй тут"
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "url",)
+    list_display = ("id", "name", "get_parents", "image", "url",)
     list_display_links = ("id", "name", "url",)
+    list_filters = ("parent__name")
     search_fields = ("name",)
+
+    def get_parents(self, obj):
+        # return "\n".join([i.name for i in obj.categories.all()])
+        if obj.parent:
+            parent = obj.parent
+            ancestors = [parent.name, ]
+            while parent.parent:
+                ancestors.append(parent.parent.name)
+                parent = parent.parent
+
+            return " > ".join([i for i in ancestors])
+
+
+
 
 
 @admin.register(Vendor)
@@ -33,11 +47,10 @@ class ManufacturerAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','vendor', 'size', 'date', 'date_amass', 'number_finished')
-    list_display_links = ('id',)
-    list_filter = ('vendor__name',)
-    search_fields = ('vendor__name',
-                      'size')
+    list_display = ('id', 'product', 'size', 'vendor', 'creator', 'date', 'date_amass', 'number_finished')
+    list_display_links = ('id', 'product', 'vendor',)
+    list_filter = ('product__name', 'vendor__name',)
+    search_fields = ('vendor__name', 'size', 'creator__user__email', 'product__name')
 
 
 
@@ -47,8 +60,8 @@ class OrderAdmin(admin.ModelAdmin):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'order', 'goods_number', 'order_size', 'date')
     list_display_links = ('id', 'customer')
-    list_filter = ('order__vendor',)
-    search_fields = ('customer__user__email',
+    list_filter = ('order__vendor', 'order__product__name')
+    search_fields = ('customer__user__email', 'order__product__name',
                      'order__vendor__name',)
 
     def order_size(self, obj):
@@ -72,3 +85,48 @@ class RatingAdmin(admin.ModelAdmin):
     search_fields = ("author__email",)
 
 
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'image', 'manufacturer', 'get_vendors', 'get_categories',)
+    list_display_links = ('id', 'name')
+    list_filter = ('vendors', 'manufacturer', 'category')
+    search_fields = ('name', 'vendors__name', 'manufacturer__name', 'category__name')
+    filter_horizontal = ("vendors", )
+    save_on_top = True
+    fieldsets = (
+        (None, {
+            "fields": (("name", "url", "category"), )
+        }),
+        (None, {
+            "fields": (("vendors", "manufacturer", ), ),  "classes": ("wide",)
+        }),
+        (None, {
+            "fields": (("description", "image"),)
+        }),
+        ('Общие характеристики', {
+            "fields": ("colors", "materials",), "classes": ("collapse",)
+        }),
+        ('Характеристики для одежды', {
+            "fields": ("sizes_eu", "sizes_am"), "classes":("collapse",)
+        }),
+                )
+    def get_categories(self, obj):
+        # return "\n".join([i.name for i in obj.categories.all()])
+        if obj.category:
+            category = obj.category
+            categories = [category.name, ]
+            while category.parent:
+                categories.append(category.parent.name)
+                category = category.parent
+
+            return " > ".join([i for i in categories])
+
+
+    def get_vendors(self, obj):
+         return "\n".join([i.name for i in obj.vendors.all()])
+
+
+admin.site.register(ProductImages)
+
+#class ProductImagesAdmin(admin.ModelAdmin):

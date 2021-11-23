@@ -6,7 +6,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 # Импорт моих модулей
 from users.models import Profile
-
+from goods.utils import ProductMixin
 
 class Category(models.Model):
     """
@@ -16,6 +16,10 @@ class Category(models.Model):
     description = models.TextField('Описание')
     image = models.ImageField("Изображение", upload_to="categories/", blank=True)
     url = models.SlugField(max_length=160)
+    parent = models.ForeignKey(
+        'self', verbose_name="Родитель", on_delete=models.SET_NULL,
+        blank=True, null=True, related_name='subcategories',
+    )
 
 
     def __str__(self):
@@ -31,9 +35,9 @@ class Vendor(models.Model):
     description = models.TextField('Описание')
     image = models.ImageField("Логотип", upload_to="vendors/", blank=True)
     finished_orders = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
-    contact_phone = models.CharField('Номер телефона', max_length=12, null=True, default='')
-    contact_site = models.CharField('Сайт', max_length=50, null=True,  default='')
-    contact_social = models.CharField('Социальные сети', max_length=200, null=True)
+    contact_phone = models.CharField('Номер телефона', max_length=12, blank=True)
+    contact_site = models.CharField('Сайт', max_length=50, blank=True)
+    contact_social = models.CharField('Социальные сети', max_length=200, blank=True)
     url = models.SlugField(max_length=160)
 
     def __str__(self):
@@ -49,7 +53,7 @@ class Manufacturer(models.Model):
     name = models.CharField('Наименование', max_length=50)
     description = models.TextField('Описание')
     image = models.ImageField("Логотип", upload_to="manufacturers/", blank=True)
-    url = models.SlugField(max_length=160)
+    url = models.SlugField(max_length=160, unique=True)
 
 
     def __str__(self):
@@ -59,36 +63,48 @@ class Manufacturer(models.Model):
         verbose_name = "Производитель"
         verbose_name_plural = "Производители"
 
-class Product(models.Model):
-    """Model of a good"""
-    name = models.CharField('Наименование', max_length=50)
+
+class Product(ProductMixin):
+    name = models.CharField('Наименование товара', max_length=50)
     description = models.TextField('Описание')
-    categories = models.ManyToManyField(Category, verbose_name='Категории',)
-                                 #related_name='product_categories')
-    vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики') #, related_name="product_vendors")
-    manufacturer = models.ForeignKey(Manufacturer, verbose_name="Производитель",
-        on_delete=models.SET_NULL, null=True,)# related_name='manufacturer_products')
+    # categories = models.ManyToManyField(Category, verbose_name='Категория',
+    #                              blank=True, related_name='product_categories')
+    category = models.ForeignKey(Category, verbose_name='Категория',
+                                        blank=True, default='', null=True, on_delete=models.SET_NULL, related_name='category_products')
     image = models.ImageField("Изображение", upload_to="products/", blank=True)
     url = models.SlugField(max_length=160, unique=True)
+    vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='product_vendors')
+    manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
+                                     blank=True, related_name='manufacturer_products')
 
     def __str__(self):
         return self.name
 
     class Meta:
-        abstract = True
-        verbose_name = "Продукт"
-        verbose_name_plural = "Продукты"
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
+
+class ProductImages(models.Model):
+    """Кадры из фильма"""
+    image = models.ImageField("Изображение товара", upload_to="product/product_images")
+    product = models.ForeignKey(Product, verbose_name="Товар",
+                                on_delete=models.CASCADE, related_name='product_images')
 
 
+    def __str__(self):
+        return self.product.name
+
+    class Meta:
+        verbose_name = "Дополнительное изображение товара"
+        verbose_name_plural = "Дополнительные изображения товара"
+        ordering = ['-id']
 
 class Order(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveSmallIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-    #product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='product_orders')
+    product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='product_orders')
     creator = models.ForeignKey(Profile, verbose_name='Создатель', on_delete=models.SET_NULL,
-                                                        null=True, related_name='order_creators')
-    vendor = models.ForeignKey(Vendor, verbose_name='Поставщик', on_delete=models.CASCADE, null=True, related_name='order_vendor')
+                                null=True, related_name='order_creators')
+    vendor = models.ForeignKey(Vendor, verbose_name='Поставщик', on_delete=models.CASCADE,
+                               null=True, related_name='order_vendor')
     partners = models.ManyToManyField(Profile, verbose_name='Участники', related_name='order_partners')
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
     unit_price = models.PositiveIntegerField('Цена за единицу товара', default=0, help_text='Сумма в рублях')
@@ -99,13 +115,14 @@ class Order(models.Model):
     number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве", default=0)
 
     def __str__(self):
-        return f"{self.product}:{self.vendor} - {self.size} ({self.date})"
+        return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
 
 
 
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
+        ordering = ['-id']
 
 
 

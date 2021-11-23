@@ -7,8 +7,10 @@ from django.dispatch import receiver
 # Create your models here.
 from .managers import CustomUserManager
 
+
 # Authentification
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    username = None
     email = models.EmailField('Адрес электронной почты', unique=True)
     first_name = models.CharField('Имя', max_length=30, blank=True)
     last_name = models.CharField('Фамилия', max_length=30, blank=True)
