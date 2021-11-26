@@ -489,6 +489,17 @@ textarea.input {
   border-radius: 0px 40px 40px 0px;
 }
 
+#filter-btn {
+  height: 40px;
+  width: 100px;
+  background: #D10024;
+  color: #FFF;
+  font-weight: 700;
+  border: none;
+  border-radius: 40px 40px 40px 40px;
+  margin: 20px 40px;
+}
+
 /*----------------------------*\
 	Cart
 \*----------------------------*/
@@ -1222,7 +1233,7 @@ textarea.input {
 .aside>.aside-title {
   text-transform: uppercase;
   font-size: 18px;
-  margin: 15px 0px 30px;
+  margin: 25px 0px 30px;
 }
 
 /*-- checkbox Filter --*/
@@ -1237,6 +1248,10 @@ textarea.input {
 
 .ul_checkbox_filter> li+li {
     margin-top: 10px;
+}
+
+.filter_item {
+font-size: 20px;
 }
 
 .checkbox-filter .input-radio label, .checkbox-filter .input-checkbox label {

@@ -73,7 +73,7 @@ class Product(ProductMixin):
                                         blank=True, default='', null=True, on_delete=models.SET_NULL, related_name='category_products')
     image = models.ImageField("Изображение", upload_to="products/", blank=True)
     url = models.SlugField(max_length=160, unique=True)
-    vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='product_vendors')
+    vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='vendor_products')
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
                                      blank=True, related_name='manufacturer_products')
 
@@ -105,7 +105,7 @@ class Order(models.Model):
                                 null=True, related_name='order_creators')
     vendor = models.ForeignKey(Vendor, verbose_name='Поставщик', on_delete=models.CASCADE,
                                null=True, related_name='order_vendor')
-    partners = models.ManyToManyField(Profile, verbose_name='Участники', related_name='order_partners')
+    partners = models.ManyToManyField(Profile, verbose_name='Участники', related_name='partner_orders')
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
     unit_price = models.PositiveIntegerField('Цена за единицу товара', default=0, help_text='Сумма в рублях')
     price = models.PositiveIntegerField('Стоимость заказа', default=0, help_text='Сумма в рублях')

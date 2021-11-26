@@ -1,0 +1,53 @@
+{% extends 'potlucks/base.html' %}
+{% block title %}  КАТЕГОРИИ  {% endblock title %}
+{% load static %}
+{% block content %}
+<!-- NAVIGATION -->
+<nav id="navigation">
+    <!-- container -->
+    <div class="container">
+        <!-- responsive-nav -->
+        <div id="responsive-nav">
+            <!-- NAV -->
+            <ul class="main-nav nav navbar-nav">
+                <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+                <li><a href="{% url 'potlucks:products' %}">Products</a></li>
+                <li  class="active"><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+            </ul>
+            <!-- /NAV -->
+        </div>
+        <!-- /responsive-nav -->
+    </div>
+    <!-- /container -->
+</nav>
+<!-- /NAVIGATION -->
+
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <!-- shop -->
+      {% for category in categories %}
+      <div class="col-md-4 col-xs-6">
+        <div class="shop">
+          {% if category.image %}
+          <div class="shop-img">
+            <img src="{{ category.image.url }}" alt="">
+          </div>
+          {% endif %}
+          <div class="shop-body">
+            <h3><a style="color:white;font-weight: 700;" href="{% url 'potlucks:category_detail' category.url %}">{{ category.name }}<br>Collection</a></h3>
+            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <!-- /shop -->
+    </div>
+  <!-- /container -->
+  </div>
+</div>
+<!-- /SECTION -->
+
+{% endblock content %}

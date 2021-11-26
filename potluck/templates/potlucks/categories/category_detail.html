@@ -29,7 +29,7 @@
 		<!-- row -->
 		<div class="row">
 			<!-- ASIDE -->
-			{% include 'potlucks/products_view/products_filter.html' %}
+			{% include 'potlucks/categories/categories_filter.html' %}
 			<!-- STORE -->
 			<div id="store" class="col-md-9">
 				<!-- store top filter -->
@@ -57,7 +57,7 @@
 					</ul>
 				</div>
 				<!-- /store top filter -->
-				<div class="row">
+
 					<!-- product -->
 					{% for category in category_list %}
 					{% for product in category.category_products.all %}
@@ -110,5 +110,6 @@
 			</div>
 			<!-- /container -->
 		</div>
-
+	</div>
+</div>
 {% endblock content %}

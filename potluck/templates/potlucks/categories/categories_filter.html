@@ -1,28 +1,10 @@
 <div id="aside" class="col-md-3">
     <!-- aside Widget -->
-    <form action="{% url 'potlucks:product_filter' %}" method="get" name="filter">
+    <form action="{% url 'potlucks:category_filter' category.url %}" method="get" name="filter">
         <div class="aside">
 
-            <h3 class="aside-title">Категории</h3>
-
-            <div class="checkbox-filter">
-                <ul class="ul_checkbox_filter">
-                    {% for category in view.get_categories %}
-                    <li>
-                        <div class="input-checkbox">
-                            <input  type="checkbox" id="category-{{ category.id }}"
-                                    value="{{ category.id }}" name="category">
-                            <label for="category-{{ category.id }}">
-                                <span></span>
-                                {{ category.name }}
-                                <small>(120)</small>
-                            </label>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
+            <h3 class="aside-title">{{ category.name }}</h3>
+            <p>{{ category.description }}</p>
         </div>
 
         <!-- /aside Widget -->
@@ -33,7 +15,7 @@
             <h3 class="aside-title">Поставщик</h3>
             <div class="checkbox-filter">
                 <ul class="ul_checkbox_filter">
-                    {% for vendor in view.get_vendors %}
+                    {% for vendor in vendors %}
                     <li>
                         <div class="input-checkbox">
                             <input  type="checkbox" id="vendor-{{ vendor.id }}"
@@ -54,7 +36,7 @@
             <h3 class="aside-title">Производитель</h3>
             <div class="checkbox-filter">
                 <ul class="ul_checkbox_filter">
-                    {% for manufacturer in view.get_manufacturers %}
+                    {% for manufacturer in manufacturers %}
                     <li>
                         <div class="input-checkbox">
                             <input  type="checkbox"
