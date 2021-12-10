@@ -2,12 +2,13 @@ from django.urls import path, include
 
 
 from .views import CategoriesView, ProductsView, ProductDetailView, CategoryListView, CategoryDetailView, \
-    FilterProductsView, CategoryProductsFilterView
+    FilterProductsView, CategoryProductsFilterView, Search
 
 app_name = 'potlucks'
 
 urlpatterns = [
     path('', CategoriesView.as_view(), name='home_page'),
+    path('search/', Search.as_view(), name='search'),
     path('categories/', CategoryListView.as_view(), name='categories'),
     path('categories/<slug:slug>/', CategoryDetailView.as_view(), name='category_detail'),
     path('category_filter/<slug:slug>/', CategoryProductsFilterView.as_view(), name='category_filter'),

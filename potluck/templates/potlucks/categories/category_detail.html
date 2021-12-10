@@ -59,8 +59,8 @@
 				<!-- /store top filter -->
 
 					<!-- product -->
-					{% for category in category_list %}
-					{% for product in category.category_products.all %}
+
+					{% for product in product_list %}
 					<div class="col-md-4 col-xs-6">
 						<div class="product">
 							<div class="product-img">
@@ -93,7 +93,7 @@
 						</div>
 					</div>
 					{% endfor %}
-					{% endfor %}
+
 				</div>
 				<!-- store bottom filter -->
 				<div class="store-filter clearfix">

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 import time
@@ -18,7 +19,8 @@ class ProductFilterFields:
         else:
 
             for subcategory in obj.subcategories.all():
-                subcategory_list.append(subcategory)
+                if subcategory not in subcategory_list:
+                    subcategory_list.append(subcategory)
                 return self.get_subcategories(subcategory, subcategory_list)
 
     def get_vendors(self):
@@ -34,6 +36,21 @@ class ProductFilterFields:
     #     return sorted(Movie.objects.filter(draft=False).values_list("year", flat=True).distinct())
 class CategoryProductFilterFields:
 
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.category_list = []
+        self.product_list = []
+
+    def get_subcategories(self, obj):
+        if not obj.subcategories.all():
+            return self.category_list
+
+        else:
+
+            for subcategory in obj.subcategories.all():
+                self.category_list.append(subcategory)
+                return self.get_subcategories(subcategory)
 
 
 
@@ -120,11 +137,13 @@ class CategoryDetailView(CategoryProductFilterFields, DetailView):
 
         category_list = [category, *self.get_subcategories(category)]
 
-        context['category_list'] = category_list
-        context['category'] = category
+
+
 
         products = Product.objects.filter(category__in=category_list)
 
+        context['category'] = category
+        context['product_list'] = products
         context['manufacturers'] = self.get_manufacturers(products)
         context['vendors'] = self.get_vendors(products)
 
@@ -160,8 +179,7 @@ class FilterProductsView(ProductFilterFields, ListView):
         vendors_filter = get_vendors if get_vendors else self.get_vendors()
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
 
-        print(f'Поставщики прод---------------------------------------{vendors_filter}')
-        print(f'Производители прод---------------------------------------{manufacturers_filter}')
+
 
         queryset = Product.objects.filter(category__in=category_filter,
                                           vendors__in=vendors_filter,
@@ -196,7 +214,7 @@ class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
         category_url = url[first_slash + 1:second_slash]
 
         category = Category.objects.get(url=category_url)
-        print(f'Категория------------------{category}----------------')
+
         return category
 
     def get_queryset(self):
@@ -204,23 +222,26 @@ class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
         get_vendors = self.request.GET.getlist("vendor")
         get_manufacturers = self.request.GET.getlist("manufacturer")
 
+        # Получаю категорию по ее url
         category = self.get_category()
 
-        print(f'------------------{category} --------')
+        # Получаю список, состоящий из категории и ее подкатегорий
+        category_list = [category, *self.get_subcategories(category)]
 
-        product_list = category.category_products.all()
-        print(f'---------------------------------------{product_list}')
+        # Создаю список всех продуктов категории и подкатегорий
+        self.product_list = Product.objects.filter(category__in=category_list)
 
-        vendors_filter = get_vendors if get_vendors else self.get_vendors(product_list)
-        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(product_list)
+        # Условием фильтрации задаю отмеченные в форме пункты либо при их отсутствии - списки поставщиков
+        # и производителей, связанных с полученным списком продуктов
+        vendors_filter = get_vendors if get_vendors else self.get_vendors(self.product_list)
+        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(self.product_list)
 
-        print(f'Поставщики кат---------------------------------------{vendors_filter}')
-        print(f'Производители кат---------------------------------------{manufacturers_filter}')
+        # Получаю продукты, принадлежащиии  к полученным категория и отвечающим условию фильтрации
+        product_list = Product.objects.filter(category__in=category_list, vendors__in=vendors_filter,
+                                                                      manufacturer__in=manufacturers_filter)
+        return product_list
 
-        queryset = Product.objects.filter(category=category).filter(vendors__in=vendors_filter,
-                                                                    manufacturer__in=manufacturers_filter)
-        print(f'Продукты-------------------{queryset}--------------')
-        return queryset
+
 
     def get_context_data(self, *args, **kwargs):
         get_vendors = self.request.GET.getlist("vendor")
@@ -230,8 +251,44 @@ class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
 
         context = super().get_context_data(*args, **kwargs)
 
+        vendors = self.get_vendors(self.product_list)
+        manufacturers = self.get_manufacturers(self.product_list)
+
         context['category'] = category
+        context['vendors'] = vendors
+        context['manufacturers'] = manufacturers
+
         context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
+        return context
+
+
+
+class Search(ProductFilterFields, ListView):
+    """Поиск по названию"""
+
+    template_name = 'potlucks/products_view/products_view.html'
+    def get_queryset(self):
+
+        category_list = []
+        request = self.request.GET.get('q')
+        print(request)
+        categories = Category.objects.filter(name__iregex=request)
+
+        for category in categories:
+            self.get_subcategories(category, category_list)
+
+        for category in categories:
+            if category not in category_list:
+                category_list.append(category)
+
+        return Product.objects.filter(Q(name__iregex=request) |
+                                      Q(category__in=category_list) |
+                                      Q(description__iregex=request))
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['q'] = f"q={self.request.GET.get('q')}&"
+
         return context
 
