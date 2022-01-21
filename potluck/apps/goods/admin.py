@@ -1,5 +1,5 @@
 # from django.contrib import admin
-#
+# # НЕ НУЖНО ПОКА
 # # Register your models here.
 # from .models import PantsProduct, WatchProduct
 #

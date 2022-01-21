@@ -416,6 +416,8 @@ textarea.input {
   background-color: #1E1F29;
 }
 
+
+
 .header-links li {
   display: inline-block;
   margin-right: 15px;
@@ -438,7 +440,21 @@ textarea.input {
   color: #D10024;
   margin-right: 5px;
 }
+.header_fixed {
+  position: fixed;
+  left: 0;
+  top: 0;
+}
 
+.header {
+  width: 100%;
+  background: #fff;
+
+  z-index: 100;
+  -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  border-bottom: 3px solid #D10024;
+}
 /*----------------------------*\
 	Logo
 \*----------------------------*/
@@ -448,6 +464,8 @@ textarea.input {
   padding-bottom: 15px;
   background-color: #15161D;
 }
+
+
 
 .header-logo {
   float: left;
@@ -633,7 +651,7 @@ textarea.input {
 #navigation {
   background: #FFF;
   border-bottom: 2px solid #E4E7ED;
-  border-top: 3px solid #D10024;
+
 }
 .navig {
    margin: 0 auto;
@@ -1426,6 +1444,11 @@ font-size: 20px;
   left: 15px;
 }
 
+.product-list-img {
+    width: 600px;
+    height: 400px;
+    }
+
 #product-main-img .slick-next {
   -webkit-transform: translateX(15px);
   -ms-transform: translateX(15px);
@@ -1646,7 +1669,7 @@ font-size: 20px;
   position: relative;
   text-align: center;
   padding: 15px 0px;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 #product-tab .tab-nav:after {
@@ -2216,3 +2239,20 @@ font-size: 20px;
     margin-top: 10px;
   }
 }
+
+
+.save-btn {
+  height: 40px;
+  margin-bottom: 10px;
+  background: #D10024;
+  color: #FFF;
+  font-weight: 700;
+  border: none;
+  border-radius: 30px;
+}
+
+.product-mini-img {
+    height: 60px;
+    width: 90px;
+
+    }

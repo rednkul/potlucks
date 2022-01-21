@@ -1,32 +1,33 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} О товаре "{{ product.name }}" {% endblock title %}
+{% block title %} Заказ "{{ order.product.name }}" {% endblock title %}
+{% load static %}
 
 {% block content %}
 <!-- NAVIGATION -->
-<nav id="navigation" >
-    <!-- container -->
-    <div class="container">
-        <!-- responsive-nav -->
+		<nav id="navigation" >
+			<!-- container -->
+			<div class="container">
+				<!-- responsive-nav -->
 
-        <div id="responsive-nav">
-            <!-- NAV -->
+				    <div id="responsive-nav">
+					<!-- NAV -->
 
-            <ul class="main-nav nav navbar-nav  navig ">
+					    <ul class="main-nav nav navbar-nav  navig ">
 
-                <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
-                <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-                <li ><a href="{% url 'potlucks:products' %}">Products</a></li>
-                <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+						    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+                            <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+						    <li ><a href="{% url 'potlucks:products' %}">Products</a></li>
+						    <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
 
-            </ul>
-            <!-- /NAV -->
-        </div>
+					    </ul>
+					<!-- /NAV -->
+                    </div>
 
-        <!-- /responsive-nav -->
-    </div>
-    <!-- /container -->
-</nav>
-<!-- /NAVIGATION -->
+				<!-- /responsive-nav -->
+			</div>
+			<!-- /container -->
+		</nav>
+		<!-- /NAVIGATION -->
 
 <!-- SECTION -->
 <div class="section">
@@ -38,13 +39,13 @@
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
                     <div class="product-preview">
-                        <img src="{{ product.image.url }}" alt="">
+                        <img src="{{ order.product.image.url }}" alt="">
                     </div>
-                    {% for image in product.product_images.all %}
-                    <div class="product-preview">
-                        <img src="{{ image.image.url }}" alt="">
-                    </div>
-                    {% endfor %}
+                        {% for image in order.product.product_images.all %}
+                            <div class="product-preview">
+                                <img src="{{ image.image.url }}" alt="">
+                            </div>
+                        {% endfor %}
 
                 </div>
             </div>
@@ -54,15 +55,15 @@
             <div class="col-md-2  col-md-pull-5">
                 <div id="product-imgs">
                     <div class="product-preview">
-                        <img src="{{ product.image.url }}" alt="">
+                        <img src="{{ order.product.image.url }}" alt="">
                     </div>
 
 
-                    {% for image in product.product_images.all %}
-                    <div class="product-preview">
-                        <img src="{{ image.image.url }}" alt="">
-                    </div>
-                    {% endfor %}
+                        {% for image in order.product.product_images.all %}
+                            <div class="product-preview">
+                                <img src="{{ image.image.url }}" alt="">
+                            </div>
+                        {% endfor %}
 
                 </div>
             </div>
@@ -71,7 +72,12 @@
             <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
-                    <h2 class="product-name">{{ product.name }}</h2>
+                    <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
+                    {% if not order.finished %}
+                    <p>Доступно позиций: {{  available }}</p>
+                    {% else %}
+                    <h2 style="color:red">Заказ заполнен</h2>
+                    {% endif %}
                     <div>
                         <div class="product-rating">
                             <i class="fa fa-star"></i>
@@ -86,39 +92,46 @@
                         <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
 
                     </div>
-                    <p>{{ product.description }}</p>
+                    <p>{{ order.product.description }}</p>
 
-                    <div class="product-options">
-                        <label>
-                            Size
-                            <select class="input-select">
-                                <option value="0">X</option>
-                            </select>
-                        </label>
-                        <label>
-                            Color
-                            <select class="input-select">
-                                <option value="0">Red</option>
-                            </select>
-                        </label>
-                    </div>
+<!--                    <div class="product-options">-->
+<!--                        <label>-->
+<!--                            Size-->
+<!--                            <select class="input-select">-->
+<!--                                <option value="0">X</option>-->
+<!--                            </select>-->
+<!--                        </label>-->
+<!--                        <label>-->
+<!--                            Color-->
+<!--                            <select class="input-select">-->
+<!--                                <option value="0">Red</option>-->
+<!--                            </select>-->
+<!--                        </label>-->
+<!--                    </div>-->
+                    <form action="{% url 'potlucks:join_an_order' order.pk %}" method="post" id="join-form">
+                        {% csrf_token %}
+                        <div class="add-to-cart">
+                            <div class="qty-label">
+                                Qty
+                                <div class="input-number" id="input-number">
+                                    <input type="number" name="number" id="number" {% if order.finished %} disabled {%endif %}>
+                                    <input type="hidden" name="order-id" value="{{ order.id }}" >
+                                    <span class="qty-up">+</span>
+                                    <span class="qty-down">-</span>
 
-                    <div class="add-to-cart">
-                        <div class="qty-label">
-                            Qty
-                            <div class="input-number">
-                                <input type="number">
-                                <span class="qty-up">+</span>
-                                <span class="qty-down">-</span>
+                                </div>
+
                             </div>
-                        </div>
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                    </div>
+                            <button id="join" type="submit" class="add-to-cart-btn" disabled><i class="fa fa-shopping-cart"></i> Присоединиться</button>
 
-                    <ul class="product-btns">
-                        <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-                        <li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-                    </ul>
+                        </div>
+
+                    </form>
+
+<!--                    <ul class="product-btns">-->
+<!--                        <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>-->
+<!--                        <li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>-->
+<!--                    </ul>-->
 
                     <ul class="product-links">
                         <li>Category:</li>
@@ -144,9 +157,8 @@
                 <div id="product-tab">
                     <!-- product tab nav -->
                     <ul class="tab-nav">
-                        <li><a data-toggle="tab" href="#tab1">Description</a></li>
+                        <li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
                         <li><a data-toggle="tab" href="#tab2">Details</a></li>
-                        <li class="active"><a data-toggle="tab" href="#tab3">Orders</a></li>
                         <li><a data-toggle="tab" href="#tab4">Reviews (3)</a></li>
                     </ul>
                     <!-- /product tab nav -->
@@ -154,10 +166,10 @@
                     <!-- product tab content -->
                     <div class="tab-content">
                         <!-- tab1  -->
-                        <div id="tab1" class="tab-pane fade in">
+                        <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>{{ product.description }}</p>
+                                    <p>{{ order.product.description }}</p>
                                 </div>
                             </div>
                         </div>
@@ -174,33 +186,9 @@
                         <!-- /tab2  -->
 
                         <!-- tab3  -->
-                        <div id="tab3" class="tab-pane fade in active">
+                        <div id="tab3" class="tab-pane fade in">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table>
-                                        <thead>
-                                        <tr>
-                                            <th>Поставщик</th>
-                                            <th>Организатор</th>
-                                            <th>Цена за единицу</th>
-                                            <th>Заполненность</th>
-                                            <th>Дата начала</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for order in product.product_orders.all %}
-                                        <tr>
-                                            <td>{{ order.vendor }}</td>
-                                            <td>{{ order.creator }}</td>
-                                            <td>{{ order.unit_price }}</td>
-                                            <td>{{ order.get_order_fullness }} / {{ order.size }}</td>
-                                            <td>{{ order.date|date:"d M Y"  }}</td>
-                                            <td class="detail-cell"><a href="{% url 'potlucks:order_detail' order.id %}">ПОДРОБНЕЕ</a></td>
-                                        </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
 
                                 </div>
                             </div>
@@ -534,3 +522,91 @@
 <!-- /Section -->
 
 {% endblock content %}
+
+{% block javascripts %}
+
+<!--
+Валидация выбранного числа товаров:
+Если число больше доступного, то выводится сообщение об ошибке, кнопка блокируется;
+Если число равно 0
+
+ -->
+<script>$(document).ready(function () {
+          // отслеживаем событие отправки формы
+          $('#number').change(function () {
+
+
+              // создаем AJAX-вызов
+
+              $.ajax({
+                  data: $(this).serialize(), // получаяем данные формы
+
+                  url: "{% url 'ajax:validate_goods_number' order.id %}",
+                  // если успешно, то
+                  success: function (response) {
+                      if (response.is_integer == false || $('#number').val() == '0') {
+                          $('#not-available').remove();
+                          $('#join').after('<p style="color:red" id="not-available">Введите целое положительное число</p>');
+                          $("#join").prop("disabled",true);
+                      }
+                      else {
+
+                          if (response.is_available == false) {
+                              $('#not-available').remove();
+                              $('#join').after('<p style="color:red" id="not-available">Нельзя выбрать больше {{ available }}</p>');
+                              $("#join").prop("disabled",true);
+                          }
+                          else {
+
+                              $('#not-available').remove();
+                              $("#join").prop("disabled",false);
+
+                          }
+                      }
+
+                  },
+                  // если ошибка, то
+                  error: function (response) {
+                      // предупредим об ошибке
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+
+
+              if ($('#number').val() == '7') {
+                $('#join').after('<p style="color:red" id="not-available">Введите целое положительное число</p>');
+                $("#join").prop("disabled",true);
+                $('#not-available').remove();
+              }
+
+          });
+      })
+</script>
+
+<!-- Проверка заполненности заказа -->
+<!--<script>-->
+<!--    $(document).ready(function () {-->
+<!--          // отслеживаем событие отправки формы-->
+<!--          $('#availble').change(function () {-->
+<!--                $.ajax({-->
+<!--                    data: $(this).serialize(), // получаяем данные формы-->
+
+<!--                    url: ,-->
+<!--                    // если успешно, то-->
+<!--                    success: function (response) {-->
+<!--                        if (response.is_finished == true ) {-->
+<!--                            $("#input-number").prop("disabled",true);-->
+<!--                            $("#join").prop("disabled",true);-->
+<!--                            $('#product-name').after('<h2 style="color:red" id="finished" >Введите целое положительное число</h2>');-->
+<!--                        }-->
+<!--                    },-->
+<!--                    // если ошибка, то-->
+<!--                    error: function (response) {-->
+<!--                      // предупредим об ошибке-->
+<!--                      console.log(response.responseJSON.errors)-->
+<!--                    }-->
+<!--                });-->
+<!--          });-->
+<!--    })-->
+<!--</script>-->
+{% endblock javascripts %}

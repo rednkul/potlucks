@@ -14,7 +14,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('Адрес электронной почты', unique=True)
     first_name = models.CharField('Имя', max_length=30, blank=True)
     last_name = models.CharField('Фамилия', max_length=30, blank=True)
-    date_registration = models.DateTimeField('Дата регистрации', auto_now_add=True)
+    date_joined = models.DateTimeField('Дата регистрации', auto_now_add=True)
     is_active = models.BooleanField('active', default=True)
     is_staff = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -28,8 +28,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.email}"
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'Аккаунт'
+        verbose_name_plural = 'Аккаунты'
 
     def get_full_name(self):
         '''
@@ -54,19 +54,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 # Profiles
 class Profile(models.Model):
 
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='user')
-    phone_number = models.CharField("Номер телефона", max_length=15)
-    patrynomic = models.CharField("Отчество", max_length=60, default='')
-    post_index = models.CharField("Почтовый индекс", max_length=6)
-    balance = models.PositiveIntegerField("Баланс счета", default=0, help_text="Сумма в рублях")
-    finished_orders = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
+    phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
+    post_index = models.CharField("Почтовый индекс", max_length=6, blank=True)
+    balance = models.PositiveIntegerField("Баланс счета", default=0, help_text="Сумма в рублях", blank=True)
+    finished_orders = models.PositiveSmallIntegerField("Завершенные заказы", default=0, blank=True)
+    instagram = models.CharField('Профиль instagram', max_length=50, null=True, blank=True)
+    vk = models.CharField('Профиль ВКонтакте', max_length=50, null=True, blank=True)
+    telegram = models.CharField('Профиль telegram', max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.email}"
+        return f"{self.user}"
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
 
 @receiver(post_save, sender=CustomUser)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-    instance.user.save()
+    instance.profile.save()
 

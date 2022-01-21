@@ -1,10 +1,12 @@
 # Импорт стандартных библиотек
 
 # Импорт модулей Django
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 # Импорт моих модулей
+from django.db.models import Sum
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+
 from users.models import Profile
 from goods.utils import ProductMixin
 
@@ -113,9 +115,20 @@ class Order(models.Model):
     date_amass = models.DateTimeField("Время заполнения", null=True, blank=True)
     url = models.SlugField(max_length=160, unique=True)
     number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве", default=0)
+    finished = models.BooleanField("Все позиции заказа выкуплены", default=False)
+
 
     def __str__(self):
         return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
+
+    def check_order_finishing(self):
+        reserved_goods = self.get_order_fullness()
+        if reserved_goods == self.size:
+            self.finished = True
+
+    def get_order_fullness(self):
+        fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
+        return fullness if fullness else 0
 
 
 
@@ -132,9 +145,18 @@ class CustomerOrder(models.Model):
     """Customer's part of Order"""
     customer = models.ForeignKey(Profile, verbose_name='Участник заказа',
                                  on_delete=models.CASCADE,)
-    order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reserved')
     goods_number = models.PositiveSmallIntegerField('Доля пользователя в заказе', default=0)
     date = models.DateTimeField('Время присоединения к заказу', auto_now_add=True)
+
+    def total_cost(self):
+        return self.goods_number * self.order.unit_price
+
+    def check_finishing_order(self):
+
+        return True if self.order.get_order_fullness() == self.order.size else False
+
+
 
     def __str__(self):
         return f"{self.customer} - {self.order} - {self.goods_number}"
@@ -142,6 +164,16 @@ class CustomerOrder(models.Model):
     class Meta:
         verbose_name = "Заказ пользователя"
         verbose_name_plural = "Заказы пользователей"
+
+
+@receiver(post_save, sender=CustomerOrder)
+def update_order(sender, instance, created, **kwargs):
+    if instance.check_finishing_order():
+        instance.order.finished = True
+    print(instance.check_finishing_order())
+    print('ЗАЕБИС')
+    instance.order.save()
+
 
 
 class Reviews(models.Model):

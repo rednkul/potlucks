@@ -1,10 +1,22 @@
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.http import JsonResponse
 import time
 
 from .models import Order, Category, Product, Vendor, Manufacturer
+from .services import join_an_order
 
+class SearchPage:
+
+    def define_search_page(self):
+
+        search_option = self.request.GET['search_option']
+
+        if int(search_option):
+            return 'potlucks/orders/orders.html'
+        else:
+            return 'potlucks/products_view/products_view.html'
 
 class ProductFilterFields:
     """Поля для фильтров"""
@@ -14,14 +26,16 @@ class ProductFilterFields:
 
     def get_subcategories(self, obj, subcategory_list):
         if not obj.subcategories.all():
+
             return subcategory_list
 
         else:
 
             for subcategory in obj.subcategories.all():
-                if subcategory not in subcategory_list:
-                    subcategory_list.append(subcategory)
-                return self.get_subcategories(subcategory, subcategory_list)
+
+                subcategory_list.append(subcategory)
+                self.get_subcategories(subcategory, subcategory_list)
+            return subcategory_list
 
     def get_vendors(self):
         """"Поставщики"""
@@ -44,6 +58,7 @@ class CategoryProductFilterFields:
 
     def get_subcategories(self, obj):
         if not obj.subcategories.all():
+
             return self.category_list
 
         else:
@@ -51,6 +66,7 @@ class CategoryProductFilterFields:
             for subcategory in obj.subcategories.all():
                 self.category_list.append(subcategory)
                 return self.get_subcategories(subcategory)
+
 
 
 
@@ -92,6 +108,9 @@ class ProductDetailView(DetailView):
                 category = category.parent
 
             return categories
+
+
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -175,6 +194,7 @@ class FilterProductsView(ProductFilterFields, ListView):
                 subcategory_list = self.get_subcategories(category, subcategory_list)
             categories += subcategory_list
 
+        print(f'-----------------------{categories}------------------')
         category_filter = categories if categories else self.get_categories()
         vendors_filter = get_vendors if get_vendors else self.get_vendors()
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
@@ -264,15 +284,34 @@ class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
 
 
 
+
 class Search(ProductFilterFields, ListView):
     """Поиск по названию"""
 
-    template_name = 'potlucks/products_view/products_view.html'
+    def get_template_names(self):
+        return self.define_search_page()
+
+
+
+    def define_search_page(self):
+
+        search_option = self.request.GET.get('search_option')
+
+
+        if int(search_option):
+            return 'potlucks/orders/orders.html'
+        else:
+            return 'potlucks/products_view/products_view.html'
+
+
     def get_queryset(self):
 
         category_list = []
         request = self.request.GET.get('q')
-        print(request)
+        option = self.request.GET.get('search_option')
+
+
+
         categories = Category.objects.filter(name__iregex=request)
 
         for category in categories:
@@ -282,13 +321,109 @@ class Search(ProductFilterFields, ListView):
             if category not in category_list:
                 category_list.append(category)
 
-        return Product.objects.filter(Q(name__iregex=request) |
-                                      Q(category__in=category_list) |
-                                      Q(description__iregex=request))
+        if int(option):
+            return Order.objects.filter(Q(product__name__iregex=request) |
+                                        Q(product__category__in=category_list) |
+                                        Q(product__description__iregex=request))
+
+        else:
+             return Product.objects.filter(Q(name__iregex=request) |
+                                           Q(category__in=category_list) |
+                                           Q(description__iregex=request))
+
+
+
+
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        option = self.request.GET.get('search_option')
+        context['search_option'] = option
+        print(context['search_option'])
         context['q'] = f"q={self.request.GET.get('q')}&"
 
         return context
 
+
+class OrderListView(ProductFilterFields, ListView):
+    queryset = Order.objects.filter(finished=False)
+    template_name = 'potlucks/orders/orders.html'
+
+
+class OrderFilterView(ProductFilterFields, ListView):
+    template_name = 'potlucks/orders/orders.html'
+
+    def get_queryset(self):
+        get_categories = self.request.GET.getlist("category")
+        get_vendors = self.request.GET.getlist("vendor")
+        get_manufacturers = self.request.GET.getlist("manufacturer")
+
+        # Создаю список категорий по их id, полученным из формы
+        categories = []
+        for id in get_categories:
+            categories.append(Category.objects.get(id=int(id)))
+
+        # Получаю список подкатегорий с присоединяю его к списку категорий
+        if get_categories:
+            subcategory_list = []
+            for category in categories:
+                subcategory_list = self.get_subcategories(category, subcategory_list)
+            categories += subcategory_list
+
+
+        category_filter = categories if categories else self.get_categories()
+        vendors_filter = get_vendors if get_vendors else self.get_vendors()
+        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
+
+        queryset = Order.objects.filter(product__category__in=category_filter,
+                                          product__vendors__in=vendors_filter,
+                                          product__manufacturer__in=manufacturers_filter,
+                                          )
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        get_categories = self.request.GET.getlist("category")
+        get_vendors = self.request.GET.getlist("vendor")
+        get_manufacturer = self.request.GET.getlist("manufacturer")
+
+        context = super().get_context_data(*args, **kwargs)
+        context['category'] = ''.join([f"category={x}&" for x in get_categories])
+        context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
+        context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
+        return context
+
+
+
+
+
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = 'potlucks/orders/order_detail.html'
+
+    def get_product_categories(self, obj):
+        if obj.category:
+            category = obj.category
+            categories = [category.name, ]
+            while category.parent:
+                categories.append(category.parent.name)
+                category = category.parent
+
+            return categories
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.object = self.get_object()
+        context['available'] = self.object.size - self.object.get_order_fullness()
+        context['categories'] = self.get_product_categories(self.object.product)
+
+        return context
+
+    def validate_goods_number(self):
+        self.object = self.get_object()
+        max_number = self.object.size - self.object.get_order_fullness
+        goods_number = self.request.GET.get('number')
+        response = {'is_available': True if max_number >= goods_number else False}
+        return JsonResponse(response)

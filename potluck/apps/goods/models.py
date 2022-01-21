@@ -1,8 +1,8 @@
-from django.db import models
-from potlucks.models import Product
-
-# Модели товаров
-
+# from django.db import models
+# from potlucks.models import Product
+#
+#
+#
 # class PantsProduct(Product):
 #     """
 #     Штаны
@@ -35,7 +35,6 @@ from potlucks.models import Product
 #     class Meta:
 #         verbose_name = 'Наручные часы'
 #         verbose_name_plural = 'Наручные часы'
-
-
-
-# Create your models here.
+#
+#
+#

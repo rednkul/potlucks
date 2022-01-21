@@ -1,6 +1,6 @@
 
 <!-- HEADER -->
-<header>
+<header class="header">
   <!-- TOP HEADER -->
   <div id="top-header">
     <div class="container">
@@ -9,10 +9,23 @@
         <li><a href="#"><i class="fa fa-envelope-o"></i> Место для эмейла</a></li>
         <li><a href="#"><i class="fa fa-map-marker"></i> Место для адреса</a></li>
       </ul>
+
       <ul class="header-links pull-right">
+        {% if request.user.is_authenticated %}
 <!--        <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>-->
-        <li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+        <li><a href="{% url 'users:profile_detail' request.user.profile.id %}"><i class="fa fa-user-o"></i>{{ request.user.email }} </a></li>
+        <li><a href="{% url 'account_logout' %}"><i class="fa fa-window-close"></i>Выход</a></li>
+        {% if request.user.is_superuser %}
+        <li><a href="{% url 'admin:index'%}"><i class="fa fa-bank"></i>Администрирование</a></li>
+        {% endif %}
+        {% else %}
+        <li><a href="{% url 'account_login' %}"><i class="fa fa-key"></i>Войти</a></li>
+        <li><a href="{% url 'account_signup' %}"><i class="fa fa-check-square-o"></i>Зарегистрироваться</a></li>
+        {% endif %}
       </ul>
+
+
+
     </div>
   </div>
   <!-- /TOP HEADER -->
@@ -37,10 +50,10 @@
         <div class="col-md-6">
           <div class="header-search">
             <form action="{% url 'potlucks:search' %}" method="get" class="d-flex editContent">
-              <select class="input-select">
-                <option value="0">All Categories</option>
-                <option value="1">Category 01</option>
-                <option value="1">Category 02</option>
+              <select class="input-select" name="search_option">
+                <option value="0" {% if search_option == '0' %} selected="selected" {% endif %}>Товары</option>
+                <option value="1" {% if search_option == '1' %} selected="selected" {% endif %}>Заказы</option>
+
               </select>
               <input class="input" name="q" placeholder="Поиск товара">
               <button type="submit" class="search-btn">Search</button>

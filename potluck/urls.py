@@ -20,8 +20,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('potlucks.urls'))
+    path('', include('potlucks.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('ajax/', include('ajax.urls')),
+    path('users/', include('users.urls')),
+
 ]
+
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Поиск товара {% endblock title %}
+{% block title %} Заказы {% endblock title %}
 {% block content %}
 <!-- NAVIGATION -->
 		<nav id="navigation">
@@ -10,10 +10,9 @@
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
 						<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
-                        <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-						<li  class="active"><a href="{% url 'potlucks:products' %}">Products</a></li>
+                        <li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+						<li><a href="{% url 'potlucks:products' %}">Products</a></li>
 						<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
-
 					</ul>
 					<!-- /NAV -->
 				</div>
@@ -29,7 +28,7 @@
         <!-- row -->
         <div class="row">
             <!-- ASIDE -->
-            {% include 'potlucks/products_view/products_filter.html' %}
+            {% include 'potlucks/orders/orders_filter.html' %}
 
             <!-- STORE -->
             <div id="store" class="col-md-9">
@@ -62,19 +61,19 @@
                 <!-- store products -->
                 <div class="row">
                     <!-- product -->
-                    {% for product in product_list %}
+                    {% for order in order_list %}
                     <div class="col-md-4 col-xs-6">
                         <div class="product">
                             <div class="product-img">
-                                <img src="{{ product.image.url }}" class="product-list-img"  alt="">
+                                <img src="{{ order.product.image.url }}" class="product-list-img" alt="">
                                 <div class="product-label">
                                     <span class="sale">-30%</span>
                                     <span class="new">NEW</span>
                                 </div>
                             </div>
                             <div class="product-body">
-                                <p class="product-category">{{ product.category.name }}</p>
-                                <h3 class="product-name"><a href="{% url 'potlucks:product_detail' product.url %}">{{ product.name }}</a></h3>
+                                <p class="product-category">{{ order.product.category.name }}</p>
+                                <h3 class="product-name"><a href="{% url 'potlucks:order_detail' order.id %}">{{ order.product.name }}</a></h3>
                                 <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
                                 <div class="product-rating">
                                     <i class="fa fa-star"></i>

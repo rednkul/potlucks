@@ -13,7 +13,7 @@ import sys
 import os.path
 from pathlib import Path
 
-# from .apps.users.models import CustomUser
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 
 
@@ -34,7 +34,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+LOGIN_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,11 +49,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # Side apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'bootstrap4',
 
     # Custom apps
     'potlucks.apps.PotlucksConfig',
     'users.apps.UsersConfig',
     'goods.apps.GoodsConfig',
+    'ajax.apps.AjaxConfig',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -84,6 +96,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'potluck.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -124,7 +141,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -147,3 +164,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SITE_ID = 1
