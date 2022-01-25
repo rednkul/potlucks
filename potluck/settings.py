@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'bootstrap4',
 
+
     # Custom apps
     'potlucks.apps.PotlucksConfig',
     'users.apps.UsersConfig',

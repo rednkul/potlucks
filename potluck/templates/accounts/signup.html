@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+
+{% block head_title %} Регистрация {% endblock %}
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+{% block base %}
+<div class="account_form">
+  <h1>Регистрация</h1>
+
+  <p>Уже есть аккаунт? Тогда <a href="{{ login_url }}">войдите</a>.</p>
+
+  <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    <p><span>Email</span>{{ form.email }}</p>
+    <p><span>Пароль</span>{{ form.password1 }}</p>
+    <p><span>Повторите пароль</span>{{ form.password2 }}</p>
+
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <button class="AccButton" type="submit">Зарегистрироваться &raquo;</button>
+  </form>
+</div>
+{% endblock base %}

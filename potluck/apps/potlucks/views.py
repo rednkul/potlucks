@@ -346,7 +346,7 @@ class Search(ProductFilterFields, ListView):
 
 
 class OrderListView(ProductFilterFields, ListView):
-    queryset = Order.objects.filter(finished=False)
+    queryset = Order.objects.filter(amassed=False)
     template_name = 'potlucks/orders/orders.html'
 
 

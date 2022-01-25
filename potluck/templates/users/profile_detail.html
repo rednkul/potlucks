@@ -33,7 +33,13 @@
             <div  class="col-lg-4 col-lg-offset-4">
                 <form action="{% url 'users:profile_detail' profile.id %}">
                     {% csrf_token %}
-                    {% bootstrap_form form %}
+                    {% bootstrap_field form.phone_number %}
+                    {% bootstrap_field form.post_index %}
+                    <h4>Ссылки на соцсети</h4>
+                    <p>!Заполненные поля будут использоваться для оповещения о наполнении заказа.</p>
+                    {% bootstrap_field form.vk %}
+                    {% bootstrap_field form.telegram %}
+                    {% bootstrap_field form.instagram %}
                     <div class="row">
                         <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-4 col-lg-4 col-xs-3 col-sm-3 ">Сохранить</button>
                     </div>
@@ -49,7 +55,7 @@
                     <!-- product tab nav -->
                     <ul class="tab-nav">
                         <li class="active"><a data-toggle="tab" href="#tab1">Действующие заказы</a></li>
-                        <li><a data-toggle="tab" href="#tab2">Завершенные заказы</a></li>
+                        <li><a data-toggle="tab" href="#tab2">Заполненные заказы</a></li>
                         <li><a data-toggle="tab" href="#tab4">Отзывы</a></li>
                     </ul>
                     <!-- /product tab nav -->
@@ -112,7 +118,7 @@
                         <div id="tab2" class="tab-pane fade in">
                             <div class="row">
                                 <div class="col-md-12">
-                                    {% if not customer_orders_finished %}
+                                    {% if not customer_orders_amassed %}
                                     <h2>
                                         Нет завершенных заказов
                                     </h2>
@@ -134,7 +140,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% for customer_order in customer_orders_finished %}
+                                        {% for customer_order in customer_orders_amassed %}
                                         <tr>
                                             <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
                                                 <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">

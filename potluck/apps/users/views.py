@@ -14,9 +14,10 @@ class ProfileDetailView(UpdateView):
 
         context = super().get_context_data(**kwargs)
         customer = self.get_object()
-        customer_orders_active = CustomerOrder.objects.filter(customer=customer, order__finished=False)
-        customer_orders_finished = CustomerOrder.objects.filter(customer=customer, order__finished=True)
+        customer_orders_active = CustomerOrder.objects.filter(customer=customer, order__amassed=False)
+        customer_orders_amassed = CustomerOrder.objects.filter(customer=customer, order__amassed=True)
         context['customer_orders_active'] = customer_orders_active
-        context['customer_orders_finished'] = customer_orders_finished
+        context['customer_orders_amassed'] = customer_orders_amassed
+        print(customer_orders_amassed)
 
         return context

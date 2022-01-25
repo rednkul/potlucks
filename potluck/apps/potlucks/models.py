@@ -1,6 +1,8 @@
 # Импорт стандартных библиотек
 
 # Импорт модулей Django
+import datetime
+
 from django.db import models
 # Импорт моих модулей
 from django.db.models import Sum
@@ -115,22 +117,31 @@ class Order(models.Model):
     date_amass = models.DateTimeField("Время заполнения", null=True, blank=True)
     url = models.SlugField(max_length=160, unique=True)
     number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве", default=0)
-    finished = models.BooleanField("Все позиции заказа выкуплены", default=False)
+    amassed = models.BooleanField("Все позиции заказа забронированы", default=False)
+    paid = models.BooleanField("Заказ полностью оплачен", default=False)
 
 
-    def __str__(self):
-        return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
 
-    def check_order_finishing(self):
+
+
+    def check_order_amass(self):
         reserved_goods = self.get_order_fullness()
         if reserved_goods == self.size:
-            self.finished = True
+            self.amassed = True
+
+    def check_order_paid(self):
+        return all(self.order_reserved.all().values_list("paid", flat=True))
+
+
+
 
     def get_order_fullness(self):
         fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
         return fullness if fullness else 0
 
 
+    def __str__(self):
+        return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
 
     class Meta:
         verbose_name = "Заказ"
@@ -148,11 +159,13 @@ class CustomerOrder(models.Model):
     order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reserved')
     goods_number = models.PositiveSmallIntegerField('Доля пользователя в заказе', default=0)
     date = models.DateTimeField('Время присоединения к заказу', auto_now_add=True)
+    paid = models.BooleanField('Доля пользователя в заказе оплачена', default=False)
+    send = models.BooleanField('Заказ отправлен', default=False)
 
     def total_cost(self):
         return self.goods_number * self.order.unit_price
 
-    def check_finishing_order(self):
+    def check_amassing_order(self):
 
         return True if self.order.get_order_fullness() == self.order.size else False
 
@@ -168,10 +181,10 @@ class CustomerOrder(models.Model):
 
 @receiver(post_save, sender=CustomerOrder)
 def update_order(sender, instance, created, **kwargs):
-    if instance.check_finishing_order():
-        instance.order.finished = True
-    print(instance.check_finishing_order())
-    print('ЗАЕБИС')
+    if instance.check_amassing_order():
+        instance.order.amassed = True
+        instance.order.date_amass = datetime.datetime.now()
+        print('ЗАЕБИС')
     instance.order.save()
 
 
