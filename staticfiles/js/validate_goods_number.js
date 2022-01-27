@@ -42,7 +42,43 @@ $(document).ready(function () {
       })
 
 return false;
-              if ($('#number') == '') {
-                $("#join").prop("disabled",true);
-                $('#not-available').remove();
-              }
+
+$(document).ready(function(){
+        //Скрыть PopUp при загрузке страницы
+        $("#popup1").hide();
+        $('.cancel').click(function () {
+            $("#popup1").show();
+        });
+        $('#no_cancel').click(function () {
+            $("#popup1").hide();
+        });
+    })
+
+
+// ajax удаления заказа пользователя
+
+        $(document).ready(function () {
+          // отслеживаем событие отправки формы
+          $('.cancel_order').click(function () {
+              var modalId = this.getAttribute('data-modal'),
+
+              // создаем AJAX-вызов
+
+              $.ajax({
+                  data: $(this).serialize(), // получаяем данные формы
+
+                  url: "{% url 'ajax:cancel_customer_order' 5 %}",
+                  // если успешно, то
+
+                  // если ошибка, то
+                  error: function (response) {
+                      // предупредим об ошибке
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+
+
+
+
+          });
+      })

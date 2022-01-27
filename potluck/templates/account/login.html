@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load bootstrap4 %}
 
 <html lang="en">
 <head>
@@ -35,27 +36,19 @@
 </head>
 <body>
 
-        <div>
-            {% include "include/header.html" %}
-        </div>
-        <div>
-            {% block base %}
 
-            {% endblock base %}
-        </div>
-        <div>
-            {% include "include/footer.html" %}
-        </div>
-<!-- jQuery Plugins -->
-		<script src="{% static 'js/jquery.min.js' %}"></script>
-		<script src="{% static 'js/bootstrap.min.js' %}"></script>
-		<script src="{% static 'js/slick.min.js' %}"></script>
-		<script src="{% static 'js/nouislider.min.js' %}"></script>
-		<script src="{% static 'js/jquery.zoom.min.js' %}"></script>
-		<script src="{% static 'js/main.js' %}"></script>
-<!-- Custom scripts -->
-        <script src="{% static 'js/script.js' %}"></script>
-{% block javascript %}
-{% endblock javascript %}
+
+<div class="col-lg-4 offset-lg-4 mt-5">
+    <h4 class="form-header" style="text-align:center;">Вход в систему</h4>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        {% bootstrap_form form %}
+
+        <button type="submit" class="btn btn-info btn-block"><h4>Войти</h4></button>
+    </form>
+</div>
 </body>
 </html>

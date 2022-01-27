@@ -73,7 +73,7 @@
             <div class="col-md-5">
                 <div class="product-details">
                     <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
-                    {% if not order.finished %}
+                    {% if not order.amassed %}
                     <p>Доступно позиций: {{  available }}</p>
                     {% else %}
                     <h2 style="color:red">Заказ заполнен</h2>
@@ -114,7 +114,7 @@
                             <div class="qty-label">
                                 Qty
                                 <div class="input-number" id="input-number">
-                                    <input type="number" name="number" id="number" {% if order.finished %} disabled {%endif %}>
+                                    <input type="number" name="number" id="number" {% if order.amassed %} disabled {% endif %}>
                                     <input type="hidden" name="order-id" value="{{ order.id }}" >
                                     <span class="qty-up">+</span>
                                     <span class="qty-down">-</span>
@@ -523,7 +523,7 @@
 
 {% endblock content %}
 
-{% block javascripts %}
+{% block javascript %}
 
 <!--
 Валидация выбранного числа товаров:
@@ -609,4 +609,4 @@
 <!--          });-->
 <!--    })-->
 <!--</script>-->
-{% endblock javascripts %}
+{% endblock javascript %}

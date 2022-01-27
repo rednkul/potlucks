@@ -6,7 +6,7 @@ import datetime
 from django.db import models
 # Импорт моих модулей
 from django.db.models import Sum
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from users.models import Profile
@@ -123,6 +123,13 @@ class Order(models.Model):
 
 
 
+    def _get_price(self):
+        self.price = self.unit_price * self.size
+
+
+    def save(self, *args, **kwargs):
+        self._get_price()
+        super().save(*args, **kwargs)
 
     def check_order_amass(self):
         reserved_goods = self.get_order_fullness()
@@ -180,13 +187,20 @@ class CustomerOrder(models.Model):
 
 
 @receiver(post_save, sender=CustomerOrder)
-def update_order(sender, instance, created, **kwargs):
+def update_order_amassing(sender, instance, created, **kwargs):
     if instance.check_amassing_order():
         instance.order.amassed = True
         instance.order.date_amass = datetime.datetime.now()
         print('ЗАЕБИС')
     instance.order.save()
 
+@receiver(post_delete, sender=CustomerOrder)
+def cancel_order_amassing(sender, instance, *args, **kwargs):
+    if not instance.check_amassing_order():
+        instance.order.amassed = False
+        instance.order.date_amass = None
+        print('ЗАЕБИС')
+    instance.order.save()
 
 
 class Reviews(models.Model):

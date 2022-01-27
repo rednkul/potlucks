@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 
-from potlucks.models import Order
+from potlucks.models import Order, CustomerOrder
+
+
 
 
 def validate_goods_number(request, pk):
@@ -17,7 +19,7 @@ def validate_goods_number(request, pk):
     response = {
         'is_available': True if max_number >= goods_number_int else False,
         'available_number': max_number,
-        'is_integer': True if goods_number.isdigit()  else False,
+        'is_integer': True if goods_number.isdigit() else False,
     }
     print(response)
     return JsonResponse(response)
@@ -37,3 +39,14 @@ def validate_goods_number(request, pk):
 #         }
 #     print(response)
 #     return JsonResponse(response)
+
+def cancel_customer_order(request, pk):
+    customer_order = CustomerOrder.objects.get(id=pk)
+    customer_order.delete()
+
+    response = {'is_deleted': True if not CustomerOrder.objects.filter(id=pk).exists() else False}
+    print('КРЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ')
+
+    return JsonResponse(response)
+
+

@@ -11,10 +11,9 @@ def join_an_order(request, pk):
 
 
 
-def validate_goods_number(request, pk):
-    order = Order.objects.get(id=pk)
-    max_number = order.size - order.get_order_fullness()
-    goods_number = request.GET.get('number')
-    response = {'is_available': True if max_number >= goods_number else False}
-    return JsonResponse(response)
+def cancel_customer_order(request, pk):
+    customer_order = CustomerOrder.objects.get(id=pk)
+    customer_order.delete()
+
+    return redirect('users:profile_detail', pk=request.user.profile.pk)
 

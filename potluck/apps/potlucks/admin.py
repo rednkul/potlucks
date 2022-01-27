@@ -51,6 +51,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'product', 'vendor',)
     list_filter = ('product__name', 'vendor__name',)
     search_fields = ('vendor__name', 'size', 'creator__user__email', 'product__name')
+    readonly_fields = ('price', )
 
 
 

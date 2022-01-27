@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 import time
 
-from .models import Order, Category, Product, Vendor, Manufacturer
+from .models import Order, Category, Product, Vendor, Manufacturer, CustomerOrder
 from .services import join_an_order
 
 class SearchPage:
@@ -427,3 +427,6 @@ class OrderDetailView(DetailView):
         goods_number = self.request.GET.get('number')
         response = {'is_available': True if max_number >= goods_number else False}
         return JsonResponse(response)
+
+
+
