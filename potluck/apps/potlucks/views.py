@@ -430,3 +430,7 @@ class OrderDetailView(DetailView):
 
 
 
+class CustomerOrderDetailView(DetailView):
+    model = CustomerOrder
+    template_name = 'potlucks/orders/cutomer_order_detail.html'
+

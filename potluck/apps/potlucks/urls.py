@@ -19,7 +19,6 @@ urlpatterns = [
     path('products_filter/', views.FilterProductsView.as_view(), name='product_filter'),
     path('products/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
     path('cancel_customer_order/<int:pk>/', services.cancel_customer_order, name='cancel_customer_order'),
-
-
+    path('customer_order_detail/<int:pk>/', views.CustomerOrderDetailView.as_view(), name='customer_order_detail'),
 
 ]

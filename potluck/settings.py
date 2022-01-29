@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'goods.apps.GoodsConfig',
     'ajax.apps.AjaxConfig',
+    'send_notification.apps.SendNotificationConfig',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -167,3 +168,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
+
+# Настройки для уведомляний по email
+
+
+passwordy = 'kiwnqxlwsndoyntu'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'kulikovn999@yandex.ru'
+DEFAULT_FROM_EMAIL = 'kulikovn999@yandex.ru'
+EMAIL_HOST_PASSWORD = "kiwnqxlwsndoyntu"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+

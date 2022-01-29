@@ -11,6 +11,7 @@ from django.dispatch import receiver
 
 from users.models import Profile
 from goods.utils import ProductMixin
+from send_notification.views import send_emails
 
 class Category(models.Model):
     """
@@ -131,10 +132,8 @@ class Order(models.Model):
         self._get_price()
         super().save(*args, **kwargs)
 
-    def check_order_amass(self):
-        reserved_goods = self.get_order_fullness()
-        if reserved_goods == self.size:
-            self.amassed = True
+
+
 
     def check_order_paid(self):
         return all(self.order_reserved.all().values_list("paid", flat=True))
@@ -155,6 +154,11 @@ class Order(models.Model):
         verbose_name_plural = "Заказы"
         ordering = ['-id']
 
+@receiver(post_save, sender=Order)
+def send_notification_if_amassed(sender, instance, created, **kwargs):
+    if instance.amassed:
+        send_emails(instance)
+        print('ЗАЕБИС')
 
 
 
