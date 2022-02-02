@@ -1,8 +1,13 @@
+import json
+
 from django.db.models import Q, Count, Sum
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, UpdateView
 from django.http import JsonResponse
+#from django_braintree.forms import TransactionForm
+
 import time
+
 
 from .models import Order, Category, Product, Vendor, Manufacturer, CustomerOrder
 from .services import join_an_order
@@ -215,11 +220,61 @@ class FilterProductsView(ProductFilterFields, ListView):
         get_manufacturer = self.request.GET.getlist("manufacturer")
 
         context = super().get_context_data(*args, **kwargs)
+        context['categories'] = [int(i) for i in get_categories]
+        context['vendors'] = [int(i) for i in get_vendors]
+        context['manufacturers'] = [int(i) for i in get_manufacturer]
+        print(context['manufacturers'])
         context['category'] = ''.join([f"category={x}&" for x in get_categories])
         context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
         return context
 
+
+class JsonProductFilter(ProductFilterFields, ListView):
+
+    def get_queryset(self):
+        get_categories = self.request.GET.getlist("category")
+        get_vendors = self.request.GET.getlist("vendor")
+        get_manufacturers = self.request.GET.getlist("manufacturer")
+
+        print(f'cat-----------{get_categories}--------------')
+        print(f'ven-----------{get_vendors}--------------')
+        print(f'man-----------{get_manufacturers}--------------')
+        # Создаю список категорий по их id, полученным из формы
+        categories = []
+        for id in get_categories:
+            categories.append(Category.objects.get(id=int(id)))
+
+        # Получаю список подкатегорий с присоединяю его к списку категорий
+        if get_categories:
+            subcategory_list = []
+            for category in categories:
+                subcategory_list = self.get_subcategories(category, subcategory_list)
+            categories += subcategory_list
+
+
+        category_filter = categories if categories else self.get_categories()
+        vendors_filter = get_vendors if get_vendors else self.get_vendors()
+        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
+
+        queryset = Product.objects.filter(category__in=category_filter,
+                                          vendors__in=vendors_filter,
+                                          manufacturer__in=manufacturers_filter,
+                                          ).distinct().values(
+                "name", "image"
+            )
+
+        return queryset
+
+
+
+
+
+    def get(self, request, *arg, **kwargs):
+
+        queryset = list(self.get_queryset())
+        print(f'JSONчек-------------------{queryset}----------------------')
+        return JsonResponse({"product_list": queryset}, safe=False)
 
 class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
 
@@ -324,12 +379,16 @@ class Search(ProductFilterFields, ListView):
         if int(option):
             return Order.objects.filter(Q(product__name__iregex=request) |
                                         Q(product__category__in=category_list) |
-                                        Q(product__description__iregex=request))
+                                        Q(product__description__iregex=request) |
+                                        Q(product__tags__iregex=request)
+                                        )
 
         else:
              return Product.objects.filter(Q(name__iregex=request) |
                                            Q(category__in=category_list) |
-                                           Q(description__iregex=request))
+                                           Q(description__iregex=request) |
+                                           Q(tags__iregex=request)
+                                           )
 
 
 
@@ -340,6 +399,7 @@ class Search(ProductFilterFields, ListView):
         option = self.request.GET.get('search_option')
         context['search_option'] = option
         print(context['search_option'])
+        context['search'] = self.request.GET.get('q')
         context['q'] = f"q={self.request.GET.get('q')}&"
 
         return context
@@ -430,7 +490,9 @@ class OrderDetailView(DetailView):
 
 
 
-class CustomerOrderDetailView(DetailView):
+class CustomerOrderСheckoutView(UpdateView):
     model = CustomerOrder
-    template_name = 'potlucks/orders/cutomer_order_detail.html'
+    template_name = 'potlucks/orders/customer_order_checkout.html'
+    context_object_name = 'customer_order'
+    fields = ['notes',]
 

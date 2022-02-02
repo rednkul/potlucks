@@ -117,11 +117,19 @@ ul, ol {
 /*-- Text input --*/
 
 .input {
+
   height: 40px;
   padding: 0px 15px;
   border: 1px solid #E4E7ED;
   background-color: #FFF;
   width: 100%;
+}
+.check-input {
+    padding: 10px 15px 0px 15px;
+    height: 40px;
+    border: 1px solid #E4E7ED;
+    background-color: #FFF;
+    width: 100%;
 }
 
 textarea.input {
@@ -2265,121 +2273,6 @@ font-size: 20px;
 ===========================================================*/
 
 
-.popup__bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    opacity: 0; // Скрываем фон и сам попап
-    pointer-events: none; // Запрещаем ему быть целью событий
-    transition: 0.5s all;
-    z-index: -1;
-}
-
-.popup__bg.active { // При добавлении класса 'active'
-    opacity: 1; // Показываем фон и попап
-    pointer-events: all; // Возвращаем события
-    transition: 0.5s all;
-    z-index: 200;
-}
-
-.popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0); // Центрируем и масштабируем в 0 само окно
-    background: #fff;
-    width: 400px;
-    padding: 25px;
-    transition: 0.5s all;
-}
-
-.popup.active { // При добавлении класса 'active'
-    transform: translate(-50%, -50%) scale(1); // Так же центрируем и плавно увеличиваем
-    transition: 0.5s all;
-    z-index: 200;
-}
-/* Конец важной части */
-/* Далее код для стилизации формы */
-.close-popup {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-}
-
-.popup label {
-    width: 100%;
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: column-reverse;
-}
-
-.popup .label__text {
-    font-size: 14px;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: #cfd0d3;
-    margin-bottom: 5px;
-}
-
-.popup input {
-    height: 45px;
-    font-size: 18px;
-    border: none;
-    outline: none;
-    border-bottom: 1px solid #cfd0d3;
-}
-
-.popup input:focus {
-    border-bottom: 1px solid #2982ff;
-}
-
-.popup input:focus + .label__text {
-    color: #2982ff;
-}
-
-.popup textarea {
-    resize: none;
-    width: 100%;
-    height: 150px;
-    border: none;
-    outline: none;
-    border-bottom: 1px solid #cfd0d3;
-    font-size: 18px;
-    padding-top: 5px;
-}
-
-.popup textarea:focus {
-    border-bottom: 1px solid #2982ff;
-}
-
-.popup textarea:focus + .label__text {
-    color: #2982ff;
-}
-
-.popup button {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 18px;
-    border: 2px solid #2982ff;
-    background: #2982ff;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: 0.5s all;
-}
-
-.popup button:hover {
-    background: #fff;
-    color:#2982ff;
-    transition: 0.5s all;
-}
 
 
 .overlay {
@@ -2452,5 +2345,23 @@ font-size: 20px;
 }
 
 
-/* Стили для кнопок. Мы ведь порядочные разработчики, негоже простые ссылки оставлять */
+.tabs {
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #1E1F29;
+    padding: 20px;
+}
 
+.tabs:hover {
+    border:1px solid #D10024;
+}
+
+.btn_logout {
+    width: 50%;
+    background-color: #D10024;
+    border-radius: 20px;
+    margin: 10px 0px;
+    border: none;
+    color: white;
+    font-weight: bold;
+}

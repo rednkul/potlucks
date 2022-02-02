@@ -7,7 +7,8 @@ from users.models import Profile
 def send_emails(order):
     connection = mail.get_connection()
     messages = get_messages(order)
-    connection.send_messages(messages)
+    #connection.send_messages(messages)
+    pass
 
 def get_messages(order):
     messages = []

@@ -1,0 +1,155 @@
+{% extends 'potlucks/base.html' %}
+
+{% block title %} Заказ {{ customer_order }} {% endblock title %}
+
+{% block content %}
+<!-- NAVIGATION -->
+<nav id="navigation" >
+	<!-- container -->
+	<div class="container">
+		<!-- responsive-nav -->
+
+		<div id="responsive-nav">
+			<!-- NAV -->
+
+			<ul class="main-nav nav navbar-nav  navig ">
+
+				<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+				<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+				<li ><a href="{% url 'potlucks:products' %}">Products</a></li>
+				<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+
+			</ul>
+			<!-- /NAV -->
+		</div>
+
+		<!-- /responsive-nav -->
+	</div>
+	<!-- /container -->
+</nav>
+<!-- /NAVIGATION -->
+
+<!-- SECTION -->
+<div class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
+
+			<div class="col-md-7">
+				<!-- Billing Details -->
+				<div class="billing-details">
+					<div class="section-title">
+						<h3 class="title">Информация для доставки</h3>
+					</div>
+
+					<div class="form-group">
+						<label>Имя</label><p class="check-input">{{ customer_order.customer.first_name }}</p>
+					</div>
+					<div class="form-group">
+						<label>Фамилия</label><p class="check-input">{{ customer_order.customer.last_name }}</p>
+					</div>
+					<div class="form-group">
+						<label>Отчество</label><p class="check-input">{{ customer_order.customer.patronymic }}</p>
+					</div>
+					<div class="form-group">
+						<label>Номер телефона</label><p class="check-input">{{ customer_order.customer.phone_number }}</p>
+					</div>
+					<div class="form-group">
+						<label>Email</label><p class="check-input">{{ customer_order.customer.user.email }}</p>
+					</div>
+					<div class="form-group">
+						<label>Адрес доставки</label><p class="check-input">{{ customer_order.customer.address }}</p>
+					</div>
+					<div class="form-group">
+						<label>Почтовый индекс</label><p class="check-input">{{ customer_order.customer.post_index }}</p>
+					</div>
+
+
+				</div>
+				<!-- /Billing Details -->
+
+				<!-- Order notes -->
+				<div class="order-notes">
+					<textarea class="input" placeholder="Примечания к заказу или доставка"></textarea>
+				</div>
+				<!-- /Order notes -->
+			</div>
+
+			<!-- Order Details -->
+			<div class="col-md-5 order-details">
+				<div class="section-title text-center">
+					<h3 class="title">Ваш заказ</h3>
+				</div>
+				<div class="order-summary">
+					<div class="order-col">
+						<div style="width:50%"><strong>Товар</strong></div>
+						<div style="width:25%"><strong>Цена</strong></div>
+						<div style="width:25%"><strong>Количество</strong></div>
+					</div>
+
+					<div class="order-col">
+						<div style="width:50%">{{ customer_order.order.product.name }}</div>
+						<div style="width:25%">{{ customer_order.order.unit_price }} ₽</div>
+						<div style="width:25%">{{ customer_order.goods_number }} ₽</div>
+					</div>
+
+
+					<div class="order-col">
+						<div>Shiping</div>
+						<div><strong>FREE</strong></div>
+					</div>
+					<div class="order-col">
+						<div><strong>СУММА</strong></div>
+						<div><strong class="order-total">{{ customer_order.total_cost }} ₽</strong></div>
+					</div>
+				</div>
+				<div class="payment-method">
+					<div class="input-radio">
+						<input type="radio" name="payment" id="payment-1">
+						<label for="payment-1">
+							<span></span>
+							Direct Bank Transfer
+						</label>
+						<div class="caption">
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+						</div>
+					</div>
+					<div class="input-radio">
+						<input type="radio" name="payment" id="payment-2">
+						<label for="payment-2">
+							<span></span>
+							Cheque Payment
+						</label>
+						<div class="caption">
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+						</div>
+					</div>
+					<div class="input-radio">
+						<input type="radio" name="payment" id="payment-3">
+						<label for="payment-3">
+							<span></span>
+							Paypal System
+						</label>
+						<div class="caption">
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+						</div>
+					</div>
+				</div>
+				<div class="input-checkbox">
+					<input type="checkbox" id="terms">
+					<label for="terms">
+						<span></span>
+						I've read and accept the <a href="#">terms & conditions</a>
+					</label>
+				</div>
+				<a href="#" class="primary-btn order-submit">Place order</a>
+			</div>
+			<!-- /Order Details -->
+		</div>
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+</div>
+<!-- /SECTION -->
+{% endblock content %}

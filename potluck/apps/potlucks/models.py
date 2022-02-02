@@ -81,7 +81,7 @@ class Product(ProductMixin):
     vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='vendor_products')
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
                                      blank=True, related_name='manufacturer_products')
-
+    tags = models.TextField("Тэги товара", max_length=200, blank=True)
     def __str__(self):
         return self.name
 
@@ -145,6 +145,10 @@ class Order(models.Model):
         fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
         return fullness if fullness else 0
 
+    @property
+    def get_order_fullness_for_tag(self):
+        fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
+        return fullness if fullness else 0
 
     def __str__(self):
         return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
@@ -158,7 +162,7 @@ class Order(models.Model):
 def send_notification_if_amassed(sender, instance, created, **kwargs):
     if instance.amassed:
         send_emails(instance)
-        print('ЗАЕБИС')
+
 
 
 
@@ -169,9 +173,11 @@ class CustomerOrder(models.Model):
                                  on_delete=models.CASCADE,)
     order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reserved')
     goods_number = models.PositiveSmallIntegerField('Доля пользователя в заказе', default=0)
+    address = models.CharField('Адрес доставки', max_length=100, blank=True)
     date = models.DateTimeField('Время присоединения к заказу', auto_now_add=True)
     paid = models.BooleanField('Доля пользователя в заказе оплачена', default=False)
     send = models.BooleanField('Заказ отправлен', default=False)
+    notes = models.TextField('Примечание к заказу', max_length=300, blank=True)
 
     def total_cost(self):
         return self.goods_number * self.order.unit_price

@@ -1,64 +1,71 @@
-<!DOCTYPE html>
-{% load static %}
-{% load bootstrap4 %}
+{% extends 'account/authorization_base.html' %}
+{% block title %} Регистрация {% endblock title %}
 
-<html lang="en">
-<head>
-    <title>{% block title %} {% endblock title %}</title>
-    <meta charset="UTF-8">
-<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="{% static 'csspp/bootstrap.min.css' %}"/>
-
-    <!-- Slick -->
-    <link  rel="stylesheet" href="{% static 'css/slick.css' %}"/>
-    <link  rel="stylesheet" href="{% static 'css/slick-theme.css' %}"/>
-
-    <!-- nouislider -->
-    <link  rel="stylesheet" href="{% static 'css/nouislider.min.css' %}"/>
-
-
-    <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-
-    <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}">
-
-    <!-- Tables -->
-    <link  rel="stylesheet" href="{% static 'css/tables.css' %}"/>
-
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-</head>
-<body>
-<div class="account_form">
-  <h1>Регистрация</h1>
-
-  <p>Уже есть аккаунт? Тогда <a href="{{ login_url }}">войдите</a>.</p>
-
-  <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+{% block form %}
+<div id="sign-up-form">
+<form method="post" action="{% url 'account_signup' %}" id="signup_form">
     {% csrf_token %}
-    <p><span>Email</span>{% bootstrap_field form.email %}</p>
-    <p><span>Пароль</span>{{ form.password1 }}</p>
-    <p><span>Повторите пароль</span>{{ form.password2 }}</p>
-
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-    {% endif %}
-    <button class="AccButton" type="submit">Зарегистрироваться &raquo;</button>
-  </form>
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="email" id="em">
+        <label for="email">Элетронная почта</label>
+        <div class="sec-2">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" title required name="email" id="id_email"/>
+        </div>
+    </div>
+    <div class="password" id="pasw">
+        <label for="password1">Пароль</label>
+        <div class="sec-2">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" title required name="password1"  id="id_password1"/>
+            <ion-icon class="show-hide" name="eye-outline"></ion-icon>
+        </div>
+    </div>
+    <div class="password">
+        <label for="password2">Повторите пароль</label>
+        <div class="sec-2">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input class="pas" type="password" name="password2" title required  id="id_password2"/>
+            <ion-icon class="show-hide" name="eye-outline"></ion-icon>
+        </div>
+    </div>
+    <button class="login" type="submit">Зарегистрироваться</button>
+</form>
+<div class="footer"><span><a href="{% url 'account_login' %}">Войти</a></span><span><a href="">Забыли пароль?</a></span></div>
 </div>
+{% endblock form %}
 
+{% block javascript %}
+<script>
+      $(document).ready(function () {
+          // отслеживаем событие отправки формы
+          $('#id_email').keyup(function () {
+              // создаем AJAX-вызов
+              $.ajax({
+                  data: $(this).serialize(), // получаяем данные формы
+                  url: "{% url 'ajax:validate_email' %}",
+                  // если успешно, то
+                  success: function (response) {
+                      if (response.is_taken == true) {
 
+                          $('#em').after('<div style="padding-left:1em; font-size: 0.85em; color:#D10024;" id="emailError">Пользователь с таким email уже существует</div>')
+                          $('#em').css({"margin-bottom": "0.55em"})
+                      }
+                      else {
 
+                          $('#emailError').remove();
+                          $('#em').css({"margin-bottom": "1.5em"})
+                      }
+                  },
+                  // если ошибка, то
+                  error: function (response) {
+                      // предупредим об ошибке
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+              return false;
+          });
+      })
+  </script>
 
-
-
-
-
-</body>
-</html>
+{% endblock javascript %}

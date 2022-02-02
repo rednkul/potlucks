@@ -13,7 +13,8 @@ import sys
 import os.path
 from pathlib import Path
 
-DATE_INPUT_FORMATS = ['%d-%m-%Y']
+import braintree
+
 
 
 
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'bootstrap4',
+    'django_braintree',
 
 
     # Custom apps
@@ -181,3 +183,11 @@ EMAIL_HOST_PASSWORD = "kiwnqxlwsndoyntu"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
+# Braintree sandbox settings
+BRAINTREE_ENV = braintree.Environment.Sandbox
+BRAINTREE_MERCHANT = 'bcynz5pv5vh83t6s'
+BRAINTREE_PUBLIC_KEY = 'mqwqqn83tnb496bj'
+BRAINTREE_PRIVATE_KEY = 'c3f1bbb42e0530a1052405496033d9b3'
+
+# If you cannot install M2Crypto (e.g. AppEngine):
+BRAINTREE_UNSAFE_SSL = True

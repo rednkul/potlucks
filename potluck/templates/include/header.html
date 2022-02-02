@@ -1,4 +1,5 @@
 
+
 <!-- HEADER -->
 <header class="header">
   <!-- TOP HEADER -->
@@ -12,9 +13,9 @@
 
       <ul class="header-links pull-right">
         {% if request.user.is_authenticated %}
-<!--        <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>-->
+        <!--        <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>-->
         <li><a href="{% url 'users:profile_detail' request.user.profile.id %}"><i class="fa fa-user-o"></i>{{ request.user.email }} </a></li>
-        <li><a href="{% url 'account_logout' %}"><i class="fa fa-window-close"></i>Выход</a></li>
+        <li><a href=""  class="js-open-modal" data-modal="logout"><i class="fa fa-window-close"></i>Выход</a></li>
         {% if request.user.is_superuser %}
         <li><a href="{% url 'admin:index'%}"><i class="fa fa-bank"></i>Администрирование</a></li>
         {% endif %}
@@ -55,7 +56,7 @@
                 <option value="1" {% if search_option == '1' %} selected="selected" {% endif %}>Заказы</option>
 
               </select>
-              <input class="input" name="q" placeholder="Поиск товара">
+              <input class="input" name="q" placeholder={% if search %}"{{ search }}"{% else %}"Поиск"{% endif %}>
               <button type="submit" class="search-btn">Search</button>
             </form>
           </div>
@@ -135,5 +136,25 @@
     <!-- container -->
   </div>
   <!-- /MAIN HEADER -->
+  {% if request.user.is_authenticated %}
+  <div class="modal_p" data-modal="logout">
+    <!--   Svg иконка для закрытия окна  -->
+    <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+    <h1>Вы уверены, что хотите выйти?</h1>
+
+
+
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+      {% endif %}
+      <button class='btn_logout js-modal-close' type="submit">ДА</button>
+    </form>
+  </div>
+  <!-- Подложка под модальным окном -->
+  <div class="overlay js-overlay-modal"></div>
+  <!-- /PopUp активных заказов -->
+  {% endif %}
 </header>
 <!-- /HEADER -->

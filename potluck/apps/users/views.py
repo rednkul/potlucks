@@ -7,8 +7,11 @@ from potlucks.models import CustomerOrder
 class ProfileDetailView(UpdateView):
     model = Profile
     template_name = 'users/profile_detail.html'
-    fields = ['phone_number', 'instagram', 'vk', 'telegram', 'post_index']
+    fields = ['first_name', 'last_name', 'patronymic', 'address', 'phone_number', 'instagram', 'vk', 'telegram', 'post_index']
 
+
+    def get_success_url(self):
+        return self.get_object().get_absolute_url()
 
     def get_context_data(self, **kwargs):
 

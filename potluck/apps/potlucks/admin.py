@@ -105,6 +105,9 @@ class ProductAdmin(admin.ModelAdmin):
         (None, {
             "fields": (("description", "image"),)
         }),
+        (None, {
+            "fields": (("tags",),)
+        }),
         ('Общие характеристики', {
             "fields": ("colors", "materials",), "classes": ("collapse",)
         }),

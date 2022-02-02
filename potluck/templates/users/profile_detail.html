@@ -30,21 +30,35 @@
 <div class="section">
     <div class="container">
         <div class="row mt-4">
-            <div  class="col-lg-4 col-lg-offset-4">
-                <form action="{% url 'users:profile_detail' profile.id %}">
+
+                <form action="{% url 'users:profile_detail' profile.id %}" method="post">
                     {% csrf_token %}
-                    {% bootstrap_field form.phone_number %}
-                    {% bootstrap_field form.post_index %}
-                    <h4>Ссылки на соцсети</h4>
-                    <p>!Заполненные поля будут использоваться для оповещения о наполнении заказа.</p>
-                    {% bootstrap_field form.vk %}
-                    {% bootstrap_field form.telegram %}
-                    {% bootstrap_field form.instagram %}
                     <div class="row">
-                        <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-4 col-lg-4 col-xs-3 col-sm-3 ">Сохранить</button>
+                        <div class="col-lg-4">
+                            <h4 class="text-center">Личные данные</h4>
+                            {% bootstrap_field form.first_name %}
+                            {% bootstrap_field form.last_name %}
+                            {% bootstrap_field form.patronymic %}
+                        </div>
+                        <div class="col-lg-4">
+                            <h4 class="text-center">Контактная информация</h4>
+                            {% bootstrap_field form.phone_number %}
+                            {% bootstrap_field form.vk %}
+                            {% bootstrap_field form.telegram %}
+                            {% bootstrap_field form.instagram %}
+                        </div>
+                        <div class="col-lg-4">
+                            <h4 class="text-center">Доставка</h4>
+                            {% bootstrap_field form.address %}
+                            {% bootstrap_field form.post_index %}
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>
                     </div>
                 </form>
-            </div>
+
         </div>
 
         <!-- Product tab -->
@@ -140,6 +154,7 @@
                                             <th>Дата заполнения</th>
                                             <th></th>
                                             <th></th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -160,6 +175,7 @@
                                             <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
                                             <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
                                             <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}">ПОДРОБНЕЕ</a></td>
+                                            <td class="detail-cell"><a href="{% url 'potlucks:customer_order_checkout' customer_order.id %}">ОПЛАТИТЬ</a></td>
                                             <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
                                         </tr>
                                         {% endfor %}

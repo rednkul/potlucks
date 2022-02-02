@@ -117,11 +117,19 @@ ul, ol {
 /*-- Text input --*/
 
 .input {
+
   height: 40px;
   padding: 0px 15px;
   border: 1px solid #E4E7ED;
   background-color: #FFF;
   width: 100%;
+}
+.check-input {
+    padding: 10px 15px 0px 15px;
+    height: 40px;
+    border: 1px solid #E4E7ED;
+    background-color: #FFF;
+    width: 100%;
 }
 
 textarea.input {
@@ -2337,5 +2345,23 @@ font-size: 20px;
 }
 
 
-/* Стили для кнопок. Мы ведь порядочные разработчики, негоже простые ссылки оставлять */
+.tabs {
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #1E1F29;
+    padding: 20px;
+}
 
+.tabs:hover {
+    border:1px solid #D10024;
+}
+
+.btn_logout {
+    width: 50%;
+    background-color: #D10024;
+    border-radius: 20px;
+    margin: 10px 0px;
+    border: none;
+    color: white;
+    font-weight: bold;
+}

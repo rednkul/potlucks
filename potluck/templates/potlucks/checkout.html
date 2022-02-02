@@ -527,3 +527,21 @@
 
 	</body>
 </html>
+<div>
+	<h4>Личные данные</h4>
+	{% bootstrap_field form.first_name %}
+	{% bootstrap_field form.last_name %}
+	{% bootstrap_field form.patrynomic %}
+</div>
+<div>
+	<h4>Контактная информация</h4>
+	{% bootstrap_field form.phone_number %}
+	{% bootstrap_field form.vk %}
+	{% bootstrap_field form.telegram %}
+	{% bootstrap_field form.instagram %}
+</div>
+<div>
+	<h4>Доставка</h4>
+
+	{% bootstrap_field form.post_index %}
+</div>

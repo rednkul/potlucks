@@ -22,6 +22,7 @@
 			<!-- /container -->
 		</nav>
 		<!-- /NAVIGATION -->
+
 <!-- SECTION -->
 <div class="section">
     <!-- container -->
@@ -122,3 +123,40 @@
 </div>
 <!-- /SECTION -->
 {% endblock content %}
+
+{% block javascript %}
+<script>$(document).ready(function () {
+          // отслеживаем событие отправки формы
+          $('#filter-btn').click(function () {
+
+
+              // создаем AJAX-вызов
+
+              $.ajax({
+                  data: $('#filter').serialize(), // получаяем данные формы
+                  type: 'get',
+                  ,
+                  // если успешно, то
+                  success: function (data) {
+                      console.log(data);
+
+                  },
+
+
+
+                  // если ошибка, то
+                  error: function (response) {
+                      // предупредим об ошибке
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+
+
+
+
+          });
+
+      })
+</script>
+
+{% endblock javascript %}

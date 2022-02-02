@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load bootstrap4 %}
 
 <html lang="en">
 <head>
@@ -34,31 +35,27 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 </head>
 <body>
+<div class="account_form">
+  <h1>Регистрация</h1>
 
-        <div>
-            {% include "include/header.html" %}
-        </div>
-        <div>
-            {% block base %}
+  <p>Уже есть аккаунт? Тогда <a href="{{ login_url }}">войдите</a>.</p>
 
-            {% endblock base %}
-        </div>
-        <div>
-            {% include "include/footer.html" %}
-        </div>
-<!-- jQuery Plugins -->
-		<script src="{% static 'js/jquery.min.js' %}"></script>
-		<script src="{% static 'js/bootstrap.min.js' %}"></script>
-		<script src="{% static 'js/slick.min.js' %}"></script>
-		<script src="{% static 'js/nouislider.min.js' %}"></script>
-		<script src="{% static 'js/jquery.zoom.min.js' %}"></script>
-		<script src="{% static 'js/main.js' %}"></script>
-<!-- Custom scripts -->
-        <script src="{% static 'js/script.js' %}"></script>
-{% block javascript %}
-{% endblock javascript %}
+  <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    <p><span>Email</span>{% bootstrap_field form.email %}</p>
+    <p><span>Пароль</span>{% bootstrap_field form.password1 %}</p>
+    <p><span>Повторите пароль</span>{{ form.password2 }}</p>
 
-<script src="{% static 'js/popup.js' %}"></script>
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <button class="AccButton" type="submit">Зарегистрироваться &raquo;</button>
+  </form>
+</div>
+
+
+
+
 
 
 

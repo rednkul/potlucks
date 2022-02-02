@@ -16,9 +16,10 @@ urlpatterns = [
     path('categories/<slug:slug>/', views.CategoryDetailView.as_view(), name='category_detail'),
     path('category_filter/<slug:slug>/', views.CategoryProductsFilterView.as_view(), name='category_filter'),
     path('products/', views.ProductsView.as_view(), name='products'),
-    path('products_filter/', views.FilterProductsView.as_view(), name='product_filter'),
+    path('products_filter/', views.FilterProductsView.as_view(), name='products_filter'),
+    #path('json_products_filter/', views.JsonProductFilter.as_view(), name='json_products_filter'),
     path('products/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
     path('cancel_customer_order/<int:pk>/', services.cancel_customer_order, name='cancel_customer_order'),
-    path('customer_order_detail/<int:pk>/', views.CustomerOrderDetailView.as_view(), name='customer_order_detail'),
+    path('customer_order_checkout/<int:pk>/', views.CustomerOrderСheckoutView.as_view(), name='customer_order_checkout'),
 
 ]
