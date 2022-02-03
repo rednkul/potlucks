@@ -5,7 +5,7 @@ import datetime
 
 from django.db import models
 # Импорт моих модулей
-from django.db.models import Sum
+from django.db.models import Sum, Max, Min
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
@@ -82,6 +82,17 @@ class Product(ProductMixin):
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
                                      blank=True, related_name='manufacturer_products')
     tags = models.TextField("Тэги товара", max_length=200, blank=True)
+
+    @property
+    def max_price(self):
+        return self.product_orders.filter(amassed=False).aggregate(Max('unit_price'))['unit_price__max']
+
+
+    @property
+    def min_price(self):
+        return self.product_orders.filter(amassed=False).aggregate(Min('unit_price'))['unit_price__min']
+
+
     def __str__(self):
         return self.name
 
@@ -194,6 +205,7 @@ class CustomerOrder(models.Model):
     class Meta:
         verbose_name = "Заказ пользователя"
         verbose_name_plural = "Заказы пользователей"
+        unique_together = ('order', 'customer')
 
 
 @receiver(post_save, sender=CustomerOrder)

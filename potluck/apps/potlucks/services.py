@@ -9,6 +9,13 @@ def join_an_order(request, pk):
     customer_order = CustomerOrder.objects.create(customer=request.user.profile, order=order, goods_number=goods_number)
     return redirect('potlucks:order_detail', pk=pk)
 
+def update_customer_order(request, pk):
+    customer_order = CustomerOrder.objects.get(id=pk)
+    customer_order.goods_number = request.POST.get('number')
+    customer_order.save()
+
+    return redirect('potlucks:order_detail', pk=customer_order.order.id)
+
 
 
 def cancel_customer_order(request, pk):

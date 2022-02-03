@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Заказ "{{ order.product.name }}" {% endblock title %}
+{% block title %} Заказ "{{ customer_order.order.product.name }}" {% endblock title %}
 {% load static %}
 
 {% block content %}
@@ -41,7 +41,7 @@
                     <div class="product-preview">
                         <img src="{{ order.product.image.url }}" alt="">
                     </div>
-                        {% for image in order.product.product_images.all %}
+                        {% for image in customer_order.order.product.product_images.all %}
                             <div class="product-preview">
                                 <img src="{{ image.image.url }}" alt="">
                             </div>
@@ -72,7 +72,6 @@
             <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
-                    {% if not is_partner %}
                     <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
                     {% if not order.amassed %}
                     <p>Доступно позиций: {{  available }}</p>
@@ -109,8 +108,7 @@
 <!--                            </select>-->
 <!--                        </label>-->
 <!--                    </div>-->
-
-                    <form action="{% url 'potlucks:join_an_order' order.id %}" method="post" id="join-form">
+                    <form action="{% url 'potlucks:join_an_order' order.pk %}" method="post" id="join-form">
                         {% csrf_token %}
                         <div class="add-to-cart">
                             <div class="qty-label">
@@ -127,63 +125,8 @@
                             <button id="join" type="submit" class="add-to-cart-btn" disabled><i class="fa fa-shopping-cart"></i>Присоединиться</button>
 
                         </div>
+
                     </form>
-                    {% else %}
-                    <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
-                    {% if not order.amassed %}
-                    <p>Можно добавить к заказу: {{  available }}</p>
-                    {% else %}
-                    <h2 style="color:red">Заказ заполнен</h2>
-                    {% endif %}
-                    <div>
-                        <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <a class="review-link" href="#">10 Review(s) | Add your review</a>
-                    </div>
-                    <div>
-                        <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-
-                    </div>
-                    <p>{{ order.product.description }}</p>
-
-<!--                    <div class="product-options">-->
-<!--                        <label>-->
-<!--                            Size-->
-<!--                            <select class="input-select">-->
-<!--                                <option value="0">X</option>-->
-<!--                            </select>-->
-<!--                        </label>-->
-<!--                        <label>-->
-<!--                            Color-->
-<!--                            <select class="input-select">-->
-<!--                                <option value="0">Red</option>-->
-<!--                            </select>-->
-<!--                        </label>-->
-<!--                    </div>-->
-                    <form action="{% url 'potlucks:update_customer_order' customer_order.pk %}" method="post" id="change-form">
-                        {% csrf_token %}
-                        <div class="add-to-cart">
-                            <div class="qty-label">
-                                Qty
-                                <div class="input-number" id="input-number">
-                                    <input type="number" name="number" id="number" value="{{ customer_order.goods_number }}">
-                                    <input type="hidden" name="order-id" value="{{ order.id }}" >
-                                    <span class="qty-up">+</span>
-                                    <span class="qty-down">-</span>
-
-                                </div>
-
-                            </div>
-                            <button id="join" type="submit" class="add-to-cart-btn" disabled><i class="fa fa-shopping-cart"></i>Изменить заказ</button>
-
-                        </div>
-                    </form>
-                {% endif %}
 
 <!--                    <ul class="product-btns">-->
 <!--                        <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>-->
@@ -611,7 +554,7 @@
 
                           if (response.is_available == false) {
                               $('#not-available').remove();
-                              $('#join').after('<p style="color:red" id="not-available">Нельзя выбрать больше ' +response.available_number +'</p>');
+                              $('#join').after('<p style="color:red" id="not-available">Нельзя выбрать больше {{ available }}</p>');
                               $("#join").prop("disabled",true);
                           }
                           else {

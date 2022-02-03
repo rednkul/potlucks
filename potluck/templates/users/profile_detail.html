@@ -39,6 +39,7 @@
                             {% bootstrap_field form.first_name %}
                             {% bootstrap_field form.last_name %}
                             {% bootstrap_field form.patronymic %}
+                            <a href="{% url 'users:change_password' %}">Изменить пароль</a>
                         </div>
                         <div class="col-lg-4">
                             <h4 class="text-center">Контактная информация</h4>
@@ -52,7 +53,7 @@
                             {% bootstrap_field form.address %}
                             {% bootstrap_field form.post_index %}
                         </div>
-
+                        <a href="{% url 'users:change_password' %}">Изменить пароль</a>
                     </div>
                     <div class="row">
                         <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>

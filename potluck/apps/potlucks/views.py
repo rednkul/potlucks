@@ -107,9 +107,9 @@ class ProductDetailView(DetailView):
     def get_product_categories(self, obj):
         if obj.category:
             category = obj.category
-            categories = [category.name, ]
+            categories = [category, ]
             while category.parent:
-                categories.append(category.parent.name)
+                categories.append(category.parent)
                 category = category.parent
 
             return categories
@@ -478,21 +478,34 @@ class OrderDetailView(DetailView):
         self.object = self.get_object()
         context['available'] = self.object.size - self.object.get_order_fullness()
         context['categories'] = self.get_product_categories(self.object.product)
-
+        context['is_partner'] = self.customer_ispartner()
+        context['customer_order'] = self.get_customer_order() if self.customer_ispartner() else None
         return context
 
-    def validate_goods_number(self):
-        self.object = self.get_object()
-        max_number = self.object.size - self.object.get_order_fullness
-        goods_number = self.request.GET.get('number')
-        response = {'is_available': True if max_number >= goods_number else False}
-        return JsonResponse(response)
+
+    def get_customer_order(self):
+        order = self.get_object()
+        customer_order = CustomerOrder.objects.get(order=order, customer=self.request.user.profile)
+        print(f"corder---------------{customer_order.id}------")
+        return customer_order
+
+    def customer_ispartner(self):
+
+        order = self.get_object()
+        print(f"Партнер---------------{self.request.user.profile in order.partners.all()}------")
+        return self.request.user.profile in order.partners.all()
 
 
-
-class CustomerOrderСheckoutView(UpdateView):
+class CustomerOrderCheckoutView(UpdateView):
     model = CustomerOrder
     template_name = 'potlucks/orders/customer_order_checkout.html'
     context_object_name = 'customer_order'
-    fields = ['notes',]
+    fields = ['notes', ]
+
+
+class CustomerOrderUpdateView(UpdateView):
+    model = CustomerOrder
+    template_name = 'potlucks/orders/customer_order_update.html'
+    context_object_name = 'customer_order'
+    fields = ['goods_number', ]
 

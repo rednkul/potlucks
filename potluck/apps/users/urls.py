@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import ProfileDetailView
+from . import views
 
 app_name = 'users'
 
 urlpatterns = [
-    path('<int:pk>/', ProfileDetailView.as_view(), name='profile_detail'),
+    path('<int:pk>/', views.ProfileDetailView.as_view(), name='profile_detail'),
+    path('change_password/', views.change_password, name='change_password')
 
 ]

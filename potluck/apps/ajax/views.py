@@ -7,9 +7,13 @@ from users.models import CustomUser
 
 def validate_goods_number(request, pk):
     order = Order.objects.get(id=pk)
-    max_number = order.size - order.get_order_fullness()
-
     goods_number = request.GET.get('number', None)
+    customer_order = CustomerOrder.objects.get(order=order, customer=request.user.profile)
+    if not customer_order:
+
+        max_number = order.size - order.get_order_fullness()
+    else:
+        max_number = order.size - order.get_order_fullness() + customer_order.goods_number
 
     try:
         goods_number_int = int(goods_number)
