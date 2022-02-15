@@ -1,0 +1,250 @@
+<div class="row">
+  <div class="col-md-12">
+    <div id="product-tab">
+      <!-- product tab nav -->
+      <ul class="tab-nav">
+        <li class="active"><a data-toggle="tab" href="#tab1">Действующие заказы</a></li>
+        <li><a data-toggle="tab" href="#tab2">Заполненные заказы</a></li>
+        <li><a data-toggle="tab" href="#tab3">Завершенные заказы</a></li>
+
+      </ul>
+      <!-- /product tab nav -->
+
+      <!-- product tab content -->
+      <div class="tab-content">
+        <!-- tab1  -->
+        <div id="tab1" class="tab-pane fade in active">
+          <div class="row">
+            <div class="col-md-12">
+              {% if not customer_orders_active %}
+              <h2>
+                Нет активных заказов
+              </h2>
+              {% else %}
+              <table>
+                <thead>
+                <tr>
+
+                  <th>Продукт</th>
+                  <th>Поставщик</th>
+                  <th>Организатор</th>
+                  <th>Цена за единицу</th>
+                  <th>Доля в заказе</th>
+                  <th>Сумма</th>
+                  <th>Заполненность</th>
+                  <th>Дата присоединения</th>
+                  <th>Дата начала</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for customer_order in customer_orders_active %}
+                <tr>
+                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                    <p><a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                      {{ customer_order.order.product.name }}
+                    </a></p>
+                  </td>
+                  <td>{{ customer_order.order.vendor }}</td>
+                  <td>{{ customer_order.order.creator }}</td>
+                  <td>{{ customer_order.order.unit_price }} р</td>
+                  <td>{{ customer_order.goods_number  }}</td>
+                  <td>{{  customer_order.total_cost }} р</td>
+                  <td>{{ customer_order.order.get_order_fullness }} / {{ customer_order.order.size }}</td>
+                  <td>{{ customer_order.date|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <!-- /tab1  -->
+
+        <!-- tab2  -->
+        <div id="tab2" class="tab-pane fade in">
+          <div class="row">
+            <div class="col-md-12">
+              {% if not customer_orders_amassed %}
+              <h2>
+                Нет заполненных заказов
+              </h2>
+              {% else %}
+              <table>
+                <thead>
+                <tr>
+
+                  <th>Продукт</th>
+                  <th>Поставщик</th>
+                  <th>Организатор</th>
+                  <th>Цена за единицу</th>
+                  <th>Доля в заказе</th>
+                  <th>Сумма</th>
+                  <th>Дата присоединения</th>
+                  <th>Дата начала</th>
+                  <th>Дата заполнения</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for customer_order in customer_orders_amassed %}
+                <tr>
+                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                      <p>{{ customer_order.order.product.name }}</p>
+                    </a>
+                  </td>
+                  <td>
+                    {{ customer_order.order.vendor }} </td>
+                  <td>{{ customer_order.order.creator }}</td>
+                  <td>{{ customer_order.order.unit_price }} р</td>
+                  <td>{{ customer_order.goods_number  }}</td>
+                  <td>{{  customer_order.total_cost }} р</td>
+                  <td>{{ customer_order.date|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:customer_order_checkout' customer_order.id %}">ОПЛАТИТЬ</a></td>
+                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <!-- /tab2  -->
+
+        <!-- tab3  -->
+        <div id="tab3" class="tab-pane fade in">
+          <div class="row">
+            <div class="col-md-12">
+              {% if not customer_orders_send %}
+              <h2>
+                Нет завершенных заказов
+              </h2>
+              {% else %}
+              <table>
+                <thead>
+                <tr>
+
+                  <th>Продукт</th>
+                  <th>Поставщик</th>
+                  <th>Организатор</th>
+                  <th>Цена за единицу</th>
+                  <th>Сумма</th>
+                  <th>Дата присоединения</th>
+                  <th>Дата начала</th>
+                  <th>Дата заполнения</th>
+                  <th>Дата завершения</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for customer_order in customer_orders_send %}
+                <tr>
+                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                      <p>{{ customer_order.order.product.name }}</p>
+                    </a>
+                  </td>
+                  <td>
+                    {{ customer_order.order.vendor }} </td>
+                  <td>{{ customer_order.order.creator }}</td>
+                  <td>{{ customer_order.order.unit_price }} р</td>
+                  <td>{{  customer_order.total_cost }} р</td>
+                  <td>{{ customer_order.date|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
+                  <td>{{ customer_order.order.date_send|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОЦЕНИТЬ</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <!-- /tab3  -->
+
+
+        <!-- /tab4  -->
+      </div>
+      <!-- /product tab content  -->
+    </div>
+  </div>
+</div>
+</div>
+<!-- PopUp активных заказов -->
+
+
+</div>
+<!-- /PopUp активных заказов -->
+{% for customer_order in customer_orders_active %}
+<div class="modal_p" data-modal="{{ customer_order.id }}" id="{{ customer_order.id }}">
+  <!--   Svg иконка для закрытия окна  -->
+  <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+  <h3>Отменить заказ?</h3>
+  <p>{{ customer_order }}</p>
+  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_customer_order' customer_order.id %}">ДА</a></p>
+</div>
+{% endfor %}
+
+{% for customer_order in customer_orders_amassed %}
+<div class="modal_p" data-modal="{{ customer_order.id }}" id="{{ customer_order.id }}">
+  <!--   Svg иконка для закрытия окна  -->
+  <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+  <h3>Отменить заказ?</h3>
+  <p>{{ customer_order }}</p>
+  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_customer_order' customer_order.id %}">ДА</a></p>
+</div>
+{% endfor %}
+
+{% for customer_order in customer_orders_send %}
+<div class="modal_p" data-modal="{{ customer_order.id }}" id="{{ customer_order.id }}">
+  <!--   Svg иконка для закрытия окна  -->
+  <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+  <!-- Review Form -->
+            <div class="col-md-12">
+              <div id="review-form">
+                <form class="review-form" action="{% url 'potlucks:review_and_rate' customer_order.id %}" method="post">
+                  {% csrf_token %}
+                  <textarea id="review" name="review{{customer_order.id}}" class="input" {% if customer_order.review %} disabled {% endif %} placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
+                  <div class="input-rating">
+                    <span>Your Rating: </span>
+                    <div class="stars">
+                      {% for star in stars %}
+
+                      <input id="star{{star.value}}-{{customer_order.id}}" name="star{{customer_order.id}}" value="{{star.value}}" type="radio" {% if star.value == customer_order.get_rating %} checked {% endif %}>
+                      <label for="star{{star.value}}-{{customer_order.id}}"></label>
+                      {% endfor %}
+
+                    </div>
+                  </div>
+                  {% if not customer_order.review %}
+                  <button class="primary-btn">Оценить</button>
+                  {% endif %}
+                </form>
+              </div>
+            </div>
+            <!-- /Review Form -->
+
+
+  <p>{{ customer_order }}</p>
+  </div>
+{% endfor %}
+
+<!-- Подложка под модальным окном -->
+<div class="overlay js-overlay-modal"></div>
+<!-- /PopUp активных заказов -->

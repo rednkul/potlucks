@@ -5,7 +5,10 @@ from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
 
 from .models import Profile, CustomUser
-from potlucks.models import CustomerOrder
+from potlucks.models import CustomerOrder, Rating, RatingStar
+
+
+
 
 class ProfileDetailView(UpdateView):
     model = Profile
@@ -21,10 +24,16 @@ class ProfileDetailView(UpdateView):
         context = super().get_context_data(**kwargs)
         customer = self.get_object()
         customer_orders_active = CustomerOrder.objects.filter(customer=customer, order__amassed=False)
-        customer_orders_amassed = CustomerOrder.objects.filter(customer=customer, order__amassed=True)
+        customer_orders_amassed = CustomerOrder.objects.filter(customer=customer, order__amassed=True, send=False)
+        customer_orders_send = CustomerOrder.objects.filter(customer=customer, send=True)
+
+        context['stars'] = RatingStar.objects.all()
         context['customer_orders_active'] = customer_orders_active
         context['customer_orders_amassed'] = customer_orders_amassed
-        print(customer_orders_amassed)
+        context['customer_orders_send'] = customer_orders_send
+
+
+
 
         return context
 

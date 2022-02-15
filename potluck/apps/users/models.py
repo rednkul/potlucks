@@ -4,13 +4,17 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-# Create your models here.
+
 from django.urls import reverse
 
 from .managers import CustomUserManager
 
 
+
 # Authentification
+
+
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = None
     email = models.EmailField('Адрес электронной почты', unique=True)
@@ -69,6 +73,7 @@ class Profile(models.Model):
     instagram = models.CharField('Профиль instagram', max_length=50, null=True, blank=True)
     vk = models.CharField('Профиль ВКонтакте', max_length=50, null=True, blank=True)
     telegram = models.CharField('Профиль telegram', max_length=50, null=True, blank=True)
+
 
     def get_absolute_url(self):
         return reverse('users:profile_detail', kwargs={'pk': self.id, })

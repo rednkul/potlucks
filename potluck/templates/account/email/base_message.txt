@@ -1,0 +1,7 @@
+{% autoescape off %}Здравствуйте! Уведомление от  {{ site_name }}!
+
+{% block content %}{% endblock %}
+
+Благодарим вас за использование нашего сервиса!
+{{ site_domain }}
+{% endautoescape %}

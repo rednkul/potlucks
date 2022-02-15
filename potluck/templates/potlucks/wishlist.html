@@ -1,8 +1,9 @@
 {% extends 'potlucks/base.html' %}
-{% load static %}
-{% block title %} Поиск товара {% endblock title %}
+{% block title %} Отложенные товары {% endblock title %}
+
 {% block content %}
 <!-- NAVIGATION -->
+
 		<nav id="navigation">
 			<!-- container -->
 			<div class="container">
@@ -12,7 +13,7 @@
 					<ul class="main-nav nav navbar-nav">
 						<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
                         <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-						<li  class="active"><a href="{% url 'potlucks:products' %}">Products</a></li>
+						<li><a href="{% url 'potlucks:products' %}">Products</a></li>
 						<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
 
 					</ul>
@@ -23,23 +24,21 @@
 			<!-- /container -->
 		</nav>
 		<!-- /NAVIGATION -->
+
 <!-- SECTION -->
 <div class="section">
     <!-- container -->
     <div class="container">
         <!-- row -->
-        <div class="row">
-            <!-- ASIDE -->
-            {% include 'potlucks/products_view/products_filter.html' %}
 
-            <!-- STORE -->
+
 
 
                 <!-- store products -->
                 <div class="row">
                     <!-- product -->
-                    {% for product in product_list %}
-                        <div class="col-md-4 col-xs-6">
+                    {% for product in wishlist.products.all %}
+                        <div class="col-md-3 col-xs-4">
                         {% include 'include/product_card.html' %}
                         </div>
                     {% endfor %}
@@ -50,24 +49,14 @@
                 <!-- /store products -->
 
                 <!-- store bottom filter -->
-                <div class="store-filter clearfix">
-                    {% include "include/pagination.html" %}
-                </div>
+
                 <!-- /store bottom filter -->
-            </div>
+
             <!-- /STORE -->
-        </div>
+
         <!-- /row -->
     </div>
     <!-- /container -->
 </div>
 <!-- /SECTION -->
-
 {% endblock content %}
-
-{% block javascript %}
-<script src="{% static 'js/wishlist.js' %}">
-
-</script>
-
-{% endblock javascript %}

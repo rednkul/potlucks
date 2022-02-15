@@ -1,0 +1,50 @@
+
+<div class="product">
+  <a href="{% url 'potlucks:product_detail' product.url %}">
+    <div class="product-img">
+      <img src="{{ product.image.url }}" href="{% url 'potlucks:product_detail' product.url %}" alt="" >
+      <div class="product-label">
+        {# <span class="sale">От {{ product.min_price }} р/шт</span> #}
+        <span class="new">От {{ product.min_price }} р/шт</span>
+
+      </div>
+    </div>
+  </a>
+  <div class="product-body">
+    <p class="product-category">{{ product.category.name }}</p>
+    <h3 class="product-name"><a href="{% url 'potlucks:product_detail' product.url %}">{{ product.name }}</a></h3>
+    <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
+    <div class="product-rating">
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+      <i class="fa fa-star"></i>
+    </div>
+    <div class="product-btns">
+
+      <button>
+        <i
+                data-del="{% url 'ajax:delete_product_from_wishlist' product.id %}"
+                data-add="{% url 'ajax:add_product_to_wishlist' product.id %}"
+                {% if product in user.profile.wishlist.products.all %}
+                class="fa fa-heart add-to-wishlist"
+                {% else %}
+                class="fa fa-heart-o add-to-wishlist"
+                {% endif %}
+                id="{{product.id}}">
+
+        </i><span class="tooltipp">Отложить</span></button>
+
+
+      <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
+      <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+    </div>
+  </div>
+  <div class="add-to-cart">
+
+    <a href="{% url 'potlucks:product_detail' product.url %}#tab2"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Заказы</button>
+
+  </div>
+
+</div>

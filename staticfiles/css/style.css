@@ -2414,3 +2414,7 @@ a.move-top span {
     line-height: 2em;
     background: #4a4b4c;
 }
+
+#paginate_item_active {
+    color: #fff;
+}

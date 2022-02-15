@@ -5,7 +5,7 @@ import datetime
 
 from django.db import models
 # Импорт моих модулей
-from django.db.models import Sum, Max, Min
+from django.db.models import Sum, Max, Min, Avg
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
@@ -84,6 +84,19 @@ class Product(ProductMixin):
     tags = models.TextField("Тэги товара", max_length=200, blank=True)
 
     @property
+    def avg_rating(self):
+        return self.product_orders.all().aggregate(
+            average_rating=Avg('order_reserved__rating__star', flat=True))['average_rating']
+
+
+    @property
+    def customer_orders(self):
+        customer_orders = []
+        for order in self.product_orders.all():
+            customer_orders.extend(order.order_reserved.all())
+        return customer_orders
+
+    @property
     def max_price(self):
         return self.product_orders.filter(amassed=False).aggregate(Max('unit_price'))['unit_price__max']
 
@@ -121,7 +134,7 @@ class Order(models.Model):
                                 null=True, related_name='order_creators')
     vendor = models.ForeignKey(Vendor, verbose_name='Поставщик', on_delete=models.CASCADE,
                                null=True, related_name='order_vendor')
-    partners = models.ManyToManyField(Profile, verbose_name='Участники', related_name='partner_orders')
+
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
     unit_price = models.PositiveIntegerField('Цена за единицу товара', default=0, help_text='Сумма в рублях')
     price = models.PositiveIntegerField('Стоимость заказа', default=0, help_text='Сумма в рублях')
@@ -137,6 +150,10 @@ class Order(models.Model):
 
     def _get_price(self):
         self.price = self.unit_price * self.size
+
+    @property
+    def partners(self):
+        return self.order_reserved.values_list('customer', flat=True)
 
 
     def save(self, *args, **kwargs):
@@ -189,6 +206,11 @@ class CustomerOrder(models.Model):
     paid = models.BooleanField('Доля пользователя в заказе оплачена', default=False)
     send = models.BooleanField('Заказ отправлен', default=False)
     notes = models.TextField('Примечание к заказу', max_length=300, blank=True)
+    date_send = models.DateField('Дата отправления', blank=True, default=None, null=True)
+
+
+
+
 
     def total_cost(self):
         return self.goods_number * self.order.unit_price
@@ -196,6 +218,11 @@ class CustomerOrder(models.Model):
     def check_amassing_order(self):
 
         return True if self.order.get_order_fullness() == self.order.size else False
+
+    @property
+    def get_rating(self):
+        if self.rating:
+            return self.rating.star.value
 
 
 
@@ -225,35 +252,60 @@ def cancel_order_amassing(sender, instance, *args, **kwargs):
     instance.order.save()
 
 
-class Reviews(models.Model):
-    author = models.ForeignKey(Profile, verbose_name='Автор', on_delete=models.CASCADE, related_name='author_reviews')
-    order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reviews')
-    text_about_vendor = models.TextField('Отзыв о поставщике', max_length=5000, default='', blank=True)
-    text_about_creator = models.TextField('Отзыв о создателе заказа', max_length=5000, default='', blank=True)
-    text_about_product = models.TextField('Отзыв о продукте', max_length=5000, default='', blank=True)
+class Review(models.Model):
+    customer_order = models.OneToOneField(CustomerOrder, verbose_name='Заказ', on_delete=models.CASCADE,)
 
-    date = models.DateTimeField(auto_now_add=True)
+    text = models.TextField('Отзыв о продукте', max_length=5000, default='', blank=True)
+
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.author} - {self.order}"
+        return f"{self.customer_order.customer.user.email} - {self.customer_order.order.product}"
 
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
 
 
-class Rating(models.Model):
-    """Рейтинг"""
-    author = models.ForeignKey(Profile, verbose_name='Автор', on_delete=models.CASCADE, related_name='author_ratings')
-    order = models.ForeignKey(Profile, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_ratings')
-    rate = models.PositiveSmallIntegerField('Оценка', default=10, help_text='Число от 1 до 10')
 
+class RatingStar(models.Model):
+    """Звезда рейтинга"""
+    value = models.SmallIntegerField("Значение", default=0)
 
     def __str__(self):
-        return f"{self.author} - {self.order} - {self.rate}"
+        return f'{self.value}'
+
+    class Meta:
+        verbose_name = "Звезда рейтинга"
+        verbose_name_plural = "Звезды рейтинга"
+        ordering = ['-value']
+
+
+class Rating(models.Model):
+    """Рейтинг"""
+    customer_order = models.OneToOneField(CustomerOrder, verbose_name='Заказ', on_delete=models.CASCADE,)
+    star = models.ForeignKey(RatingStar, verbose_name="Звезда рейтинга", on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.customer_order.customer.user.email} - {self.customer_order.order.product} - {self.star}"
 
     class Meta:
         verbose_name = "Рейтинг"
         verbose_name_plural = "Рейтинги"
 
+
+
+class Wishlist(models.Model):
+    """Список пожеланий (отложенные товары)"""
+    customer = models.OneToOneField(Profile, verbose_name='Клиент', on_delete=models.CASCADE, related_name='wishlist')
+    products = models.ManyToManyField(Product, verbose_name='Товары', blank=True)
+
+
+    def __str__(self):
+        return f"Отложенные товары {self.customer}"
+
+    class Meta:
+        verbose_name = "Отложенный товар"
+        verbose_name_plural = "Отложенные товары"
 

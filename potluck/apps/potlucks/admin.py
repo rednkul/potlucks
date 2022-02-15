@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Reviews, Product, ProductImages
+from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Review, Product, ProductImages, \
+    RatingStar, Wishlist
 
 # Register your models here.
 
@@ -70,22 +71,21 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(Reviews)
-class ReviewsAdmin(admin.ModelAdmin):
-    list_display = ('author', "order", "date")
-    list_display_links = ('author', "order",)
-    list_filter = ("order",)
-    search_fields = ('author', )
-#
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("customer_order", "date")
+    list_display_links = ("customer_order",)
+    list_filter = ("customer_order__order__product", "customer_order__order__vendor")
+    search_fields = ("customer_order__customer__profile__user__email",)
+
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
     """Настройка страницы рейтинга"""
-    list_display = ("id", "author", "rate", "order",)
-    list_display_links = ("id", "author")
-    list_filter = ("order",)
-    search_fields = ("author__email",)
+    list_display = ("customer_order", "date")
+    list_display_links = ("customer_order",)
 
 
+admin.site.register(RatingStar)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -132,5 +132,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ProductImages)
+admin.site.register(Wishlist)
 
 #class ProductImagesAdmin(admin.ModelAdmin):

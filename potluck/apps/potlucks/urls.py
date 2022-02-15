@@ -6,7 +6,7 @@ from . import services
 app_name = 'potlucks'
 
 urlpatterns = [
-    path('', views.CategoriesView.as_view(), name='home_page'),
+    path('', views.HomePageView.as_view(), name='home_page'),
     path('orders/', views.OrderListView.as_view(), name='orders'),
     path('order_filter/', views.OrderFilterView.as_view(), name='order_filter'),
     path('orders/<int:pk>/', views.OrderDetailView.as_view(), name='order_detail'),
@@ -22,5 +22,7 @@ urlpatterns = [
     path('update_customer_order/<int:pk>/', services.update_customer_order, name='update_customer_order'),
     path('cancel_customer_order/<int:pk>/', services.cancel_customer_order, name='cancel_customer_order'),
     path('customer_order_checkout/<int:pk>/', views.CustomerOrderCheckoutView.as_view(), name='customer_order_checkout'),
+    path('review_and_rate/<int:pk>', services.review_and_rate, name='review_and_rate'),
+    path('wishlist/<int:pk>/', views.WishlistView.as_view(), name='wishlist'),
 
 ]

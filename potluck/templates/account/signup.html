@@ -20,6 +20,7 @@
             <input type="password" title required name="password1"  id="id_password1"/>
             <ion-icon class="show-hide" name="eye-outline"></ion-icon>
         </div>
+        {{ form.password1.errors }}
     </div>
     <div class="password">
         <label for="password2">Повторите пароль</label>
@@ -28,9 +29,13 @@
             <input class="pas" type="password" name="password2" title required  id="id_password2"/>
             <ion-icon class="show-hide" name="eye-outline"></ion-icon>
         </div>
+        {{ form.password2.errors }}
     </div>
     <button class="login" type="submit">Зарегистрироваться</button>
+
+
 </form>
+
 <div class="footer"><span><a href="{% url 'account_login' %}">Войти</a></span><span><a href="">Забыли пароль?</a></span></div>
 </div>
 {% endblock form %}
