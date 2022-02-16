@@ -69,7 +69,7 @@
             {% if user.is_authenticated %}
             <!-- Wishlist -->
             <div>
-              <a href="{% url 'potlucks:wishlist' user.profile.wishlist.id %}">
+              {# <a href="{% url 'potlucks:wishlist' user.profile.wishlist.id %}"> #}
                 <i class="fa fa-heart-o"></i>
                 <span>Отложенные товары</span>
                 <div class="qty">{{ user.profile.wishlist.products.all|length }}</div>

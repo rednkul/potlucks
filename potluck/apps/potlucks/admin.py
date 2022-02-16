@@ -16,15 +16,8 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
     def get_parents(self, obj):
-        # return "\n".join([i.name for i in obj.categories.all()])
-        if obj.parent:
-            parent = obj.parent
-            ancestors = [parent.name, ]
-            while parent.parent:
-                ancestors.append(parent.parent.name)
-                parent = parent.parent
 
-            return " > ".join([i for i in ancestors])
+        return " > ".join([i.name for i in obj.get_ancestors()])
 
 
 
@@ -116,15 +109,9 @@ class ProductAdmin(admin.ModelAdmin):
         }),
                 )
     def get_categories(self, obj):
-        # return "\n".join([i.name for i in obj.categories.all()])
-        if obj.category:
-            category = obj.category
-            categories = [category.name, ]
-            while category.parent:
-                categories.append(category.parent.name)
-                category = category.parent
 
-            return " > ".join([i for i in categories])
+
+        return " > ".join([i.name for i in obj.category.get_ancestors(include_self=True)])
 
 
     def get_vendors(self, obj):

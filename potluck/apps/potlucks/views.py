@@ -66,19 +66,10 @@ class CategoryProductFilterFields:
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.category_list = []
+
         self.product_list = []
 
-    def get_subcategories(self, obj):
-        if not obj.subcategories.all():
 
-            return self.category_list
-
-        else:
-
-            for subcategory in obj.subcategories.all():
-                self.category_list.append(subcategory)
-                return self.get_subcategories(subcategory)
 
     def get_vendors(self, product_list):
 
@@ -118,15 +109,6 @@ class ProductDetailView(Ratings,DetailView):
     model = Product
     slug_field = 'url'
 
-    def get_product_categories(self, obj):
-        if obj.category:
-            category = obj.category
-            categories = [category, ]
-            while category.parent:
-                categories.append(category.parent)
-                category = category.parent
-
-            return categories
 
 
     def get_context_data(self, **kwargs):
@@ -141,7 +123,7 @@ class ProductDetailView(Ratings,DetailView):
         context['avg_rating'] = self.object.avg_rating
         context['stars'] = self.stars
         context['customer_orders'] = CustomerOrder.objects.filter(send=True, order__product=self.object)
-        context['categories'] = self.get_product_categories(self.object)
+        context['categories'] = self.object.category.get_ancestors(include_self=True)
 
         return context
 
@@ -157,26 +139,13 @@ class CategoryDetailView(CategoryProductFilterFields, DetailView):
     slug_field = 'url'
     template_name = 'potlucks/categories/category_detail.html'
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.category_list = []
-
-    def get_subcategories(self, obj):
-        if not obj.subcategories.all():
-            return self.category_list
-
-        else:
-
-            for subcategory in obj.subcategories.all():
-                self.category_list.append(subcategory)
-                return self.get_subcategories(subcategory)
 
     def get(self, request, slug, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         category = Category.objects.get(url=slug)
 
-        category_list = [category, *self.get_subcategories(category)]
+        category_list = category.get_descendants(include_self=True)
 
         products = Product.objects.filter(category__in=category_list)
 
@@ -307,7 +276,7 @@ class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
         category = self.get_category()
 
         # Получаю список, состоящий из категории и ее подкатегорий
-        category_list = [category, *self.get_subcategories(category)]
+        category_list = category.get_descendants(include_self=True)
 
         # Создаю список всех продуктов категории и подкатегорий
         self.product_list = Product.objects.filter(category__in=category_list)
@@ -457,21 +426,13 @@ class OrderDetailView(DetailView):
     model = Order
     template_name = 'potlucks/orders/order_detail.html'
 
-    def get_product_categories(self, obj):
-        if obj.category:
-            category = obj.category
-            categories = [category.name, ]
-            while category.parent:
-                categories.append(category.parent.name)
-                category = category.parent
 
-            return categories
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.object = self.get_object()
         context['available'] = self.object.size - self.object.get_order_fullness()
-        context['categories'] = self.get_product_categories(self.object.product)
+        context['categories'] = self.object.product.category.get_ancestors(include_self=True)
         context['is_partner'] = self.customer_ispartner()
         context['customer_order'] = self.get_customer_order() if self.customer_ispartner() else None
         return context

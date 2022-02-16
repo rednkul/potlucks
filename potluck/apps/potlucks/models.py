@@ -1,19 +1,20 @@
 # Импорт стандартных библиотек
-
-# Импорт модулей Django
 import datetime
+# Импорт модулей Django
 
 from django.db import models
-# Импорт моих модулей
 from django.db.models import Sum, Max, Min, Avg
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
+from mptt.models import MPTTModel, TreeForeignKey
+
+# Импорт моих модулей
 from users.models import Profile
 from goods.utils import ProductMixin
 from send_notification.views import send_emails
 
-class Category(models.Model):
+class Category(MPTTModel):
     """
     Category of product
     """
@@ -21,7 +22,7 @@ class Category(models.Model):
     description = models.TextField('Описание')
     image = models.ImageField("Изображение", upload_to="categories/", blank=True)
     url = models.SlugField(max_length=160)
-    parent = models.ForeignKey(
+    parent = TreeForeignKey(
         'self', verbose_name="Родитель", on_delete=models.SET_NULL,
         blank=True, null=True, related_name='subcategories',
     )

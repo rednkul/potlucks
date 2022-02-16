@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'bootstrap4',
     'django_braintree',
+    'mptt',
 
 
     # Custom apps
