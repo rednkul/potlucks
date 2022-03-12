@@ -56,6 +56,10 @@ Table OF Contents
 	Typography
 \*----------------------------*/
 
+main ~ :not(footer) {
+  display: none;
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
   font-weight: 400;

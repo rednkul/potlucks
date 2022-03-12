@@ -175,6 +175,10 @@ class Order(models.Model):
         return fullness if fullness else 0
 
     @property
+    def remaining_goods(self):
+        return self.size - self.get_order_fullness()
+
+    @property
     def get_order_fullness_for_tag(self):
         fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
         return fullness if fullness else 0
@@ -310,3 +314,8 @@ class Wishlist(models.Model):
         verbose_name = "Отложенный товар"
         verbose_name_plural = "Отложенные товары"
 
+
+@receiver(post_save, sender=Profile)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Wishlist.objects.create(customer=instance)

@@ -26,11 +26,12 @@ def validate_goods_number(request, pk):
         goods_number_int = 0
 
     response = {
+        'sum': goods_number_int * order.unit_price,
         'is_available': max_number >= goods_number_int,
         'available_number': max_number,
         'is_integer': goods_number.isdigit(),
     }
-    print(response)
+    print(f'response---------------------------- {response}')
     return JsonResponse(response)
 
 
@@ -69,20 +70,16 @@ def validate_email_to_reset_password(request):
 
 
 def add_product_to_wishlist(request, pk):
-    try:
 
-        wishlist = Wishlist.objects.get(customer=request.user.profile)
 
-        wishlist.products.add(pk)
+    wishlist = Wishlist.objects.get(customer=request.user.profile)
 
-        wishlist.save()
-        return JsonResponse({"product": pk}, status=200)
-    except Wishlist.DoesNotExist:
+    wishlist.products.add(pk)
 
-        wishlist = Wishlist.objects.create(customer=request.user.profile)
-        wishlist.products.add(pk)
-        wishlist.save()
-        return JsonResponse({"product": pk}, status=200)
+    wishlist.save()
+
+
+    return JsonResponse({"product": pk}, status=200)
 
 
 def delete_product_from_wishlist(request, pk):

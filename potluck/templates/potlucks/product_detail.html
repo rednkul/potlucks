@@ -74,13 +74,15 @@
                     <h2 class="product-name">{{ product.name }}</h2>
                     <div>
                         <div class="product-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
+                            {% for star in stars reversed %}
+                            {% if star.value <= product.avg_rating %}
+                            <i class="fa fa-star empty"></i>
+                            {% else %}
+                            <i class="fa fa-star-o empty"></i>
+                            {% endif %}
+                            {% endfor %}
                         </div>
-                        <a class="review-link" href="#">10 Review(s) | Add your review</a>
+
                     </div>
                     <div>
                         <h3 class="product-price">{{ product.min_price }} - {{ product.max_price }} ₽/шт</h3>

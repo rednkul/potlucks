@@ -69,7 +69,7 @@
             {% if user.is_authenticated %}
             <!-- Wishlist -->
             <div>
-              {# <a href="{% url 'potlucks:wishlist' user.profile.wishlist.id %}"> #}
+              <a href="{% url 'potlucks:wishlist' user.profile.wishlist.id %}">
                 <i class="fa fa-heart-o"></i>
                 <span>Отложенные товары</span>
                 <div class="qty">{{ user.profile.wishlist.products.all|length }}</div>
@@ -79,11 +79,7 @@
             {% endif %}
             <!-- Cart -->
             <div class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                <i class="fa fa-shopping-cart"></i>
-                <span>Your Cart</span>
-                <div class="qty">3</div>
-              </a>
+
               <div class="cart-dropdown">
                 <div class="cart-list">
                   <div class="product-widget">

@@ -201,7 +201,7 @@ class FilterProductsView(ProductFilterFields, ListView):
         context['categories'] = [int(i) for i in get_categories]
         context['vendors'] = [int(i) for i in get_vendors]
         context['manufacturers'] = [int(i) for i in get_manufacturer]
-        print(context['manufacturers'])
+
         context['category'] = ''.join([f"category={x}&" for x in get_categories])
         context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
@@ -370,11 +370,18 @@ class Search(ProductFilterFields, ListView):
         return context
 
 
-class OrderListView(ProductFilterFields, ListView):
+class OrderListView(ProductFilterFields, Ratings, ListView):
     queryset = Order.objects.filter(amassed=False)
     template_name = 'potlucks/orders/orders.html'
     paginate_by = 15
     paginate_orphans = 3
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['stars'] = self.stars
+        return context
+
+
 
 
 class OrderFilterView(ProductFilterFields, ListView):
@@ -422,7 +429,7 @@ class OrderFilterView(ProductFilterFields, ListView):
         return context
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(Ratings,DetailView):
     model = Order
     template_name = 'potlucks/orders/order_detail.html'
 
@@ -435,6 +442,17 @@ class OrderDetailView(DetailView):
         context['categories'] = self.object.product.category.get_ancestors(include_self=True)
         context['is_partner'] = self.customer_ispartner()
         context['customer_order'] = self.get_customer_order() if self.customer_ispartner() else None
+
+        ratings = {'ones': 1, 'twos': 2, 'threes': 3, 'fours': 4, 'fives': 5}
+
+        for verb, value in ratings.items():
+            context[f'{verb}'] = Rating.objects.filter(star__value=value,
+                                                       customer_order__order__product=self.object.product).count()
+
+        context['avg_rating'] = self.object.product.avg_rating
+        context['stars'] = self.stars
+        context['customer_orders'] = CustomerOrder.objects.filter(send=True, order__product=self.object.product)
+
         return context
 
     def get_customer_order(self):
