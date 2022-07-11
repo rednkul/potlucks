@@ -3,7 +3,8 @@ import datetime
 # Импорт модулей Django
 
 from django.db import models
-from django.db.models import Sum, Max, Min, Avg
+
+from django.db.models import Sum, Max, Min, Avg, JSONField
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
@@ -11,7 +12,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 # Импорт моих модулей
 from users.models import Profile
-from goods.utils import ProductMixin
+#from goods.utils import ProductMixin
 from send_notification.views import send_emails
 
 class Category(MPTTModel):
@@ -70,7 +71,7 @@ class Manufacturer(models.Model):
         verbose_name_plural = "Производители"
 
 
-class Product(ProductMixin):
+class Product(models.Model):
     name = models.CharField('Наименование товара', max_length=50)
     description = models.TextField('Описание')
     # categories = models.ManyToManyField(Category, verbose_name='Категория',
@@ -83,6 +84,7 @@ class Product(ProductMixin):
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
                                      blank=True, related_name='manufacturer_products')
     tags = models.TextField("Тэги товара", max_length=200, blank=True)
+    parameters = JSONField("Характеристики", blank=True)
 
     @property
     def avg_rating(self):
@@ -319,3 +321,21 @@ class Wishlist(models.Model):
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Wishlist.objects.create(customer=instance)
+
+class Parameters(models.Model):
+    """Названия характеристик, используемых в атрибуте parameters товаров"""
+    name = models.CharField('Название', max_length=100)
+    TYPE_CHOICES = (
+        ('number', 'Число', ),
+        ('text', 'Текст', ),
+    )
+    type = models.CharField('Тип параметра', choices=TYPE_CHOICES,
+                            max_length=6, default='text',
+                            help_text='Для числового параметра (например, размер, '
+                                      'кол-во чего-либо) - число, для остальных - текст.')
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Характеристика"
+        verbose_name_plural = "Характеристики"

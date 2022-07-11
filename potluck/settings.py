@@ -13,11 +13,6 @@ import sys
 import os.path
 from pathlib import Path
 
-import braintree
-
-
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,7 +38,25 @@ LOGIN_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
+    # Side apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'bootstrap4',
+    'mptt',
+    'django_admin_json_editor',
+    'prettyjson',
+    'grappelli',
+
+    # Custom apps
+    'potlucks.apps.PotlucksConfig',
+    'users.apps.UsersConfig',
+    'goods.apps.GoodsConfig',
+    'ajax.apps.AjaxConfig',
+    'send_notification.apps.SendNotificationConfig',
+
     # Standard apps
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,21 +65,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-    # Side apps
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'bootstrap4',
-    'django_braintree',
-    'mptt',
-
-
-    # Custom apps
-    'potlucks.apps.PotlucksConfig',
-    'users.apps.UsersConfig',
-    'goods.apps.GoodsConfig',
-    'ajax.apps.AjaxConfig',
-    'send_notification.apps.SendNotificationConfig',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -86,7 +84,7 @@ ROOT_URLCONF = 'potluck.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR/'potluck', 'templates'), ],
+        'DIRS': [os.path.join(BASE_DIR / 'potluck', 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -110,13 +108,24 @@ AUTHENTICATION_BACKENDS = [
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'potluck',
+        'USER': 'postgres',
+        'PASSWORD': '1',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -136,7 +145,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -150,16 +158,14 @@ USE_L10N = False
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
-
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
-#STATIC_ROOT = STATIC_DIR
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+# STATIC_ROOT = STATIC_DIR
 
 MEDIA_URL = '/media/'
 
@@ -183,12 +189,3 @@ DEFAULT_FROM_EMAIL = 'kulikovn999@yandex.ru'
 EMAIL_HOST_PASSWORD = "kiwnqxlwsndoyntu"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-
-# Braintree sandbox settings
-BRAINTREE_ENV = braintree.Environment.Sandbox
-BRAINTREE_MERCHANT = 'bcynz5pv5vh83t6s'
-BRAINTREE_PUBLIC_KEY = 'mqwqqn83tnb496bj'
-BRAINTREE_PRIVATE_KEY = 'c3f1bbb42e0530a1052405496033d9b3'
-
-# If you cannot install M2Crypto (e.g. AppEngine):
-BRAINTREE_UNSAFE_SSL = True

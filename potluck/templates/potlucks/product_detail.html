@@ -136,7 +136,9 @@
 
                             <div class="row tabs" id="tab2">
                                 <div class="col-md-12">
-                                    <p></p>
+                                    {% for k, v in product.parameters.items %}
+                                    <p>{{ k }} : {{ v }}</p>
+                                    {% endfor %}
                                 </div>
                             </div>
 

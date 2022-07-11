@@ -75,8 +75,11 @@
                     <!-- product -->
                     {% for product in new_products %}
                     <div class="product">
+
                       <div class="product-img">
+                        {% if product.image %}
                         <img src="{{ product.image.url }}" alt="">
+                        {% endif %}
                         <div class="product-label">
                           <span class="new">От {{ product.min_price }} р/шт</span>
                         </div>
@@ -159,7 +162,9 @@
                     {% for product in most_popular_products %}
                     <div class="product">
                       <div class="product-img">
+                        {% if product.image %}
                         <img src="{{ product.image.url }}" alt="">
+                        {% endif %}
                         <div class="product-label">
                           <span class="new">От {{ product.min_price }} р/шт</span>
                         </div>

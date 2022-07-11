@@ -1,7 +1,7 @@
 <div class="col-md-4 col-xs-6">
   <div class="product">
     <div class="product-img">
-      <img src="{{ order.product.image.url }}" class="product-list-img" alt="">
+      {% if order.product.image %}<img src="{{ order.product.image.url }}" class="product-list-img" alt="">{% endif %}
       <div class="product-label">
 
         <span class="new">{{ order.unit_price }} р/шт</span>

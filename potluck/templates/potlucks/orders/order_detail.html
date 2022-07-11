@@ -1,6 +1,6 @@
 {% extends 'potlucks/base.html' %}
 {% block title %} Заказ "{{ order.product.name }}" {% endblock title %}
-{% load static %}
+{% load static part_in_order_tag %}
 
 {% block content %}
 <!-- NAVIGATION -->
@@ -38,13 +38,17 @@
             <!-- Product main img -->
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
+                    {% if order.product.image %}
                     <div class="product-preview">
                         <img src="{{ order.product.image.url }}" alt="">
                     </div>
+                    {% endif %}
                     {% for image in order.product.product_images.all %}
+                    {% if image %}
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
                     </div>
+                    {% endif %}
                     {% endfor %}
 
                 </div>
@@ -54,15 +58,18 @@
             <!-- Product thumb imgs -->
             <div class="col-md-2  col-md-pull-5">
                 <div id="product-imgs">
+                    {% if order.product.image %}
                     <div class="product-preview">
                         <img src="{{ order.product.image.url }}" alt="">
                     </div>
-
+                    {% endif %}
 
                     {% for image in order.product.product_images.all %}
+                    {% if image %}
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
                     </div>
+                    {% endif %}
                     {% endfor %}
 
                 </div>
@@ -72,8 +79,6 @@
             <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
-                    {% if not is_partner %}
-
                     <h2 class="product-name"  id="product-name">
                         <a href="{% url 'potlucks:product_detail' order.product.url %}">{{ order.product.name }}</a>
                     </h2>
@@ -81,11 +86,14 @@
                         <h3 class="product-price">{{ order.unit_price }} р/шт </h3>
 
                     </div>
+                    {% if not is_partner %}
+
                     {% if not order.amassed %}
                     <p>Доступно позиций: {{  available }}</p>
 
                     {% else %}
                     <h2 style="color:red">Заказ заполнен</h2>
+                    <h2 style="color:red">Ваша доля: </h2>
                     {% endif %}
                     <div>
                         <div class="product-rating">
@@ -123,35 +131,9 @@
                         </div>
                     </form>
                     {% else %}
-                    <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
-                    <div>
-                        <h3 class="product-price">{{ order.unit_price }} р/шт </h3>
 
-                    </div>
                     {% if not order.amassed %}
                     <p>Можно добавить к заказу: {{  available }}</p>
-                    {% else %}
-                    <h2 class="product-name"  id="product-name">
-                        <a href="{% url 'potlucks:product_detail' order.product.url %}">{{ order.product.name }}</a>
-                    </h2>
-                    <h2 style="color:red">Заказ заполнен</h2>
-                    {% endif %}
-                    <div>
-                        <div class="product-rating">
-                            {% for star in stars reversed %}
-                            {% if star.value <= order.product.avg_rating %}
-                            <i class="fa fa-star empty"></i>
-                            {% else %}
-                            <i class="fa fa-star-o empty"></i>
-                            {% endif %}
-                            {% endfor %}
-                        </div>
-
-                    </div>
-
-
-
-
                     <form action="{% url 'potlucks:update_customer_order' customer_order.pk %}" method="post" id="change-form">
                         {% csrf_token %}
                         <div class="add-to-cart">
@@ -170,6 +152,24 @@
 
                         </div>
                     </form>
+                    {% else %}
+                    <h2 style="color:red">Заказ заполнен</h2>
+                    <h2 style="color:red">Ваша доля в заказе: {% part_in_order user.profile order.id %} из {{ order.size }} </h2>
+
+                    {% endif %}
+                    <div>
+                        <div class="product-rating">
+                            {% for star in stars reversed %}
+                            {% if star.value <= order.product.avg_rating %}
+                            <i class="fa fa-star empty"></i>
+                            {% else %}
+                            <i class="fa fa-star-o empty"></i>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
                     {% endif %}
 
                     <!--                    <ul class="product-btns">-->

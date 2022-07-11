@@ -1,12 +1,37 @@
 from django.contrib import admin
+from django import forms
+from django_admin_json_editor import JSONEditorWidget
+from prettyjson import PrettyJSONWidget
+
+
 from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Review, Product, ProductImages, \
-    RatingStar, Wishlist
+    RatingStar, Wishlist, Parameters
 
 # Register your models here.
 
 admin.site.site_title = "Администрируй тут"
 admin.site.site_header = "Администрируй тут"
 
+def dynamic_schema(widget):
+    return {
+        'type': 'array',
+        'title': 'tags',
+        'items': {
+            'type': 'string',
+            'enum': [i for i in Parameters.objects.values_list('name', flat=True)],
+        }
+    }
+enum = [i for i in Parameters.objects.values_list('name', flat=True)]
+
+DATA_SCHEMA = {
+    'type': 'object',
+    'title': 'Характеристика',
+    'properties': {
+
+    },
+}
+for i in enum:
+    DATA_SCHEMA['properties'][f'{i}'] = ''
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -80,8 +105,17 @@ class RatingAdmin(admin.ModelAdmin):
 
 admin.site.register(RatingStar)
 
+class ProductAdminForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        widgets = {
+            'parameters': JSONEditorWidget(DATA_SCHEMA, collapsed=True)
+        }
+        fields = '__all__'
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    form = ProductAdminForm
     list_display = ('id', 'name', 'image', 'manufacturer', 'get_vendors', 'get_categories',)
     list_display_links = ('id', 'name')
     list_filter = ('vendors', 'manufacturer', 'category')
@@ -101,16 +135,15 @@ class ProductAdmin(admin.ModelAdmin):
         (None, {
             "fields": (("tags",),)
         }),
-        ('Общие характеристики', {
-            "fields": ("colors", "materials",), "classes": ("collapse",)
+        (None, {
+            "fields": (("parameters",), )
         }),
-        ('Характеристики для одежды', {
-            "fields": ("sizes_eu", "sizes_am"), "classes":("collapse",)
-        }),
+
                 )
+
+
+
     def get_categories(self, obj):
-
-
         return " > ".join([i.name for i in obj.category.get_ancestors(include_self=True)])
 
 
@@ -118,6 +151,8 @@ class ProductAdmin(admin.ModelAdmin):
          return "\n".join([i.name for i in obj.vendors.all()])
 
 
+
+admin.site.register(Parameters)
 admin.site.register(ProductImages)
 admin.site.register(Wishlist)
 
