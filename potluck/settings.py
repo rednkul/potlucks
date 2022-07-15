@@ -45,15 +45,15 @@ INSTALLED_APPS = [
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',
-    'prettyjson',
     'grappelli',
+    'djcelery_email',
 
     # Custom apps
     'potlucks.apps.PotlucksConfig',
     'users.apps.UsersConfig',
-    'goods.apps.GoodsConfig',
     'ajax.apps.AjaxConfig',
     'send_notification.apps.SendNotificationConfig',
+
 
     # Standard apps
 
@@ -181,6 +181,8 @@ SITE_ID = 1
 # Настройки для уведомляний по email
 
 
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+
 passwordy = 'kiwnqxlwsndoyntu'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -189,3 +191,7 @@ DEFAULT_FROM_EMAIL = 'kulikovn999@yandex.ru'
 EMAIL_HOST_PASSWORD = "kiwnqxlwsndoyntu"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+RABBITMQ_HOST = 'localhost'
+RABBITMQ_PORT = '15672'
+CELERY_BROKER_URL = 'amqp://localhost'

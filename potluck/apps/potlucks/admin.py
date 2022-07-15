@@ -1,37 +1,20 @@
 from django.contrib import admin
 from django import forms
 from django_admin_json_editor import JSONEditorWidget
-from prettyjson import PrettyJSONWidget
+
 
 
 from .models import Category, Vendor, Manufacturer, Order, CustomerOrder, Rating, Review, Product, ProductImages, \
     RatingStar, Wishlist, Parameters
+from .utils import parameters_to_data
 
 # Register your models here.
 
 admin.site.site_title = "Администрируй тут"
 admin.site.site_header = "Администрируй тут"
 
-def dynamic_schema(widget):
-    return {
-        'type': 'array',
-        'title': 'tags',
-        'items': {
-            'type': 'string',
-            'enum': [i for i in Parameters.objects.values_list('name', flat=True)],
-        }
-    }
-enum = [i for i in Parameters.objects.values_list('name', flat=True)]
 
-DATA_SCHEMA = {
-    'type': 'object',
-    'title': 'Характеристика',
-    'properties': {
 
-    },
-}
-for i in enum:
-    DATA_SCHEMA['properties'][f'{i}'] = ''
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -105,11 +88,13 @@ class RatingAdmin(admin.ModelAdmin):
 
 admin.site.register(RatingStar)
 
+
+
 class ProductAdminForm(forms.ModelForm):
     class Meta:
         model = Product
         widgets = {
-            'parameters': JSONEditorWidget(DATA_SCHEMA, collapsed=True)
+            'parameters': JSONEditorWidget(parameters_to_data(), collapsed=True)
         }
         fields = '__all__'
 

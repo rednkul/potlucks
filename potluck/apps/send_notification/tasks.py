@@ -2,7 +2,10 @@ from django.conf import settings
 from django.core import mail
 from django.core.mail import EmailMessage
 
+from potluck.celery import app
 
+
+@app.task
 def send_emails(costumers_emails, order):
     connection = mail.get_connection()
     messages = get_messages(costumers_emails, order)
@@ -24,9 +27,7 @@ def get_messages(costumers_emails, order):
         )
         messages.append(email)
     return messages
-
 # def send_emails(customers_emails, order):
-#
 #
 #     for customer_email in customers_emails:
 #         message = get_message(customer_email, order)

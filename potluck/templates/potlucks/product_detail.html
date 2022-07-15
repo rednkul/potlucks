@@ -37,14 +37,18 @@
             <!-- Product main img -->
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
+                    {% if product.image %}
                     <div class="product-preview">
                         <img src="{{ product.image.url }}" alt="">
                     </div>
+                    {% endif %}
+                    {% if product.product_images %}
                     {% for image in product.product_images.all %}
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
                     </div>
                     {% endfor %}
+                    {% endif %}
 
                 </div>
             </div>
@@ -53,16 +57,21 @@
             <!-- Product thumb imgs -->
             <div class="col-md-2  col-md-pull-5">
                 <div id="product-imgs">
+                    {% if product.image %}
                     <div class="product-preview">
                         <img src="{{ product.image.url }}" alt="">
                     </div>
+                    {% endif %}
 
-
+                    {% if product.product_images %}
                     {% for image in product.product_images.all %}
+
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
                     </div>
+
                     {% endfor %}
+                    {% endif %}
 
                 </div>
             </div>
@@ -85,7 +94,7 @@
 
                     </div>
                     <div>
-                        <h3 class="product-price">{{ product.min_price }} - {{ product.max_price }} ₽/шт</h3>
+                        <h3 class="product-price">от {{ product.min_price }} до {{ product.max_price }} ₽/шт</h3>
 
                     </div>
                     <p>{{ product.description }}</p>
@@ -109,7 +118,9 @@
 
             <!-- Product tab -->
             <div class="col-md-12">
+
                 <div id="product-tab">
+
                     <!-- product tab nav -->
                     <ul class="tab-nav">
 
@@ -146,7 +157,7 @@
 
                         <!-- tab3  -->
 
-                            <div class="row tabs" id="tab3">
+                            <div class="row tabs tab-pane fade in" id="tab3">
                                 <div class="col-md-12">
                                     <table>
                                         <thead>
@@ -166,8 +177,10 @@
                                             <td>{{ order.creator }}</td>
                                             <td>{{ order.unit_price }}</td>
                                             <td>{{ order.get_order_fullness }} / {{ order.size }}</td>
-                                            <td>{{ order.date|date:"d M Y"  }}</td>
-                                            <td class="detail-cell"><a href="{% url 'potlucks:order_detail' order.id %}">ПОДРОБНЕЕ</a></td>
+                                            <td>{{ order.date|date:"d M Y"  }}
+
+                                            </td>
+                                            <td class="detail-cell"><a href="{% url 'potlucks:order_detail' order.id %}" onclick="window.open({% url 'potlucks:order_detail' order.id %})">ПОДРОБНЕЕ</a></td>
                                         </tr>
                                         {% endfor %}
                                         </tbody>

@@ -11,9 +11,12 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 
 # Импорт моих модулей
+
 from users.models import Profile
-#from goods.utils import ProductMixin
 from send_notification.views import send_emails
+
+#from goods.utils import ProductMixin
+
 
 class Category(MPTTModel):
     """
@@ -196,7 +199,10 @@ class Order(models.Model):
 @receiver(post_save, sender=Order)
 def send_notification_if_amassed(sender, instance, created, **kwargs):
     if instance.amassed:
-        send_emails(instance)
+        customers_emails = list(instance.order_reserved.all().values_list('customer__user__email', flat=True))
+        # Перевожу QuerySet в list, т.к. celery требует сериализуемый объект, которым QuerySet не является
+        print('Сигнал')
+        send_emails(customers_emails, instance.__str__())
 
 
 
@@ -336,6 +342,9 @@ class Parameters(models.Model):
     def __str__(self):
         return self.name
 
+
     class Meta:
         verbose_name = "Характеристика"
         verbose_name_plural = "Характеристики"
+
+

@@ -41,7 +41,9 @@
                 <tbody>
                 {% for customer_order in customer_orders_active %}
                 <tr>
-                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                  <td> {% if customer_order.order.product.image %}
+                    <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                        {% endif %}
                     <p><a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
                       {{ customer_order.order.product.name }}
                     </a></p>
@@ -96,11 +98,14 @@
                 <tbody>
                 {% for customer_order in customer_orders_amassed %}
                 <tr>
-                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
-                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                  <td>
+                     {% if customer_order.order.product.image %}
+                    <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                        {% endif %}
+                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}" >
                       <p>{{ customer_order.order.product.name }}</p>
                     </a>
-                  </td>
+
                   <td>
                     {{ customer_order.order.vendor }} </td>
                   <td>{{ customer_order.order.creator }}</td>
@@ -110,7 +115,7 @@
                   <td>{{ customer_order.date|date:"d M Y"  }}</td>
                   <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
                   <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
-                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}" >ПОДРОБНЕЕ</a></td>
                   <td class="detail-cell"><a href="{% url 'potlucks:customer_order_checkout' customer_order.id %}">ОПЛАТИТЬ</a></td>
                   <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
                 </tr>
