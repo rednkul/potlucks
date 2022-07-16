@@ -1,32 +1,27 @@
 {% extends 'potlucks/base.html' %}
-{% load bootstrap4 static %}
+{% load bootstrap4 static breadcrumbs %}
 {% block title %} Личный кабинет {% endblock title %}
 
+{% block navigation %}
+    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+    <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+    <li><a href="{% url 'potlucks:products' %}">Products</a></li>
+    <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+  {% url 'potlucks:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'users:profile_detail' profile.user.id as profile_detail %}
+  {% breadcrumb_active profile_detail 'Profile' 2 %}
+
+
+{% endblock breadcrumbs %}
+
 {% block content %}
-<nav id="navigation" >
-    <!-- container -->
-    <div class="container">
-        <!-- responsive-nav -->
 
-        <div id="responsive-nav">
-            <!-- NAV -->
-
-            <ul class="main-nav nav navbar-nav  navig ">
-
-                <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
-                <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-                <li ><a href="{% url 'potlucks:products' %}">Products</a></li>
-                <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
-
-            </ul>
-            <!-- /NAV -->
-        </div>
-
-        <!-- /responsive-nav -->
-    </div>
-    <!-- /container -->
-</nav>
-<!-- /NAVIGATION -->
 <div class="section">
     <div class="container">
         <div class="row mt-4">

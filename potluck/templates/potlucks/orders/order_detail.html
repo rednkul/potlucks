@@ -1,34 +1,39 @@
 {% extends 'potlucks/base.html' %}
 {% block title %} Заказ "{{ order.product.name }}" {% endblock title %}
-{% load static part_in_order_tag %}
+{% load static part_in_order_tag breadcrumbs %}
+
+
+{% load breadcrumbs %}
+{% block navigation %}
+
+
+<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+<li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li><a href="{% url 'potlucks:products' %}">Products</a></li>
+<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+
+{% endblock navigation %}
+{% block breadcrumbs %}
+
+  {% url 'potlucks:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'potlucks:orders' as orders %}
+  {% breadcrumb_item orders 'Orders' 2 %}
+
+  {% ancestors_and_category order.product.category as categories %}
+  {% for category in categories %}
+    {% url 'potlucks:category_detail' category.url as category_detail %}
+    {% breadcrumb_item category_detail category.name forloop.counter|add:"2" %}
+  {% endfor %}
+
+  {% url 'potlucks:order_detail' order.id as order_detail %}
+  {% breadcrumb_active order.id order.product.name order.product.category.ancestors_and_category.count|add:"2" %}
+
+
+{% endblock breadcrumbs %}
 
 {% block content %}
-<!-- NAVIGATION -->
-<nav id="navigation" >
-    <!-- container -->
-    <div class="container">
-        <!-- responsive-nav -->
-
-        <div id="responsive-nav">
-            <!-- NAV -->
-
-            <ul class="main-nav nav navbar-nav  navig ">
-
-                <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
-                <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-                <li ><a href="{% url 'potlucks:products' %}">Products</a></li>
-                <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
-
-            </ul>
-            <!-- /NAV -->
-        </div>
-
-        <!-- /responsive-nav -->
-    </div>
-    <!-- /container -->
-</nav>
-<!-- /NAVIGATION -->
-
 <!-- SECTION -->
 <div class="section">
     <!-- container -->

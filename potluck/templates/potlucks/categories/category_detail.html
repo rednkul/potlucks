@@ -1,28 +1,31 @@
 {% extends 'potlucks/base.html' %}
-{% load static %}
+{% load static breadcrumbs %}
 {% block title %} {{ category.name }} {% endblock title %}
-{% block content %}
-<!-- NAVIGATION -->
-		<nav id="navigation">
-			<!-- container -->
-			<div class="container">
-				<!-- responsive-nav -->
-				<div id="responsive-nav">
-					<!-- NAV -->
-					<ul class="main-nav nav navbar-nav">
-						<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
-						<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-						<li><a href="{% url 'potlucks:products' %}">Products</a></li>
-						<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
-					</ul>
-					<!-- /NAV -->
-				</div>
-				<!-- /responsive-nav -->
-			</div>
-			<!-- /container -->
-		</nav>
-		<!-- /NAVIGATION -->
 
+{% block navigation %}
+    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+    <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+    <li><a href="{% url 'potlucks:products' %}">Products</a></li>
+    <li  class="active"><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+  {% url 'potlucks:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'potlucks:categories' as categories %}
+  {% breadcrumb_active categories 'Categories' 2 %}
+
+  {% ancestors_and_category category as categories %}
+  {% for category in categories %}
+    {% url 'potlucks:category_detail' category.url as category_detail %}
+    {% breadcrumb_item category_detail category.name forloop.counter|add:"2" %}
+  {% endfor %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
 
 <!-- /SECTION --><!-- SECTION -->
 <div class="section">
