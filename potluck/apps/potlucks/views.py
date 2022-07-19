@@ -37,18 +37,6 @@ class ProductFilterFields:
         """Категории"""
         return Category.objects.all()
 
-    def get_subcategories(self, obj, subcategory_list):
-        if not obj.subcategories.all():
-
-            return subcategory_list
-
-        else:
-
-            for subcategory in obj.subcategories.all():
-                subcategory_list.append(subcategory)
-                self.get_subcategories(subcategory, subcategory_list)
-            return subcategory_list
-
     def get_vendors(self):
         """"Поставщики"""
         return Vendor.objects.all()
@@ -139,20 +127,17 @@ class CategoryDetailView(CategoryProductFilterFields, DetailView):
     slug_field = 'url'
     template_name = 'potlucks/categories/category_detail.html'
 
-
-    def get(self, request, slug, **kwargs):
+    def get(self, request, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
-        category = Category.objects.get(url=slug)
 
-        category_list = category.get_descendants(include_self=True)
+        category_list = self.object.get_descendants(include_self=True)
 
         products = Product.objects.filter(category__in=category_list)
 
-        context['category'] = category
+        context['category'] = self.object
         context['product_list'] = products
         context['manufacturers'] = self.get_manufacturers(products)
-        context['vendors'] = self.get_vendors(products)
 
         return self.render_to_response(context)
 
@@ -168,17 +153,17 @@ class FilterProductsView(ProductFilterFields, ListView):
         get_vendors = self.request.GET.getlist("vendor")
         get_manufacturers = self.request.GET.getlist("manufacturer")
 
-        # Создаю список категорий по их id, полученным из формы
-        categories = []
-        for id in get_categories:
-            categories.append(Category.objects.get(id=int(id)))
 
-        # Получаю список подкатегорий с присоединяю его к списку категорий
-        if get_categories:
-            subcategory_list = []
-            for category in categories:
-                subcategory_list = self.get_subcategories(category, subcategory_list)
-            categories += subcategory_list
+
+        categories = Category.objects.filter(id__in=[int(i) for i in get_categories])
+        subcategories = Category.objects.none()
+
+        for category in categories:
+            subcategories = subcategories | category.get_descendants()
+
+        categories = (categories | subcategories).distinct()
+
+
 
         print(f'-----------------------{categories}------------------')
         category_filter = categories if categories else self.get_categories()
@@ -220,17 +205,17 @@ class JsonProductFilter(ProductFilterFields, ListView):
         print(f'cat-----------{get_categories}--------------')
         print(f'ven-----------{get_vendors}--------------')
         print(f'man-----------{get_manufacturers}--------------')
-        # Создаю список категорий по их id, полученным из формы
-        categories = []
-        for id in get_categories:
-            categories.append(Category.objects.get(id=int(id)))
+        # Создаю queryset категорий по их id, полученным из формы
 
-        # Получаю список подкатегорий с присоединяю его к списку категорий
-        if get_categories:
-            subcategory_list = []
-            for category in categories:
-                subcategory_list = self.get_subcategories(category, subcategory_list)
-            categories += subcategory_list
+        categories = Category.objects.filter(id__in=[int(i) for i in get_categories])
+        subcategories = Category.objects.none()
+
+        # Получаю потомков каждой из категорий и свожу их в один qs
+        for category in categories:
+            subcategories = subcategories | category.get_descendants()
+
+        # Свожу qs подкатегорий и категорий
+        categories = (categories | subcategories).distinct()
 
         category_filter = categories if categories else self.get_categories()
         vendors_filter = get_vendors if get_vendors else self.get_vendors()
@@ -338,12 +323,12 @@ class Search(ProductFilterFields, ListView):
 
         categories = Category.objects.filter(name__iregex=request)
 
-        for category in categories:
-            self.get_subcategories(category, category_list)
+        subcategories = Category.objects.none()
 
         for category in categories:
-            if category not in category_list:
-                category_list.append(category)
+            subcategories = subcategories | category.get_descendants()
+
+        categories = (categories | subcategories).distinct()
 
         if option == 'orders':
             return Order.objects.filter(Q(product__name__iregex=request) |
@@ -394,17 +379,17 @@ class OrderFilterView(ProductFilterFields, ListView):
         get_vendors = self.request.GET.getlist("vendor")
         get_manufacturers = self.request.GET.getlist("manufacturer")
 
-        # Создаю список категорий по их id, полученным из формы
-        categories = []
-        for id in get_categories:
-            categories.append(Category.objects.get(id=int(id)))
+        # Создаю queryset категорий по их id, полученным из формы
 
-        # Получаю список подкатегорий с присоединяю его к списку категорий
-        if get_categories:
-            subcategory_list = []
-            for category in categories:
-                subcategory_list = self.get_subcategories(category, subcategory_list)
-            categories += subcategory_list
+        categories = Category.objects.filter(id__in=[int(i) for i in get_categories])
+        subcategories = Category.objects.none()
+
+        # Получаю потомков каждой из категорий и свожу их в один qs
+        for category in categories:
+            subcategories = subcategories | category.get_descendants()
+
+        # Свожу qs подкатегорий и категорий
+        categories = (categories | subcategories).distinct()
 
         category_filter = categories if categories else self.get_categories()
         vendors_filter = get_vendors if get_vendors else self.get_vendors()

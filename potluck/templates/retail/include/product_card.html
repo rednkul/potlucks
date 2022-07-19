@@ -1,0 +1,48 @@
+
+<div class="product">
+  <a href="">
+    <div class="product-img">
+      {% if product.image %}
+      <img src="{{ product.image.url}}" href="" alt="" >
+      {% endif %}
+      <div class="product-label">
+
+      </div>
+    </div>
+  </a>
+  <div class="product-body">
+    <p class="product-category">{{ product.category.name }}</p>
+    <h3 class="product-name"><a href="{% url 'retail:product_detail' product.url %}">{{ product.name }}</a></h3>
+    <div class="product-rating">
+      {% for star in stars reversed %}
+      {% if star.value <= avg_rating %}
+      <i class="fa fa-star empty"></i>
+      {% else %}
+      <i class="fa fa-star-o empty"></i>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class="product-btns">
+
+      <button>
+        <i
+                data-del="{% url 'ajax:delete_product_from_wishlist' product.id %}"
+                data-add="{% url 'ajax:add_product_to_wishlist' product.id %}"
+                {% if product in user.profile.wishlist.products.all %}
+                class="fa fa-heart add-to-wishlist"
+                {% else %}
+                class="fa fa-heart-o add-to-wishlist"
+                {% endif %}
+                id="{{product.id}}">
+
+        </i><span class="tooltipp">Отложить</span></button>
+
+
+
+    </div>
+  </div>
+  <div class="add-to-cart">
+
+  </div>
+
+</div>

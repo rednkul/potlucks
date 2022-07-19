@@ -65,12 +65,16 @@ class Profile(models.Model):
     last_name = models.CharField('Фамилия', max_length=30, blank=True)
     patronymic = models.CharField('Отчество', max_length=30, blank=True)
 
-    phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
+
+    city = models.CharField("Город", max_length=100, blank=True)
     post_index = models.CharField("Почтовый индекс", max_length=6, blank=True)
     address = models.CharField("Адрес", max_length=100, blank=True)
+
     balance = models.PositiveIntegerField("Баланс счета", default=0, help_text="Сумма в рублях", blank=True)
     finished_orders = models.PositiveSmallIntegerField("Завершенные заказы", default=0, blank=True)
-    instagram = models.CharField('Профиль instagram', max_length=50, null=True, blank=True)
+
+    phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
+
     vk = models.CharField('Профиль ВКонтакте', max_length=50, null=True, blank=True)
     telegram = models.CharField('Профиль telegram', max_length=50, null=True, blank=True)
 

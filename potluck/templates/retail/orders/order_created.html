@@ -1,0 +1,13 @@
+{% extends "potlucks/base.html" %}
+
+{% block title %}Thank you{% endblock %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-lg-12 col-lg-offset-4">
+    <h1>Thank you</h1>
+    <p>Your order has been successfully completed. Your order number is
+        <strong>{{ order.id }}</strong>.</p>
+    </div>
+    </div>
+{% endblock %}

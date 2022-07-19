@@ -1,0 +1,178 @@
+{% extends "potlucks/base.html" %}
+
+{% block title %} Оформление заказа {% endblock title %}
+
+
+
+
+
+
+{% block content %}
+<!-- NAVIGATION -->
+<nav id="navigation" >
+	<!-- container -->
+	<div class="container">
+		<!-- responsive-nav -->
+
+		<div id="responsive-nav">
+			<!-- NAV -->
+
+			<ul class="main-nav nav navbar-nav  navig ">
+
+				<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+				<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+				<li ><a href="{% url 'potlucks:products' %}">Products</a></li>
+				<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+
+			</ul>
+			<!-- /NAV -->
+		</div>
+
+		<!-- /responsive-nav -->
+	</div>
+	<!-- /container -->
+</nav>
+<!-- /NAVIGATION -->
+<form action="." method="post" class="order-form">
+	{% csrf_token %}
+	<!-- SECTION -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+
+
+				<div class="col-md-7">
+					<!-- Billing Details -->
+					<div class="billing-details">
+						<div class="section-title">
+							<h3 class="title">Информация для доставки</h3>
+						</div>
+
+						<div class="form-group">
+							<label for="id_first_name">Имя</label><input maxlength="30" name="first_name" type="text" required id="id_first_name" class="check-input"  value="{{ user.profile.first_name }}" >
+						</div>
+						<div class="form-group">
+							<label for="id_last_name">Фамилия</label><input maxlength="30" name="last_name" type="text" required id="id_last_name" class="check-input"  value="{{ user.profile.last_name }}">
+						</div>
+						<div class="form-group">
+							<label for="id_patronymic">Отчество</label><input maxlength="30" name="patronymic" type="text" required id="id_patronymic" class="check-input" value="{{ user.profile.patronymic }}">
+						</div>
+						<div class="form-group">
+							<label for="id_phone_number">Номер телефона</label><input maxlength="11" name="phone_number" type="text" required id="id_phone_number" class="check-input" value="{{ user.profile.phone_number }}">
+						</div>
+						<div class="form-group">
+							<label for="id_email">Email</label><input maxlength="40" name="email" type="text" required id="id_email" class="check-input" value="{{ user.email }}">
+						</div>
+						<div class="form-group">
+							<label for="id_city">Город</label><input maxlength="30" name="city" type="text" required id="id_city" class="check-input" value="{{ user.profile.city }}">
+						</div>
+
+						<div class="form-group">
+							<label for="id_address">Адрес доставки</label><input maxlength="50" name="address" type="text" required id="id_address" class="check-input" value="{{ user.profile.address }}" placeholder="Улица, дом, квартира">
+						</div>
+						<div class="form-group">
+							<label for="id_post_index">Почтовый индекс</label><input maxlength="6" name="post_index" type="text" required id="id_post_index" class="check-input" value="{{ user.profile.post_index }}">
+						</div>
+
+
+
+
+					</div>
+					<!-- /Billing Details -->
+
+					<!-- Order notes -->
+					<div class="order-notes">
+						<textarea maxlength="200" class="input" name="notes"  id="id_notes" placeholder="Примечания к заказу или доставка"></textarea>
+					</div>
+					<!-- /Order notes -->
+				</div>
+
+
+<!-- Order Details -->
+<div class="col-md-5 order-details">
+	<div class="section-title text-center">
+		<h3 class="title">Ваш заказ</h3>
+	</div>
+	<div class="order-summary">
+		<div class="order-col">
+			<div style="width:25%"><strong>Товар</strong></div>
+			<div style="width:25%"><strong>Цена за шт.</strong></div>
+			<div style="width:25%; text-align:right;"><strong>Количество</strong></div>
+			<div style="width:25%"><strong>Цена</strong></div>
+		</div>
+
+		<ul>
+
+		</ul>
+		{% for item in cart %}
+		<div class="order-col">
+			<div style="width:25%">{{ item.product.name }}</div>
+			<div style="width:25%">{{ item.product.price }} ₽</div>
+			<div style="width:25%;text-align:right;">{{ item.quantity }}</div>
+			<div style="width:25%;text-align:right;">{{ item.total_price }} ₽</div>
+
+		</div>
+		{% endfor %}
+
+		<div class="order-col">
+			<div>Shiping</div>
+			<div><strong>FREE</strong></div>
+		</div>
+		<div class="order-col">
+			<div><strong>СУММА</strong></div>
+			<div><strong class="order-total">{{  cart.get_total_price  }} ₽</strong></div>
+		</div>
+	</div>
+	<div class="payment-method">
+		<div class="input-radio">
+			<input type="radio" name="payment" id="payment-1">
+			<label for="payment-1">
+				<span></span>
+				Direct Bank Transfer
+			</label>
+			<div class="caption">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<div class="input-radio">
+			<input type="radio" name="payment" id="payment-2">
+			<label for="payment-2">
+				<span></span>
+				Cheque Payment
+			</label>
+			<div class="caption">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+		<div class="input-radio">
+			<input type="radio" name="payment" id="payment-3">
+			<label for="payment-3">
+				<span></span>
+				Paypal System
+			</label>
+			<div class="caption">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+			</div>
+		</div>
+	</div>
+	<div class="input-checkbox">
+		<input type="checkbox" id="terms">
+		<label for="terms">
+			<span></span>
+			I've read and accept the <a href="#">terms & conditions</a>
+		</label>
+	</div>
+	<input type="submit" value="Place order" class="primary-btn order-submit">
+</div>
+<!-- /Order Details -->
+</div>
+<!-- /row -->
+</div>
+<!-- /container -->
+</div>
+
+</form>
+<!-- /SECTION -->
+{% endblock content %}

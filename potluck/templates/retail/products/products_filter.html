@@ -1,0 +1,60 @@
+{% load product_tag %}
+<div id="aside" class="col-md-3">
+    <!-- aside Widget -->
+    <form  name="filter" action="{% url 'retail:products_filter' %}" method="get">
+        <div class="aside">
+
+            <h3 class="aside-title">Категории</h3>
+
+            <div class="checkbox-filter">
+                <ul class="ul_checkbox_filter">
+                    {% for category in view.get_categories %}
+                    <li>
+                        <div class="input-checkbox">
+                            <input  type="checkbox" id="category-{{ category.id }}"
+                                    value="{{ category.id }}" name="category" {% if category.id  in categories %} checked {% endif %}>
+                            <label for="category-{{ category.id }}">
+                                <span></span>
+                                {{ category.name }}
+                                <small>(120)</small>
+                            </label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- /aside Widget -->
+
+
+        <!-- aside Widget -->
+
+        <div>
+            <button id="filter-btn" type="submit">Найти</button>
+        </div>
+
+        <!-- aside Widget -->
+        {# get_most_popular_products #}
+        <!-- /aside Widget -->
+</div>
+<!-- /ASIDE -->
+<!-- STORE -->
+<div id="store" class="col-md-9">
+    <!-- store top filter -->
+    <div class="store-filter clearfix">
+        <div class="store-sort">
+
+            <label>
+                Товаров на страницу:
+                <select class="input-select" name="show">
+                    <option value="0">1</option>
+                    <option value="1">2</option>
+                </select>
+            </label>
+        </div>
+
+    </div>
+    </form>
+    <!-- /store top filter -->

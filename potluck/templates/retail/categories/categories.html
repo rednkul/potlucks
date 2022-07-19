@@ -1,0 +1,54 @@
+{% extends 'potlucks/base.html' %}
+{% block title %}  КАТЕГОРИИ  {% endblock title %}
+{% load static %}
+{% load breadcrumbs %}
+
+{% block navigation %}
+    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+    <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+    <li><a href="{% url 'potlucks:products' %}">Products</a></li>
+    <li  class="active"><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+{% url 'home:index' as home_index_url %}
+
+  {% url 'potlucks:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'potlucks:categories' as categories %}
+  {% breadcrumb_active categories 'Categories' 2 %}
+
+{% endblock breadcrumbs %}
+{% block content %}
+<!-- /NAVIGATION -->
+
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <!-- shop -->
+      {% for category in categories %}
+      <div class="col-md-4 col-xs-6">
+        <div class="shop">
+          {% if category.image %}
+          <div class="shop-img">
+            <img src="{{ category.image.url }}" style="width:450px;height:300px;" alt="">
+          </div>
+          {% endif %}
+          <div class="shop-body">
+            <h3><a style="color:white;font-weight: 700;" href="{% url 'retail:category_detail' category.url %}">{{ category.name }}<br>Collection</a></h3>
+            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <!-- /shop -->
+    </div>
+  <!-- /container -->
+  </div>
+</div>
+<!-- /SECTION -->
+
+{% endblock content %}

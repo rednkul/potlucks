@@ -130,7 +130,7 @@ ul, ol {
   width: 100%;
 }
 .check-input {
-    padding: 10px 15px 0px 15px;
+    padding: 10px;
     height: 40px;
     border: 1px solid #E4E7ED;
     background-color: #FFF;
@@ -372,7 +372,7 @@ textarea.input {
 \*----------------------------*/
 
 #breadcrumb {
-  padding: 30px 0px;
+  padding: 12px 0px;
   background: #FBFBFC;
   border-bottom: 1px solid #E4E7ED;
   margin-bottom: 30px;
@@ -682,7 +682,7 @@ textarea.input {
 }
 
 .main-nav>li>a {
-  padding: 20px 0px;
+  padding: 12px 0px;
 }
 
 .main-nav>li>a:hover, .main-nav>li>a:focus, .main-nav>li.active>a {

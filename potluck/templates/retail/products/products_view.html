@@ -1,0 +1,68 @@
+{% extends 'potlucks/base.html' %}
+{% load static breadcrumbs %}
+{% block title %} Поиск товара {% endblock title %}
+
+{% block navigation %}
+    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+    <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+    <li  class="active"><a href="{% url 'potlucks:products' %}">Products</a></li>
+    <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+  {% url 'potlucks:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'potlucks:products' as product_list %}
+  {% breadcrumb_item product_list 'Products' 2 %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- ASIDE -->
+            {% include 'retail/products/products_filter.html' %}
+
+            <!-- STORE -->
+
+
+                <!-- store products -->
+                <div class="row">
+                    <!-- product -->
+                    {% for product in product_list %}
+                        <div class="col-md-4 col-xs-6">
+                        {% include 'retail/include/product_card.html' %}
+                        </div>
+                    {% endfor %}
+                </div>
+                    <!-- /product -->
+
+
+                <!-- /store products -->
+
+                <!-- store bottom filter -->
+                <div class="store-filter clearfix">
+                    {% include "include/pagination.html" %}
+                </div>
+                <!-- /store bottom filter -->
+            </div>
+            <!-- /STORE -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /SECTION -->
+
+{% endblock content %}
+
+{% block javascript %}
+
+
+{% endblock javascript %}

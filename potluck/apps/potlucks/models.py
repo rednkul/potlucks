@@ -14,30 +14,19 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from users.models import Profile
 from send_notification.views import send_emails
+from goods.models import CategoryMixin, ProductMixin, ProductImagesMixin
 
 #from goods.utils import ProductMixin
 
 
-class Category(MPTTModel):
-    """
-    Category of product
-    """
-    name = models.CharField('Категория', max_length=50)
-    description = models.TextField('Описание')
-    image = models.ImageField("Изображение", upload_to="categories/", blank=True)
-    url = models.SlugField(max_length=160)
-    parent = TreeForeignKey(
-        'self', verbose_name="Родитель", on_delete=models.SET_NULL,
-        blank=True, null=True, related_name='subcategories',
-    )
-
+class Category(CategoryMixin):
 
     def __str__(self):
-        return self.name
+        return self.name + '(складчина)'
 
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
+        verbose_name = "Категория для складчины"
+        verbose_name_plural = "Категории для складчины"
 
 class Vendor(models.Model):
     """Wholesale supplier of product"""
@@ -74,19 +63,19 @@ class Manufacturer(models.Model):
         verbose_name_plural = "Производители"
 
 
-class Product(models.Model):
-    name = models.CharField('Наименование товара', max_length=50)
-    description = models.TextField('Описание')
+class Product(ProductMixin):
+    # = models.CharField('Наименование товара', max_length=50)
+    #description = models.TextField('Описание')
     # categories = models.ManyToManyField(Category, verbose_name='Категория',
     #                              blank=True, related_name='product_categories')
     category = models.ForeignKey(Category, verbose_name='Категория',
                                         blank=True, default='', null=True, on_delete=models.SET_NULL, related_name='category_products')
-    image = models.ImageField("Изображение", upload_to="products/", blank=True)
-    url = models.SlugField(max_length=160, unique=True)
+    #image = models.ImageField("Изображение", upload_to="products/", blank=True)
+    #url = models.SlugField(max_length=160, unique=True)
     vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='vendor_products')
-    manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE,
-                                     blank=True, related_name='manufacturer_products')
-    tags = models.TextField("Тэги товара", max_length=200, blank=True)
+    manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.SET_NULL,
+                                     blank=True, null=True,related_name='manufacturer_products')
+    #tags = models.TextField("Тэги товара", max_length=200, blank=True)
     parameters = JSONField("Характеристики", blank=True)
 
     @property
@@ -116,23 +105,17 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Товар"
-        verbose_name_plural = "Товары"
+        verbose_name = "Товар для складчины"
+        verbose_name_plural = "Товары для складчины"
 
-class ProductImages(models.Model):
-    """Кадры из фильма"""
-    image = models.ImageField("Изображение товара", upload_to="product/product_images")
+class ProductImages(ProductImagesMixin):
+    """Дополнительные изображения"""
     product = models.ForeignKey(Product, verbose_name="Товар",
                                 on_delete=models.CASCADE, related_name='product_images')
-
 
     def __str__(self):
         return self.product.name
 
-    class Meta:
-        verbose_name = "Дополнительное изображение товара"
-        verbose_name_plural = "Дополнительные изображения товара"
-        ordering = ['-id']
 
 class Order(models.Model):
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='product_orders')
@@ -142,8 +125,8 @@ class Order(models.Model):
                                null=True, related_name='order_vendor')
 
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
-    unit_price = models.PositiveIntegerField('Цена за единицу товара', default=0, help_text='Сумма в рублях')
-    price = models.PositiveIntegerField('Стоимость заказа', default=0, help_text='Сумма в рублях')
+    unit_price = models.DecimalField('Цена за единицу товара', default=0, help_text='Сумма в рублях', max_digits=8, decimal_places=2)
+    price = models.DecimalField('Стоимость заказа', default=0, help_text='Сумма в рублях', max_digits=10, decimal_places=2)
     date = models.DateTimeField('Время создания', auto_now_add=True)
     date_amass = models.DateTimeField("Время заполнения", null=True, blank=True)
     url = models.SlugField(max_length=160, unique=True)

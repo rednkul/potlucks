@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'ajax.apps.AjaxConfig',
     'send_notification.apps.SendNotificationConfig',
+    'retail.apps.RetailConfig',
+    'goods.apps.GoodsConfig',
+    'cart.apps.CartConfig',
 
 
     # Standard apps
@@ -92,6 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'potluck.apps.cart.context_processors.cart',
             ],
         },
     },
@@ -195,3 +199,5 @@ EMAIL_USE_SSL = True
 RABBITMQ_HOST = 'localhost'
 RABBITMQ_PORT = '15672'
 CELERY_BROKER_URL = 'amqp://localhost'
+
+CART_SESSION_ID = 'cart'

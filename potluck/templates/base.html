@@ -39,29 +39,41 @@
     {% include "include/header.html" %}
 </div>
 <!-- NAVIGATION -->
+
 <nav id="navigation">
     <!-- container -->
     <div class="container">
+
         <!-- responsive-nav -->
         <div id="responsive-nav">
             <!-- NAV -->
+
             <ul class="main-nav nav navbar-nav">
+                <li>Складчина</li>
                 {% block navigation %}
                 {% endblock navigation %}
             </ul>
-            <!-- /NAV -->
+            <ul class="main-nav nav navbar-nav">
+                <li>Розница</li>
+                <li  class="active"><a href="{% url 'retail:products' %}">Products</a></li>
+                <li><a href="{% url 'retail:categories' %}">Categories</a></li>
+            </ul>
+             <!-- /NAV -->
+
         </div>
         <!-- /responsive-nav -->
     </div>
     <!-- /container -->
 </nav>
 <!-- /NAVIGATION -->
+
 <div id="breadcrumb" class="section">
     <!-- container -->
     <div class="container">
         <!-- row -->
         <div class="row">
             <div class="col-md-12">
+
                 <ul class="breadcrumb-tree">
                     {% block breadcrumbs %}
                     {% endblock breadcrumbs %}
@@ -72,7 +84,7 @@
     </div>
     <!-- /container -->
 </div>
-<div>
+<div style="min-height:400px;">
     {% block base %}
 
     {% endblock base %}
