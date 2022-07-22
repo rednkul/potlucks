@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 
-from potlucks.models import Order, CustomerOrder, Wishlist
+from potlucks.models import Order, CustomerOrder
 
-
+from goods.models import Wishlist
 
 
 from users.models import CustomUser
@@ -78,8 +78,10 @@ def add_product_to_wishlist(request, pk):
 
     wishlist.save()
 
+    response = {"product": pk, "wishlist_qty": wishlist.products.count()}
+    print(wishlist.products.count())
 
-    return JsonResponse({"product": pk}, status=200)
+    return JsonResponse(response, status=200)
 
 
 def delete_product_from_wishlist(request, pk):
@@ -90,4 +92,8 @@ def delete_product_from_wishlist(request, pk):
     wishlist.products.remove(pk)
 
     wishlist.save()
-    return JsonResponse({"product": pk}, status=200)
+
+    response = {"product": pk, "wishlist_qty": wishlist.products.count()}
+    print(wishlist.products.count())
+
+    return JsonResponse(response, status=200)

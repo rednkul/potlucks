@@ -23,10 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cart/', include('cart.urls')),
     path('retail/', include('retail.urls')),
-    path('', include('potlucks.urls')),
+    path('potlucks/', include('potlucks.urls')),
     path('accounts/', include('allauth.urls')),
     path('ajax/', include('ajax.urls')),
     path('users/', include('users.urls')),
+    path('', include('goods.urls')),
 
 ]
 

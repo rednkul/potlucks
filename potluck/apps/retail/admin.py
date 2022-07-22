@@ -1,47 +1,6 @@
 from django.contrib import admin
 
-from .models import CategoryToRetail, ProductToRetail, ProductImages, OrderToRetail, OrderItem
-
-
-@admin.register(CategoryToRetail)
-class CategoryRetailAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "get_parents", "image", "url",)
-    list_display_links = ("id", "name", "url",)
-    list_filters = ("parent__name")
-    search_fields = ("name",)
-
-    def get_parents(self, obj):
-
-        return " > ".join([i.name for i in obj.get_ancestors()])
-
-
-@admin.register(ProductToRetail)
-class ProductRetailAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'image', 'get_categories', 'manufacturer',)
-    list_display_links = ('id', 'name')
-    list_filter = ('category', 'manufacturer',)
-    search_fields = ('name', 'category__name', 'manufacturer__name',)
-    save_on_top = True
-    fieldsets = (
-        (None, {
-            "fields": (("name", "price", "url", "category"), )
-        }),
-        (None, {
-            "fields": (("description", "image"),)
-        }),
-        (None, {
-            "fields": (("manufacturer",),)
-        }),
-
-        (None, {
-            "fields": (("tags",),)
-        }),
-
-                )
-
-    def get_categories(self, obj):
-        return " > ".join([i.name for i in obj.category.get_ancestors(include_self=True)])
-
+from .models import OrderToRetail, OrderItem
 
 
 class OrderItemInline(admin.TabularInline):

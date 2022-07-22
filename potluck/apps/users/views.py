@@ -5,8 +5,8 @@ from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
 
 from .models import Profile, CustomUser
-from potlucks.models import CustomerOrder, Rating, RatingStar
-
+from potlucks.models import CustomerOrder
+from goods.models import Rating, RatingStar
 
 
 

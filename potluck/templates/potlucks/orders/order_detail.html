@@ -7,15 +7,15 @@
 {% block navigation %}
 
 
-<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
 <li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-<li><a href="{% url 'potlucks:products' %}">Products</a></li>
-<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
 {% block breadcrumbs %}
 
-  {% url 'potlucks:home_page' as home_page %}
+  {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
   {% url 'potlucks:orders' as orders %}
@@ -23,7 +23,7 @@
 
   {% ancestors_and_category order.product.category as categories %}
   {% for category in categories %}
-    {% url 'potlucks:category_detail' category.url as category_detail %}
+    {% url 'goods:category_detail' category.url as category_detail %}
     {% breadcrumb_item category_detail category.name forloop.counter|add:"2" %}
   {% endfor %}
 
@@ -85,7 +85,7 @@
             <div class="col-md-5">
                 <div class="product-details">
                     <h2 class="product-name"  id="product-name">
-                        <a href="{% url 'potlucks:product_detail' order.product.url %}">{{ order.product.name }}</a>
+                        <a href="{% url 'goods:product_detail' order.product.url %}">{{ order.product.name }}</a>
                     </h2>
                     <div>
                         <h3 class="product-price">{{ order.unit_price }} р/шт </h3>

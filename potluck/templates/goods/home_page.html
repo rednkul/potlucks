@@ -5,17 +5,17 @@
 
 {% block navigation %}
 
-        <li class="active"><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+        <li class="active"><a href="{% url 'goods:home_page' %}">Home</a></li>
+        <li><a href="{% url 'goods:products' %}">Products</a></li>
         <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-        <li><a href="{% url 'potlucks:products' %}">Products</a></li>
-        <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+        <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
 
 {% block breadcrumbs %}
-{% url 'home:index' as home_index_url %}
 
-  {% url 'potlucks:home_page' as home_page %}
+
+  {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
 {% endblock breadcrumbs %}
@@ -36,7 +36,7 @@
           </div>
           {% endif %}
           <div class="shop-body">
-            <h3><a style="color:white;font-weight: 700;" href="{% url 'potlucks:category_detail' category.url %}">{{ category.name }}<br>Collection</br></a></h3>
+            <h3><a style="color:white;font-weight: 700;" href="{% url 'goods:category_detail' category.url %}">{{ category.name }}<br>Collection</br></a></h3>
             <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
@@ -85,17 +85,9 @@
                       </div>
                       <div class="product-body">
                         <p class="product-category">{{ product.category.name }}</p>
-                        <h3 class="product-name"><a href="{% url 'potlucks:product_detail' product.url %}">{{ product.name }}</a></h3>
+                        <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
                         <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
-                        <div class="product-rating">
-                          {% for star in stars reversed %}
-                          {% if star.value <= product.avg_rating %}
-                          <i class="fa fa-star empty"></i>
-                          {% else %}
-                          <i class="fa fa-star-o empty"></i>
-                          {% endif %}
-                          {% endfor %}
-                        </div>
+
                         <div class="product-btns">
                           <button>
                             <i
@@ -170,7 +162,7 @@
                       </div>
                       <div class="product-body">
                         <p class="product-category">{{ product.category.name }}</p>
-                        <h3 class="product-name"><a href="{% url 'potlucks:product_detail' product.url %}">{{ product.name }}</a></h3>
+                        <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
                         <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
                         <div class="product-rating">
                           {% for star in stars reversed %}

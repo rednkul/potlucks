@@ -3,18 +3,18 @@
 {% block title %} Поиск товара {% endblock title %}
 
 {% block navigation %}
-    <li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+    <li><a href="{% url 'goods:home_page' %}">Home</a></li>
+    <li  class="active"><a href="{% url 'goods:products' %}">Products</a></li>
     <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-    <li  class="active"><a href="{% url 'potlucks:products' %}">Products</a></li>
-    <li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+    <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 {% endblock navigation %}
 
 {% block breadcrumbs %}
 
-  {% url 'potlucks:home_page' as home_page %}
+  {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
-  {% url 'potlucks:products' as product_list %}
+  {% url 'goods:products' as product_list %}
   {% breadcrumb_item product_list 'Products' 2 %}
 
 {% endblock breadcrumbs %}
@@ -27,7 +27,7 @@
         <!-- row -->
         <div class="row">
             <!-- ASIDE -->
-            {% include 'retail/products/products_filter.html' %}
+            {% include 'goods/products_view/products_filter.html' %}
 
             <!-- STORE -->
 
@@ -37,7 +37,7 @@
                     <!-- product -->
                     {% for product in product_list %}
                         <div class="col-md-4 col-xs-6">
-                        {% include 'retail/include/product_card.html' %}
+                        {% include 'include/product_card.html' %}
                         </div>
                     {% endfor %}
                 </div>
@@ -64,5 +64,5 @@
 
 {% block javascript %}
 
-
+<script src="{% static 'js/wishlist.js' %}"></script>
 {% endblock javascript %}

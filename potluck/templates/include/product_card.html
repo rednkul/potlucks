@@ -1,9 +1,9 @@
 
 <div class="product">
-  <a href="{% url 'potlucks:product_detail' product.url %}">
+  <a href="{% url 'goods:product_detail' product.url %}">
     <div class="product-img">
       {% if product.image %}
-      <img src="{{ product.image.url }}" href="{% url 'potlucks:product_detail' product.url %}" alt="" >
+      <img src="{{ product.image.url }}" href="{% url 'goods:product_detail' product.url %}" alt="" >
       {% endif %}
       <div class="product-label">
         {# <span class="sale">От {{ product.min_price }} р/шт</span> #}
@@ -14,7 +14,7 @@
   </a>
   <div class="product-body">
     <p class="product-category">{{ product.category.name }}</p>
-    <h3 class="product-name"><a href="{% url 'potlucks:product_detail' product.url %}">{{ product.name }}</a></h3>
+    <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
     <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
     <div class="product-rating">
       {% for star in stars reversed %}
@@ -46,7 +46,7 @@
   </div>
   <div class="add-to-cart">
 
-    <a href="{% url 'potlucks:product_detail' product.url %}#tab2"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Заказы</button>
+    <a href="{% url 'goods:product_detail' product.url %}#tab2"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Заказы</button>
 
   </div>
 

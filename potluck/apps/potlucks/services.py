@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 
-from .models import CustomerOrder, Order, Rating, Review
+from .models import CustomerOrder, Order
 
 def join_an_order(request, pk):
     order = Order.objects.get(id=pk)
@@ -24,24 +24,24 @@ def cancel_customer_order(request, pk):
 
     return redirect('users:profile_detail', pk=request.user.profile.pk)
 
-def review_and_rate(request, pk):
-
-    review = request.POST.get(f'review{pk}')
-    star = request.POST.get(f"star{pk}")
-    customer_order = CustomerOrder.objects.get(id=pk)
-
-
-    Rating.objects.update_or_create(
-
-        customer_order=customer_order,
-        defaults={'star_id': int(star) if star else 5},
-    )
-
-    if review:
-        Review.objects.update_or_create(
-
-            customer_order=customer_order,
-            text=review,
-        )
-
-    return redirect('users:profile_detail', pk=request.user.profile.id)
+# def review_and_rate(request, pk):
+#
+#     review = request.POST.get(f'review{pk}')
+#     star = request.POST.get(f"star{pk}")
+#     customer_order = CustomerOrder.objects.get(id=pk)
+#
+#
+#     Rating.objects.update_or_create(
+#
+#         customer_order=customer_order,
+#         defaults={'star_id': int(star) if star else 5},
+#     )
+#
+#     if review:
+#         Review.objects.update_or_create(
+#
+#             customer_order=customer_order,
+#             text=review,
+#         )
+#
+#     return redirect('users:profile_detail', pk=request.user.profile.id)

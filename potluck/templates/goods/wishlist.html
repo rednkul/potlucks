@@ -4,10 +4,10 @@
 
 {% block breadcrumbs %}
 
-  {% url 'potlucks:home_page' as home_page %}
+  {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
-  {% url 'potlucks:wishlist' user.id as wishlist %}
+  {% url 'goods:wishlist' user.id as wishlist %}
   {% breadcrumb_active wishlist 'Wishlist' 2 %}
 
 

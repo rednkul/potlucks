@@ -44,7 +44,7 @@
                   <td> {% if customer_order.order.product.image %}
                     <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
                         {% endif %}
-                    <p><a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                    <p><a href="{% url 'goods:product_detail' customer_order.order.product.url %}">
                       {{ customer_order.order.product.name }}
                     </a></p>
                   </td>
@@ -158,7 +158,7 @@
                 {% for customer_order in customer_orders_send %}
                 <tr>
                   <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
-                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">
+                    <a href="{% url 'goods:product_detail' customer_order.order.product.url %}">
                       <p>{{ customer_order.order.product.name }}</p>
                     </a>
                   </td>
@@ -171,7 +171,7 @@
                   <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
                   <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
                   <td>{{ customer_order.order.date_send|date:"d M Y"  }}</td>
-                  <td class="detail-cell"><a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="{% url 'goods:product_detail' customer_order.order.product.url %}">ПОДРОБНЕЕ</a></td>
                   <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОЦЕНИТЬ</a></td>
                 </tr>
                 {% endfor %}

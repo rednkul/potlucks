@@ -50,7 +50,7 @@
         <!-- SEARCH BAR -->
         <div class="col-md-6">
           <div class="header-search">
-            <form action="{% url 'potlucks:search' %}" method="get" class="d-flex editContent">
+            <form action="{% url 'goods:search' %}" method="get" class="d-flex editContent">
               <select class="input-select" name="search_option">
                 <option value="goods" {% if search_option == 'goods' %} selected="selected" {% endif %}>Товары</option>
                 <option value="orders" {% if search_option == 'orders' %} selected="selected" {% endif %}>Заказы</option>
@@ -69,10 +69,10 @@
             {% if user.is_authenticated %}
             <!-- Wishlist -->
             <div>
-              <a href="{% url 'potlucks:wishlist' user.profile.wishlist.id %}">
+              <a href="{% url 'goods:wishlist' user.profile.wishlist.id %}">
                 <i class="fa fa-heart-o"></i>
                 <span>Отложенные товары</span>
-                <div class="qty">{{ user.profile.wishlist.products.all.count }}</div>
+                <div id="wishlist-qty" class="qty">{{ user.profile.wishlist.products.all.count }}</div>
               </a>
 
             </div>
@@ -84,7 +84,7 @@
               <a class="dropdown-toggle" href="{% url 'cart:cart_detail' %}">
                 <i class="fa fa-shopping-cart"></i>
                 <span>Ваша корзина</span>
-                <div class="qty"> {{ cart|length }}</div>
+                <div id="cart-qty" class="qty"> {{ cart|length }}</div>
 
               </a>
             </div>

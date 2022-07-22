@@ -2,6 +2,6 @@
 {% load account %}
 
 
-{% block content %}{% autoescape off %}{% user_display user as user_display %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Вы получили это письмо, потому что пользователь {{ user_display }} указал ваш e-mail адресс при регистрации аккаунта на {{ site_domain }}.
+{% block content %}{% autoescape off %}{% user_display user as user_display %}Вы получили это письмо, потому что пользователь {{ user_display }} указал ваш e-mail адресс при регистрации аккаунта на {{ site_domain }}.
 
 Для подтверждения аккаунта перейдите по ссылке {{ activate_url }}{% endautoescape %}{% endblock %}

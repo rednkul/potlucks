@@ -123,7 +123,7 @@ AUTHENTICATION_BACKENDS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'potluck',
+        'NAME': 'potlucks',
         'USER': 'postgres',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',
@@ -169,7 +169,7 @@ STATIC_URL = '/static/'
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
-# STATIC_ROOT = STATIC_DIR
+#STATIC_ROOT = STATIC_DIR
 
 MEDIA_URL = '/media/'
 

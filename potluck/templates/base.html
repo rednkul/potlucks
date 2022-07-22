@@ -49,16 +49,10 @@
             <!-- NAV -->
 
             <ul class="main-nav nav navbar-nav">
-                <li>Складчина</li>
                 {% block navigation %}
                 {% endblock navigation %}
             </ul>
-            <ul class="main-nav nav navbar-nav">
-                <li>Розница</li>
-                <li  class="active"><a href="{% url 'retail:products' %}">Products</a></li>
-                <li><a href="{% url 'retail:categories' %}">Categories</a></li>
-            </ul>
-             <!-- /NAV -->
+
 
         </div>
         <!-- /responsive-nav -->
@@ -111,9 +105,7 @@
 <!-- Custom scripts -->
 <script src="{% static 'js/script.js' %}"></script>
 {% block javascript %}
-<script src="{% static 'js/wishlist.js' %}">
-
-</script>
+<script src="{% static 'js/wishlist.js' %}"></script>
 {% endblock javascript %}
 
 <script src="{% static 'js/popup.js' %}"></script>

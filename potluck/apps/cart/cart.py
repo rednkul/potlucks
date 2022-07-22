@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from retail.models import ProductToRetail
+from goods.models import Product
 
 
 class Cart(object):
@@ -22,7 +22,7 @@ class Cart(object):
         """
         product_ids = self.cart.keys()
         # получение объектов product и добавление их в корзину
-        products = ProductToRetail.objects.filter(id__in=product_ids)
+        products = Product.objects.filter(id__in=product_ids)
         for product in products:
             self.cart[str(product.id)]['product'] = product
 

@@ -46,9 +46,11 @@
         </tbody>
     </table>
     <p class="text-right">
-        <a href="{% url 'potlucks:products' %}" class="button light">Continue shopping</a>
+        <a href="{% url 'goods:products' %}" class="button light">Continue shopping</a>
+        {% if cart %}
         <a href="{% url 'retail:order_create' %}" class="button">
     Checkout
 </a>
+        {% endif %}
     </p>
 {% endblock %}

@@ -19,9 +19,10 @@ $(document).ready(function () {
 
                   url: url,
                   // если успешно, то
-                  success: function () {
-                    $(this).removeClass('fa-heart-o')
-                    $(this).addClass('fa-heart')
+                  success: function (response) {
+                    $(this).removeClass('fa-heart-o');
+                    $(this).addClass('fa-heart');
+                    $('#wishlist-qty').text(response.wishlist_qty);
 
                   },
                   // если ошибка, то

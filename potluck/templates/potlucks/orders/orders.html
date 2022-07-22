@@ -4,15 +4,15 @@
 {% block navigation %}
 
 
-<li><a href="{% url 'potlucks:home_page' %}">Home</a></li>
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
 <li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-<li><a href="{% url 'potlucks:products' %}">Products</a></li>
-<li><a href="{% url 'potlucks:categories' %}">Categories</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
 {% block breadcrumbs %}
 
-  {% url 'potlucks:home_page' as home_page %}
+  {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
   {% url 'potlucks:orders' as orders %}
