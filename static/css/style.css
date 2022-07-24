@@ -2230,6 +2230,32 @@ font-size: 20px;
   }
 }
 
+.review-text {
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.add-review-btn {
+    position: relative;
+    border: 2px solid transparent;
+    height: 40px;
+    padding: 0 30px;
+    background-color: #ef233c;
+    color: #FFF;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-radius: 40px;
+    -webkit-transition: 0.2s all;
+    transition: 0.2s all;
+    margin-top: 50px;
+}
+
+.add-review-btn:hover {
+    color: #ef233c;
+    background-color: #FFF;
+    border: 2px solid #ef233c;
+}
+
 @media only screen and (max-width: 767px) {
   .section-title .section-nav {
     float: none;
@@ -2422,3 +2448,4 @@ a.move-top span {
 #paginate_item_active {
     color: #fff;
 }
+

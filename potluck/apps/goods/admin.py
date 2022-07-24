@@ -96,6 +96,10 @@ class ProductAdmin(admin.ModelAdmin):
     def get_vendors(self, obj):
          return "\n".join([i.name for i in obj.vendors.all()])
 
+class RatingInline(admin.TabularInline):
+    model = Rating
+    raw_id_fields = ['star']
+
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -103,15 +107,15 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display_links = ("customer", "product",)
     list_filter = ("product", "customer",)
     search_fields = ("customer__profile__user__email", "product__name")
-
+    inlines = [RatingInline]
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
     """Настройка страницы рейтинга"""
-    list_display = ("customer", "product", "date")
-    list_display_links = ("customer", "product",)
-    list_filter = ("product", "customer",)
-    search_fields = ("customer__profile__user__email", "product__name")
+    list_display = ("review", "star")
+    list_display_links = ("review", )
+    list_filter = ("review__customer", "review__product",)
+    search_fields = ("review__customer__user__email", "review__product__name",)
 
 
 admin.site.register(RatingStar)

@@ -14,7 +14,7 @@ urlpatterns = [
     path('update_customer_order/<int:pk>/', services.update_customer_order, name='update_customer_order'),
     path('cancel_customer_order/<int:pk>/', services.cancel_customer_order, name='cancel_customer_order'),
     path('customer_order_checkout/<int:pk>/', views.CustomerOrderCheckoutView.as_view(), name='customer_order_checkout'),
-    #path('review_and_rate/<int:pk>', services.review_and_rate, name='review_and_rate'),
+
 
 
 ]

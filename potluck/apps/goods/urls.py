@@ -2,6 +2,7 @@ from django.urls import path
 
 
 from . import views
+from . import services
 
 app_name = 'goods'
 
@@ -17,4 +18,5 @@ urlpatterns = [
     # path('json_products_filter/', views.JsonProductFilter.as_view(), name='json_products_filter'),
     path('products/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
     path('wishlist/<int:pk>/', views.WishlistView.as_view(), name='wishlist'),
+    path('review_and_rate/<int:pk>/', services.review_and_rate, name='review_and_rate'),
 ]

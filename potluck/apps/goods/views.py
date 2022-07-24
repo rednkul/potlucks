@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView, UpdateView
 from django.http import JsonResponse
 
 from potlucks.models import Order, CustomerOrder
-from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist
+from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
 from cart.forms import CartAddProductForm
 
 class Ratings:
@@ -98,7 +98,6 @@ class ProductDetailView(Ratings,DetailView):
     slug_field = 'url'
     template_name = 'goods/products_view/product_detail.html'
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -106,7 +105,7 @@ class ProductDetailView(Ratings,DetailView):
 
         for verb, value in ratings.items():
             context[f'{verb}'] = Rating.objects.filter(star__value=value,
-                                                       product=self.object).count()
+                                                       review__product=self.object).count()
 
         context['avg_rating'] = self.object.avg_rating
         context['stars'] = self.stars
@@ -316,3 +315,6 @@ class Search(ProductFilterFields, ListView):
 class WishlistView(DetailView):
     model = Wishlist
     template_name = 'goods/wishlist.html'
+
+
+

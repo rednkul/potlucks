@@ -43,7 +43,7 @@
                 <tr>
                   <td> {% if customer_order.order.product.image %}
                     <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
-                        {% endif %}
+                    {% endif %}
                     <p><a href="{% url 'goods:product_detail' customer_order.order.product.url %}">
                       {{ customer_order.order.product.name }}
                     </a></p>
@@ -99,10 +99,10 @@
                 {% for customer_order in customer_orders_amassed %}
                 <tr>
                   <td>
-                     {% if customer_order.order.product.image %}
+                    {% if customer_order.order.product.image %}
                     <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
-                        {% endif %}
-                    <a href="{% url 'potlucks:product_detail' customer_order.order.product.url %}" >
+                    {% endif %}
+                    <a href="{% url 'goods:product_detail' customer_order.order.product.url %}" >
                       <p>{{ customer_order.order.product.name }}</p>
                     </a>
 
@@ -221,33 +221,33 @@
   <!--   Svg иконка для закрытия окна  -->
   <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
   <!-- Review Form -->
-            <div class="col-md-12">
-              <div id="review-form">
-                <form class="review-form" action="{% url 'potlucks:review_and_rate' customer_order.id %}" method="post">
-                  {% csrf_token %}
-                  <textarea id="review" name="review{{customer_order.id}}" class="input" {% if customer_order.review %} disabled {% endif %} placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
-                  <div class="input-rating">
-                    <span>Your Rating: </span>
-                    <div class="stars">
-                      {% for star in stars %}
+  <div class="col-md-12">
+    <div id="review-form">
+      <form class="review-form" action="{% url 'goods:review_and_rate' customer_order.id %}" method="post">
+        {% csrf_token %}
+        <textarea id="review" name="review{{customer_order.id}}" class="input" {% if customer_order.review %} disabled {% endif %} placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
+        <div class="input-rating">
+          <span>Your Rating: </span>
+          <div class="stars">
+            {% for star in stars %}
 
-                      <input id="star{{star.value}}-{{customer_order.id}}" name="star{{customer_order.id}}" value="{{star.value}}" type="radio" {% if star.value == customer_order.get_rating %} checked {% endif %}>
-                      <label for="star{{star.value}}-{{customer_order.id}}"></label>
-                      {% endfor %}
+            <input id="star{{star.value}}-{{customer_order.id}}" name="star{{customer_order.id}}" value="{{star.value}}" type="radio" {% if star.value == customer_order.get_rating %} checked {% endif %}>
+            <label for="star{{star.value}}-{{customer_order.id}}"></label>
+            {% endfor %}
 
-                    </div>
-                  </div>
-                  {% if not customer_order.review %}
-                  <button class="primary-btn">Оценить</button>
-                  {% endif %}
-                </form>
-              </div>
-            </div>
-            <!-- /Review Form -->
+          </div>
+        </div>
+        {% if not customer_order.review %}
+        <button class="primary-btn">Оценить</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <!-- /Review Form -->
 
 
   <p>{{ customer_order }}</p>
-  </div>
+</div>
 {% endfor %}
 
 <!-- Подложка под модальным окном -->

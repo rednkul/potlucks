@@ -117,7 +117,7 @@
                             <button id="join" type="submit" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Добавить в корзину</button>
 
                         </div>
-
+                    </form>
 
                     <div id="to-product-tab">
                         <span>или принять участие в одном из <a  href="#tab3">заказов</a> при стоимости</span>
@@ -217,135 +217,7 @@
 
                         <!-- tab4  -->
 
-                        <div class="row tabs" id="tab4">
-                            <!-- Rating -->
-                            <div class="col-md-3">
-                                <div id="rating">
-                                    <div class="rating-avg">
-                                        <span>{{ avg_rating }}</span>
-                                        <div class="rating-stars">
-                                            {% for star in stars reversed %}
-                                            {% if star.value <= avg_rating %}
-                                            <i class="fa fa-star empty"></i>
-                                            {% else %}
-                                            <i class="fa fa-star-o empty"></i>
-                                            {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    <ul class="rating">
-                                        <li>
-                                            <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div>
-                                            <div class="rating-progress">
-                                                <div style="width: 80%;"></div>
-                                            </div>
-                                            <span class="sum">{{ fives }}</span>
-                                        </li>
-                                        <li>
-                                            <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
-                                            <div class="rating-progress">
-                                                <div style="width: 60%;"></div>
-                                            </div>
-                                            <span class="sum">{{ fours }}</span>
-                                        </li>
-                                        <li>
-                                            <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
-                                            <div class="rating-progress">
-                                                <div></div>
-                                            </div>
-                                            <span class="sum">{{ threes }}</span>
-                                        </li>
-                                        <li>
-                                            <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
-                                            <div class="rating-progress">
-                                                <div></div>
-                                            </div>
-                                            <span class="sum">{{ twos }}</span>
-                                        </li>
-                                        <li>
-                                            <div class="rating-stars">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
-                                            <div class="rating-progress">
-                                                <div></div>
-                                            </div>
-                                            <span class="sum">{{ ones }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- /Rating -->
-
-                            <!-- Reviews -->
-                            <div class="col-md-9">
-                                <div id="reviews">
-                                    <ul class="reviews">
-
-                                        {% for customer_order in customer_orders %}
-                                        {% if customer_order.review or customer_order.rating %}
-                                        <li>
-                                            <div class="review-heading">
-                                                <h5 class="name">{{ customer_order.customer.first_name }}</h5>
-                                                <p class="date">{{ customer_order.review.date }}</p>
-                                                <div class="review-rating">
-                                                    {% for star in stars reversed %}
-                                                    {% if star.value <= customer_order.get_rating %}
-                                                    <i class="fa fa-star empty"></i>
-                                                    {% else %}
-                                                    <i class="fa fa-star-o empty"></i>
-                                                    {% endif %}
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                            <div class="review-body">
-                                                <p>{{ customer_order.review.text }}</p>
-                                            </div>
-                                        </li>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                    <!--                                        <ul class="reviews-pagination">-->
-                                    <!--                                            <li class="active">1</li>-->
-                                    <!--                                            <li><a href="#">2</a></li>-->
-                                    <!--                                            <li><a href="#">3</a></li>-->
-                                    <!--                                            <li><a href="#">4</a></li>-->
-                                    <!--                                            <li><a href="#"><i class="fa fa-angle-right"></i></a></li>-->
-                                    <!--                                        </ul>-->
-                                </div>
-                            </div>
-                            <!-- /Reviews -->
-
-
-                            <!-- /Review Form -->
-                        </div>
+                        {% include 'include/reviews.html' %}
 
                         <!-- /tab4  -->
                     </div>
@@ -381,4 +253,5 @@ $(document).ready(function(){
 });
 </script>
 <script src="{% static 'js/cart.js' %}"></script>
+<script src="{% static 'js/popup.js' %}"></script>
 {% endblock javascript %}

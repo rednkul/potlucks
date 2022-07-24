@@ -91,8 +91,8 @@ class Product(models.Model):
 
     @property
     def avg_rating(self):
-        return self.ratings.aggregate(
-            average_rating=Avg('star'))['average_rating']
+        return self.reviews.aggregate(
+            average_rating=Avg('rating__star'))['average_rating']
 
     # @property
     # def customer_orders(self):
@@ -185,13 +185,11 @@ class RatingStar(models.Model):
 
 class Rating(models.Model):
     """Рейтинг"""
-    product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='ratings')
-    customer = models.ForeignKey(Profile, verbose_name='Заказчик', on_delete=models.CASCADE, )
+    review = models.OneToOneField(Review, verbose_name="Оценка", related_name="rating", on_delete=models.CASCADE)
     star = models.ForeignKey(RatingStar, verbose_name="Звезда рейтинга", on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.customer.user.email} - {self.product} - {self.star}"
+        return f"{self.review} - {self.star}"
 
     class Meta:
         verbose_name = "Рейтинг"

@@ -1,0 +1,163 @@
+<div class="row tabs" id="tab4">
+  <!-- Rating -->
+  <div class="col-md-3">
+    <div id="rating">
+      <div class="rating-avg">
+        <span>{{ avg_rating }}</span>
+        <div class="rating-stars">
+          {% for star in stars reversed %}
+          {% if star.value <= avg_rating %}
+          <i class="fa fa-star empty"></i>
+          {% else %}
+          <i class="fa fa-star-o empty"></i>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <ul class="rating">
+        <li>
+          <div class="rating-stars">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+          </div>
+          <div class="rating-progress">
+            <div style="width: 80%;"></div>
+          </div>
+          <span class="sum">{{ fives }}</span>
+        </li>
+        <li>
+          <div class="rating-stars">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <div class="rating-progress">
+            <div style="width: 60%;"></div>
+          </div>
+          <span class="sum">{{ fours }}</span>
+        </li>
+        <li>
+          <div class="rating-stars">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <div class="rating-progress">
+            <div></div>
+          </div>
+          <span class="sum">{{ threes }}</span>
+        </li>
+        <li>
+          <div class="rating-stars">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <div class="rating-progress">
+            <div></div>
+          </div>
+          <span class="sum">{{ twos }}</span>
+        </li>
+        <li>
+          <div class="rating-stars">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <div class="rating-progress">
+            <div></div>
+          </div>
+          <span class="sum">{{ ones }}</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <button type="submit" class="add-review-btn js-open-modal" data-modal="review">Оставить отзыв</button>
+    </div>
+  </div>
+  <!-- /Rating -->
+
+  <!-- Reviews -->
+  <div class="col-md-9">
+    <div id="reviews">
+      <ul class="reviews">
+
+        {% for review in product.reviews.all %}
+        <li>
+          <div class="review-heading">
+            <h5 class="name">{{ product.review.customer.first_name }}</h5>
+            <p class="date">{{ product.review.date }}</p>
+            <div class="review-rating">
+              {% for star in stars reversed %}
+              {% if star.value <= review.rating.star.value %}
+              <i class="fa fa-star empty"></i>
+              {% else %}
+              <i class="fa fa-star-o empty"></i>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="review-body">
+            <p class="review-text">{{ review.text }}</p>
+          </div>
+        </li>
+
+        {% endfor %}
+      </ul>
+      <!--                                        <ul class="reviews-pagination">-->
+      <!--                                            <li class="active">1</li>-->
+      <!--                                            <li><a href="#">2</a></li>-->
+      <!--                                            <li><a href="#">3</a></li>-->
+      <!--                                            <li><a href="#">4</a></li>-->
+      <!--                                            <li><a href="#"><i class="fa fa-angle-right"></i></a></li>-->
+      <!--                                        </ul>-->
+    </div>
+  </div>
+  <!-- /Reviews -->
+
+
+  <!-- /Review Form -->
+
+</div>
+
+<div class="modal_p" data-modal="review">
+  <!--   Svg иконка для закрытия окна  -->
+  <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+
+
+  <div class="col-md-12">
+    <div id="review-form">
+      <form class="review-form" action="{% url 'goods:review_and_rate' product.id %}" method="post">
+        {% csrf_token %}
+        <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
+        <div class="input-rating">
+          <span>Your Rating: </span>
+          <div class="stars">
+            {% for star in stars %}
+
+            <input id="star{{star.value}}" name="star" value="{{star.value}}" type="radio">
+            <label for="star{{star.value}}"></label>
+            {% endfor %}
+
+          </div>
+        </div>
+        <button type="submit" class="add-review-btn js-modal-close">Оценить</button>
+
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Подложка под модальным окном -->
+<div class="overlay js-overlay-modal"></div>
+<!-- /PopUp активных заказов -->
