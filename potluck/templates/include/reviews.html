@@ -91,13 +91,13 @@
   <!-- Reviews -->
   <div class="col-md-9">
     <div id="reviews">
-      <ul class="reviews">
+      <ul id="reviews-ul" class="reviews">
 
         {% for review in product.reviews.all %}
         <li>
           <div class="review-heading">
-            <h5 class="name">{{ product.review.customer.first_name }}</h5>
-            <p class="date">{{ product.review.date }}</p>
+            <h5 class="name">{{ review.customer.first_name }}</h5>
+            <p class="date">{{ review.date }}</p>
             <div class="review-rating">
               {% for star in stars reversed %}
               {% if star.value <= review.rating.star.value %}
@@ -137,8 +137,8 @@
 
 
   <div class="col-md-12">
-    <div id="review-form">
-      <form class="review-form" action="{% url 'goods:review_and_rate' product.id %}" method="post">
+    <div>
+      <form class="review-form" action="{% url 'goods:review_and_rate' product.id %}" method="post" id="review-form">
         {% csrf_token %}
         <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
         <div class="input-rating">

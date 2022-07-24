@@ -1,5 +1,4 @@
 
-
 $(document).ready(function () {
     var frm = $('#join-form');
     frm.submit(function () {
