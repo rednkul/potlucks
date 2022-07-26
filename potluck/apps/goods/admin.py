@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from users.admin import admin
 
 from django_admin_json_editor import JSONEditorWidget
@@ -14,16 +15,25 @@ from .utils import parameters_to_data
 admin.site.site_title = "Администрируй тут"
 admin.site.site_header = "Администрируй тут"
 
+class MyModelAdmin(admin.ModelAdmin):
+    # Класс для добавления метода вывода изображения
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url if obj.image else None} width="100" height="auto">')
 
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "get_parents", "image", "url",)
-    list_display_links = ("id", "name", "url",)
+    get_image.short_description = ("Изображение")
+
+class CategoryAdmin(MyModelAdmin):
+    list_display = ("id", "name", "get_parents", "get_image", "url",)
+    list_display_links = ("id", "name", "get_image", "url",)
     list_filters = ("parent__name",)
     search_fields = ("name",)
 
     @staticmethod
     def get_parents(obj):
         return " > ".join([i.name for i in obj.get_ancestors()])
+
+    get_parents.shot_description = ("Предки")
+
 
 
 class VendorAdmin(admin.ModelAdmin):
@@ -47,16 +57,29 @@ class ProductAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
-class ProductAdmin(admin.ModelAdmin):
+class ProductImagesInline(admin.TabularInline):
+    model = ProductImages
+    readonly_fields = ('get_image',)
+    extra = 0
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url if obj.image else None} width="100" height="auto">')
+
+    get_image.short_description = ("Изображение")
+
+class ProductAdmin(MyModelAdmin):
     form = ProductAdminForm
     list_display = (
-    'id', 'name', 'image', 'price', 'stock', 'available', 'manufacturer', 'get_vendors', 'get_categories',)
+                    'id', 'name', 'get_image', 'price', 'stock',
+                    'available', 'manufacturer', 'get_vendors', 'get_categories',
+    )
     list_display_links = ('id', 'name')
     list_filter = ('vendors', 'manufacturer', 'category', 'available')
     search_fields = ('name', 'vendors__name', 'manufacturer__name', 'category__name')
     filter_horizontal = ("vendors",)
     save_on_top = True
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'get_image')
+    inlines = [ProductImagesInline]
     fieldsets = (
         (None, {
             "fields": (("name", "available", "stock", "price"),)
@@ -71,7 +94,7 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": (("vendors", "manufacturer",),), "classes": ("wide",)
         }),
         (None, {
-            "fields": (("description", "image"),)
+            "fields": (("description", "image", "get_image"),)
         }),
         (None, {
             "fields": (("tags",),)
@@ -82,14 +105,14 @@ class ProductAdmin(admin.ModelAdmin):
 
     )
 
-    @staticmethod
-    def get_categories(obj):
+    def get_categories(self, obj):
         return " > ".join([i.name for i in obj.category.get_ancestors(include_self=True)]) if obj.category else ''
 
-    @staticmethod
-    def get_vendors(obj):
+    def get_vendors(self, obj):
         return "\n".join([i.name for i in obj.vendors.all()])
 
+    get_categories.short_description = ("Категории")
+    get_categories.get_vendors = ("Поставщики")
 
 class RatingInline(admin.TabularInline):
     model = Rating
@@ -110,6 +133,16 @@ class RatingAdmin(admin.ModelAdmin):
     list_display_links = ("review",)
     list_filter = ("review__customer", "review__product",)
     search_fields = ("review__customer__user__email", "review__product__name",)
+
+
+class ProductImagesAdmin(MyModelAdmin):
+    model = ProductImages
+    list_display = ('product', "get_image")
+    list_display_links = ('product', "get_image")
+    list_filter = ("product",)
+    search_fields = ("product__name",)
+
+
 
 
 admin.site.register(Product, ProductAdmin)
