@@ -15,3 +15,11 @@ def parameters_to_data():
         DATA_SCHEMA['properties'][f'{i}'] = ''
 
     return DATA_SCHEMA
+
+
+
+def format_date(date):
+
+    month_names = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября',
+                   'ноября', 'декабря']
+    return f'{date.day} {month_names[date.month - 1]} {date.year} г.'

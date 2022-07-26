@@ -6,12 +6,20 @@ from django.http import JsonResponse
 from potlucks.models import Order, CustomerOrder
 from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
 from cart.forms import CartAddProductForm
+from retail.models import OrderItem
 
 class Ratings:
 
     @property
     def stars(self):
         return RatingStar.objects.all()
+
+    @classmethod
+    def number_of_ratings(self):
+        ratings = {'ones': 1, 'twos': 2, 'threes': 3, 'fours': 4, 'fives': 5}
+        return ratings
+
+
 
 
 class HomePageView(Ratings, ListView):
@@ -93,17 +101,21 @@ class ProductsView(ProductFilterFields, ListView):
     template_name = 'goods/products_view/products_view.html'
 
 
-class ProductDetailView(Ratings,DetailView):
+class ProductDetailView(Ratings, DetailView):
     model = Product
     slug_field = 'url'
     template_name = 'goods/products_view/product_detail.html'
 
+    @property
+    def is_ordered_by_user(self):
+        return OrderItem.objects.filter(order__customer=self.request.user.profile.id, product=self.object.id).exists()
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        ratings = {'ones': 1, 'twos': 2, 'threes': 3, 'fours': 4, 'fives': 5}
 
-        for verb, value in ratings.items():
+        for verb, value in Ratings.number_of_ratings().items():
             context[f'{verb}'] = Rating.objects.filter(star__value=value,
                                                        review__product=self.object).count()
 
@@ -112,6 +124,8 @@ class ProductDetailView(Ratings,DetailView):
         context['customer_orders'] = CustomerOrder.objects.filter(send=True, order__product=self.object)
         context['categories'] = self.object.category.get_ancestors(include_self=True)
         context['cart_product_form'] = CartAddProductForm()
+        context['is_ordered'] = self.is_ordered_by_user
+
         return context
 
 

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Side apps
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
+    #'allauth.socialaccount',
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',

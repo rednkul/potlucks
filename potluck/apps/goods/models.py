@@ -56,7 +56,6 @@ class Manufacturer(models.Model):
     image = models.ImageField("Логотип", upload_to="manufacturers/", blank=True)
     url = models.SlugField(max_length=160, unique=True)
 
-
     def __str__(self):
         return self.name
 
@@ -80,7 +79,7 @@ class Product(models.Model):
     description = models.TextField('Описание')
     tags = models.TextField('Тэги товара', max_length=200, blank=True)
 
-    url = models.SlugField('URL',max_length=160, unique=True)
+    url = models.SlugField('URL', max_length=160, unique=True)
 
     available = models.BooleanField('Доступность', default=True)
     stock = models.PositiveSmallIntegerField('Остаток', default=0, blank=True)
@@ -91,8 +90,8 @@ class Product(models.Model):
 
     @property
     def avg_rating(self):
-        return self.reviews.aggregate(
-            average_rating=Avg('rating__star'))['average_rating']
+        return round(self.reviews.aggregate(
+            average_rating=Avg('rating__star'))['average_rating'], 1) if self.reviews.all() else 0
 
     # @property
     # def customer_orders(self):
@@ -109,6 +108,9 @@ class Product(models.Model):
     def min_price(self):
         return self.product_orders.filter(amassed=False).aggregate(Min('unit_price'))['unit_price__min']
 
+    def is_reviewed_by_user(self, profile_id):
+        return Review.objects.filter(product=self.id, customer=profile_id).exists()
+
     def __str__(self):
         return self.name
 
@@ -117,14 +119,12 @@ class Product(models.Model):
         verbose_name_plural = "Товары"
 
 
-
-
-
 class ProductImages(models.Model):
     """Дополнительные изображения"""
     image = models.ImageField("Изображение товара", upload_to="product/product_images")
     product = models.ForeignKey(Product, verbose_name="Товар",
                                 on_delete=models.CASCADE, related_name='product_images')
+
     def __str__(self):
         return self.product.name
 
@@ -138,16 +138,16 @@ class Parameters(models.Model):
     """Названия характеристик, используемых в атрибуте parameters товаров"""
     name = models.CharField('Название', max_length=100)
     TYPE_CHOICES = (
-        ('number', 'Число', ),
-        ('text', 'Текст', ),
+        ('number', 'Число',),
+        ('text', 'Текст',),
     )
     type = models.CharField('Тип параметра', choices=TYPE_CHOICES,
                             max_length=6, default='text',
                             help_text='Для числового параметра (например, размер, '
                                       'кол-во чего-либо) - число, для остальных - текст.')
+
     def __str__(self):
         return self.name
-
 
     class Meta:
         verbose_name = "Характеристика"
@@ -156,10 +156,11 @@ class Parameters(models.Model):
 
 class Review(models.Model):
     product = models.ForeignKey(Product, verbose_name='Заказ', on_delete=models.CASCADE, related_name='reviews')
-    customer = models.ForeignKey(Profile, verbose_name='Заказчик', on_delete=models.CASCADE,)
+    customer = models.ForeignKey(Profile, verbose_name='Заказчик', on_delete=models.CASCADE, )
     text = models.TextField('Отзыв о продукте', max_length=5000, default='', blank=True)
 
     date = models.DateField(auto_now_add=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.customer.user.email} - {self.product}"
@@ -167,7 +168,8 @@ class Review(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-
+        ordering = ('-id',)
+        unique_together = ('customer', 'product')
 
 
 class RatingStar(models.Model):
@@ -196,12 +198,10 @@ class Rating(models.Model):
         verbose_name_plural = "Рейтинги"
 
 
-
 class Wishlist(models.Model):
     """Список пожеланий (отложенные товары)"""
     customer = models.OneToOneField(Profile, verbose_name='Клиент', on_delete=models.CASCADE, related_name='wishlist')
     products = models.ManyToManyField(Product, verbose_name='Товары', blank=True)
-
 
     def __str__(self):
         return f"Отложенные товары {self.customer}"

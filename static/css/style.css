@@ -1815,6 +1815,12 @@ font-size: 20px;
   margin: 0;
 }
 
+.date {
+  color: #8D99AE;
+  font-size: 12px;
+  margin: 0;
+}
+
 .reviews .review-heading .review-rating {
   margin-top: 5px;
 }

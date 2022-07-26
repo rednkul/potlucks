@@ -4,15 +4,12 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 from django.urls import reverse
 
 from .managers import CustomUserManager
 
 
-
 # Authentification
-
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -20,8 +17,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('Адрес электронной почты', unique=True)
 
     date_joined = models.DateTimeField('Дата регистрации', auto_now_add=True)
-    is_active = models.BooleanField('active', default=True)
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField('Сотрудник', default=False)
+    is_confirmed = models.BooleanField('Подтвержден', default=False)
+    is_active = models.BooleanField('Активный', default=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     objects = CustomUserManager()
@@ -58,13 +56,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 # Profiles
 class Profile(models.Model):
-
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
 
     first_name = models.CharField('Имя', max_length=30, blank=True)
     last_name = models.CharField('Фамилия', max_length=30, blank=True)
     patronymic = models.CharField('Отчество', max_length=30, blank=True)
-
 
     city = models.CharField("Город", max_length=100, blank=True)
     post_index = models.CharField("Почтовый индекс", max_length=6, blank=True)
@@ -78,7 +74,6 @@ class Profile(models.Model):
     vk = models.CharField('Профиль ВКонтакте', max_length=50, null=True, blank=True)
     telegram = models.CharField('Профиль telegram', max_length=50, null=True, blank=True)
 
-
     def get_absolute_url(self):
         return reverse('users:profile_detail', kwargs={'pk': self.id, })
 
@@ -89,10 +84,10 @@ class Profile(models.Model):
         verbose_name = 'Профиль'
         verbose_name_plural = 'Профили'
 
+
 @receiver(post_save, sender=CustomUser)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
     instance.profile.save()
-

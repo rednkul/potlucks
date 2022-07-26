@@ -1,14 +1,13 @@
-from django.contrib import admin
+from users.admin import admin
 
 from .models import Order, CustomerOrder
-
 
 # Register your models here.
 
 admin.site.site_title = "Администрируй тут"
 admin.site.site_header = "Администрируй тут"
 
-@admin.register(Order)
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'size', 'vendor', 'creator', 'date', 'date_amass', 'number_finished')
     list_display_links = ('id', 'product', 'vendor',)
@@ -17,7 +16,6 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ('price', )
 
 
-@admin.register(CustomerOrder)
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'order', 'goods_number', 'order_size', 'date')
     list_display_links = ('id', 'customer')
@@ -25,8 +23,10 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     search_fields = ('customer__user__email', 'order__product__name',
                      'order__vendor__name',)
 
-    def order_size(self, obj):
+    @staticmethod
+    def order_size(obj):
         return obj.order.size
 
 
-
+admin.site.register(Order, OrderAdmin)
+admin.site.register(CustomerOrder, CustomerOrderAdmin)

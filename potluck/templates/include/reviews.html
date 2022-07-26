@@ -1,10 +1,11 @@
+{% load is_reviewed_by_user format_date %}
 <div class="row tabs" id="tab4">
   <!-- Rating -->
   <div class="col-md-3">
     <div id="rating">
       <div class="rating-avg">
-        <span>{{ avg_rating }}</span>
-        <div class="rating-stars">
+        <span id="rating-avg">{{ avg_rating }}</span>
+        <div id="rating-avg-stars" class="rating-stars">
           {% for star in stars reversed %}
           {% if star.value <= avg_rating %}
           <i class="fa fa-star empty"></i>
@@ -26,7 +27,7 @@
           <div class="rating-progress">
             <div style="width: 80%;"></div>
           </div>
-          <span class="sum">{{ fives }}</span>
+          <span id="fives" class="sum">{{ fives }}</span>
         </li>
         <li>
           <div class="rating-stars">
@@ -39,7 +40,7 @@
           <div class="rating-progress">
             <div style="width: 60%;"></div>
           </div>
-          <span class="sum">{{ fours }}</span>
+          <span id="fours" class="sum">{{ fours }}</span>
         </li>
         <li>
           <div class="rating-stars">
@@ -52,7 +53,7 @@
           <div class="rating-progress">
             <div></div>
           </div>
-          <span class="sum">{{ threes }}</span>
+          <span id="threes" class="sum">{{ threes }}</span>
         </li>
         <li>
           <div class="rating-stars">
@@ -65,7 +66,7 @@
           <div class="rating-progress">
             <div></div>
           </div>
-          <span class="sum">{{ twos }}</span>
+          <span id="twos" class="sum">{{ twos }}</span>
         </li>
         <li>
           <div class="rating-stars">
@@ -78,13 +79,23 @@
           <div class="rating-progress">
             <div></div>
           </div>
-          <span class="sum">{{ ones }}</span>
+          <span id="ones" class="sum">{{ ones }}</span>
         </li>
       </ul>
     </div>
+
+    {% if user.is_authenticated and is_ordered %}
+    {% is_reviewed_by_user product.id user.id as reviewed %}
+    {% if reviewed  %}
+    <div>
+      <button type="submit" class="add-review-btn js-open-modal" data-modal="review">Дополнить отзыв</button>
+    </div>
+    {% else %}
     <div>
       <button type="submit" class="add-review-btn js-open-modal" data-modal="review">Оставить отзыв</button>
     </div>
+    {% endif %}
+    {% endif %}
   </div>
   <!-- /Rating -->
 
@@ -94,10 +105,10 @@
       <ul id="reviews-ul" class="reviews">
 
         {% for review in product.reviews.all %}
-        <li>
+        <li id="review-{{ review.id }}">
           <div class="review-heading">
             <h5 class="name">{{ review.customer.first_name }}</h5>
-            <p class="date">{{ review.date }}</p>
+            <p class="date">{% format_date review.date %}</p>
             <div class="review-rating">
               {% for star in stars reversed %}
               {% if star.value <= review.rating.star.value %}
@@ -109,7 +120,10 @@
             </div>
           </div>
           <div class="review-body">
-            <p class="review-text">{{ review.text }}</p>
+            <p id="review-text-{{ review.id }}" class="review-text">{{ review.text }}</p>
+            {% if review.updated_at %}
+            <p class="date">Отзыв обновлен {% format_date review.updated_at %}</p>
+            {% endif %}
           </div>
         </li>
 
@@ -140,7 +154,7 @@
     <div>
       <form class="review-form" action="{% url 'goods:review_and_rate' product.id %}" method="post" id="review-form">
         {% csrf_token %}
-        <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{{customer_order.review.text}}</textarea>
+        <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки..."></textarea>
         <div class="input-rating">
           <span>Your Rating: </span>
           <div class="stars">
@@ -158,6 +172,7 @@
     </div>
   </div>
 </div>
+
 <!-- Подложка под модальным окном -->
 <div class="overlay js-overlay-modal"></div>
 <!-- /PopUp активных заказов -->
