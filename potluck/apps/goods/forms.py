@@ -1,9 +1,8 @@
-from django.forms import forms
+from django.forms import forms, ModelForm, ModelChoiceField,TextInput, RadioSelect
+from .models import Review, Rating, RatingStar, Product
 
-from .models import Review, Rating, RatingStar
 
-
-class ReviewForm(forms.ModelForm):
+class ReviewForm(ModelForm):
     """Форма отзывов"""
 
     class Meta:
@@ -11,12 +10,29 @@ class ReviewForm(forms.ModelForm):
         fields = ('text',)
 
 
-class RatingForm(forms.ModelForm):
+class RatingForm(ModelForm):
     """Форма рейтинга"""
-    star = forms.ModelChoiceField(
-        queryset=RatingStar.objects.all(), widget=forms.RadioSelect(), empty_label=None
+    star = ModelChoiceField(
+        queryset=RatingStar.objects.all(), widget=RadioSelect(), empty_label=None
     )
 
     class Meta:
         model = Rating
         fields = ['star', ]
+
+# class AddProductForm(ModelForm):
+#     class Meta:
+#         model = Product
+#         fields = ['name', 'category', 'vendors', 'manufacturer', 'description',
+#                   'tags', 'url', 'available', 'stock','price', 'image'
+#                   ]
+#         widgets = {
+#             'name': TextInput(attrs={'class': 'check-input'}),
+#
+#
+#         }
+
+    # def get_wigets(self):
+    #     wigets = {}
+    #     for field in self._meta.fields:
+    #         if field.

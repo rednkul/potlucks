@@ -56,7 +56,8 @@ $(document).ready(function () {
             $('#threes').text(response.product.number_of_ratings.threes);
             $('#fours').text(response.product.number_of_ratings.fours);
             $('#fives').text(response.product.number_of_ratings.fives);
-            $('#review-text').val('')
+
+            $('#add-or-update-review').text('Дополнить отзыв');
 
 
             },

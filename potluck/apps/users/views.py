@@ -13,7 +13,7 @@ from goods.models import Rating, RatingStar
 class ProfileDetailView(UpdateView):
     model = Profile
     template_name = 'users/profile_detail.html'
-    fields = ['first_name', 'last_name', 'patronymic', 'address', 'phone_number', 'vk', 'telegram', 'post_index']
+    fields = ['first_name', 'last_name', 'patronymic', 'address', 'phone_number', 'vk', 'telegram', 'post_index', 'city']
 
 
     def get_success_url(self):

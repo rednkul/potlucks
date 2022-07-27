@@ -86,15 +86,11 @@
 
     {% if user.is_authenticated and is_ordered %}
     {% is_reviewed_by_user product.id user.id as reviewed %}
-    {% if reviewed  %}
+
     <div>
-      <button type="submit" class="add-review-btn js-open-modal" data-modal="review">Дополнить отзыв</button>
+      <button type="submit" id="add-or-update-review"  class="add-review-btn js-open-modal" data-modal="review">{% if reviewed  %}Дополнить отзыв{% else %}Оставить отзыв{% endif %}</button>
     </div>
-    {% else %}
-    <div>
-      <button type="submit" class="add-review-btn js-open-modal" data-modal="review">Оставить отзыв</button>
-    </div>
-    {% endif %}
+
     {% endif %}
   </div>
   <!-- /Rating -->
@@ -154,7 +150,7 @@
     <div>
       <form class="review-form" action="{% url 'goods:review_and_rate' product.id %}" method="post" id="review-form">
         {% csrf_token %}
-        <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки..."></textarea>
+        <textarea id="review-text" name="review-text" required class="input" placeholder="Расскажите, понравился ли вам товар, как долго вы ждали заполенения заказа и доставки...">{% user_review product.id user.profile.id %}</textarea>
         <div class="input-rating">
           <span>Your Rating: </span>
           <div class="stars">

@@ -91,88 +91,88 @@
 				</div>
 
 
-<!-- Order Details -->
-<div class="col-md-5 order-details">
-	<div class="section-title text-center">
-		<h3 class="title">Ваш заказ</h3>
-	</div>
-	<div class="order-summary">
-		<div class="order-col">
-			<div style="width:25%"><strong>Товар</strong></div>
-			<div style="width:25%"><strong>Цена за шт.</strong></div>
-			<div style="width:25%; text-align:right;"><strong>Количество</strong></div>
-			<div style="width:25%"><strong>Цена</strong></div>
-		</div>
+				<!-- Order Details -->
+				<div class="col-md-5 order-details">
+					<div class="section-title text-center">
+						<h3 class="title">Ваш заказ</h3>
+					</div>
+					<div class="order-summary">
+						<div class="order-col">
+							<div style="width:25%"><strong>Товар</strong></div>
+							<div style="width:25%"><strong>Цена за шт.</strong></div>
+							<div style="width:25%; text-align:right;"><strong>Количество</strong></div>
+							<div style="width:25%"><strong>Цена</strong></div>
+						</div>
 
-		<ul>
+						<ul>
 
-		</ul>
-		{% for item in cart %}
-		<div class="order-col">
-			<div style="width:25%">{{ item.product.name }}</div>
-			<div style="width:25%">{{ item.product.price }} ₽</div>
-			<div style="width:25%;text-align:right;">{{ item.quantity }}</div>
-			<div style="width:25%;text-align:right;">{{ item.total_price }} ₽</div>
+						</ul>
+						{% for item in cart %}
+						<div class="order-col">
+							<div style="width:25%">{{ item.product.name }}</div>
+							<div style="width:25%">{{ item.product.price }} ₽</div>
+							<div style="width:25%;text-align:right;">{{ item.quantity }}</div>
+							<div style="width:25%;text-align:right;">{{ item.total_price }} ₽</div>
 
-		</div>
-		{% endfor %}
+						</div>
+						{% endfor %}
 
-		<div class="order-col">
-			<div>Shiping</div>
-			<div><strong>FREE</strong></div>
-		</div>
-		<div class="order-col">
-			<div><strong>СУММА</strong></div>
-			<div><strong class="order-total">{{  cart.get_total_price  }} ₽</strong></div>
-		</div>
-	</div>
-	<div class="payment-method">
-		<div class="input-radio">
-			<input type="radio" name="payment" id="payment-1">
-			<label for="payment-1">
-				<span></span>
-				Direct Bank Transfer
-			</label>
-			<div class="caption">
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+						<div class="order-col">
+							<div>Shiping</div>
+							<div><strong>FREE</strong></div>
+						</div>
+						<div class="order-col">
+							<div><strong>СУММА</strong></div>
+							<div><strong class="order-total">{{  cart.get_total_price  }} ₽</strong></div>
+						</div>
+					</div>
+					<div class="payment-method">
+						<div class="input-radio">
+							<input type="radio" name="payment" id="payment-1">
+							<label for="payment-1">
+								<span></span>
+								Direct Bank Transfer
+							</label>
+							<div class="caption">
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							</div>
+						</div>
+						<div class="input-radio">
+							<input type="radio" name="payment" id="payment-2">
+							<label for="payment-2">
+								<span></span>
+								Cheque Payment
+							</label>
+							<div class="caption">
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							</div>
+						</div>
+						<div class="input-radio">
+							<input type="radio" name="payment" id="payment-3">
+							<label for="payment-3">
+								<span></span>
+								Paypal System
+							</label>
+							<div class="caption">
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							</div>
+						</div>
+					</div>
+					<div class="input-checkbox">
+						<input type="checkbox" id="terms">
+						<label for="terms">
+							<span></span>
+							I've read and accept the <a href="#">terms & conditions</a>
+						</label>
+					</div>
+					<input type="submit" value="Place order" class="primary-btn order-submit">
+				</div>
+				<!-- /Order Details -->
 			</div>
+			<!-- /row -->
 		</div>
-		<div class="input-radio">
-			<input type="radio" name="payment" id="payment-2">
-			<label for="payment-2">
-				<span></span>
-				Cheque Payment
-			</label>
-			<div class="caption">
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-			</div>
-		</div>
-		<div class="input-radio">
-			<input type="radio" name="payment" id="payment-3">
-			<label for="payment-3">
-				<span></span>
-				Paypal System
-			</label>
-			<div class="caption">
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-			</div>
-		</div>
+		<!-- /container -->
 	</div>
-	<div class="input-checkbox">
-		<input type="checkbox" id="terms">
-		<label for="terms">
-			<span></span>
-			I've read and accept the <a href="#">terms & conditions</a>
-		</label>
-	</div>
-	<input type="submit" value="Place order" class="primary-btn order-submit">
-</div>
-<!-- /Order Details -->
-</div>
-<!-- /row -->
-</div>
-<!-- /container -->
-</div>
 
 </form>
 <!-- /SECTION -->

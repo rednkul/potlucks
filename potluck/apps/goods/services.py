@@ -19,10 +19,11 @@ def review_and_rate(request, pk):
     review, created = Review.objects.update_or_create(
         product=product,
         customer=request.user.profile,
+        defaults={'text': review_text},
 
     )
 
-    review.text += review_text
+
     review.updated_at = datetime.today() if not created else None
 
     review.save()
@@ -49,7 +50,7 @@ def review_and_rate(request, pk):
             "date": format_date(review.date),
             "created": created,
             "id": review.id,
-            "updated_at": format_date(review.updated_at),
+            "updated_at": format_date(review.updated_at) if review.updated_at else '',
         },
         "product": {
             "rating_avg": avg_rating,

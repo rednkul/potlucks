@@ -17,7 +17,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class CustomerOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'order', 'goods_number', 'order_size', 'date')
+    list_display = ('id', 'customer', 'order', 'goods_number', 'order_size', 'created', 'date_send', 'confirmed', 'paid')
     list_display_links = ('id', 'customer')
     list_filter = ('order__vendor', 'order__product__name')
     search_fields = ('customer__user__email', 'order__product__name',
@@ -26,6 +26,8 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     @staticmethod
     def order_size(obj):
         return obj.order.size
+
+    order_size.short_description = ("Товаров в заказе")
 
 
 admin.site.register(Order, OrderAdmin)

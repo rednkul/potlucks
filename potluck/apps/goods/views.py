@@ -1,10 +1,12 @@
 from django.db.models import Q, Count, Sum, Avg
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, UpdateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.http import JsonResponse
 
 from potlucks.models import Order, CustomerOrder
 from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
+
 from cart.forms import CartAddProductForm
 from retail.models import OrderItem
 
@@ -331,4 +333,10 @@ class WishlistView(DetailView):
     template_name = 'goods/wishlist.html'
 
 
-
+class ProductCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Product
+    template_name = 'goods/products_view/new_product.html'
+    #form_class = AddProductForm
+    fields = [ 'name', 'category', 'vendors', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    success_url = reverse_lazy('goods:products')

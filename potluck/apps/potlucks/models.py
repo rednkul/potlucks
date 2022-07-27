@@ -82,19 +82,36 @@ def send_notification_if_amassed(sender, instance, created, **kwargs):
 class CustomerOrder(models.Model):
     """Customer's part of Order"""
     customer = models.ForeignKey(Profile, verbose_name='Участник заказа',
-                                 on_delete=models.CASCADE,)
+                                 on_delete=models.CASCADE, )
     order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reserved')
+
     goods_number = models.PositiveSmallIntegerField('Доля пользователя в заказе', default=0)
+
+    first_name = models.CharField('Имя', max_length=30)
+    last_name = models.CharField('Фамилия', max_length=30)
+    patronymic = models.CharField('Отчество', max_length=30, blank=True)
+
+    email = models.EmailField('Адрес электронной почты')
+    phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
+
+    city = models.CharField("Город", max_length=100)
+    post_index = models.CharField("Почтовый индекс", max_length=6, blank=True)
     address = models.CharField('Адрес доставки', max_length=100, blank=True)
-    date = models.DateTimeField('Время присоединения к заказу', auto_now_add=True)
+
     paid = models.BooleanField('Доля пользователя в заказе оплачена', default=False)
     send = models.BooleanField('Заказ отправлен', default=False)
+
     notes = models.TextField('Примечание к заказу', max_length=300, blank=True)
     date_send = models.DateField('Дата отправления', blank=True, default=None, null=True)
+    confirmed = models.BooleanField("Подтвержден", default=False)
 
+    created = models.DateTimeField(auto_now_add=True)
+
+    @property
     def total_cost(self):
         return self.goods_number * self.order.unit_price
 
+    @property
     def check_amassing_order(self):
 
         return True if self.order.get_order_fullness() == self.order.size else False
@@ -115,7 +132,7 @@ class CustomerOrder(models.Model):
 
 @receiver(post_save, sender=CustomerOrder)
 def update_order_amassing(sender, instance, created, **kwargs):
-    if instance.check_amassing_order():
+    if instance.check_amassing_order:
         instance.order.amassed = True
         instance.order.date_amass = datetime.datetime.now()
         print('ЗАЕБИС')
@@ -123,7 +140,7 @@ def update_order_amassing(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=CustomerOrder)
 def cancel_order_amassing(sender, instance, *args, **kwargs):
-    if not instance.check_amassing_order():
+    if not instance.check_amassing_order:
         instance.order.amassed = False
         instance.order.date_amass = None
         print('ЗАЕБИС')

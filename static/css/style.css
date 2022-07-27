@@ -2254,6 +2254,7 @@ font-size: 20px;
     -webkit-transition: 0.2s all;
     transition: 0.2s all;
     margin-top: 50px;
+    min-width: 90%;
 }
 
 .add-review-btn:hover {

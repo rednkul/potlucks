@@ -51,6 +51,9 @@
             <ul class="main-nav nav navbar-nav">
                 {% block navigation %}
                 {% endblock navigation %}
+                {% if user.is_staff %}
+                <li><a href="{% url 'goods:new_product' %}">Add product</a></li>
+                {% endif %}
             </ul>
 
 

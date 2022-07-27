@@ -219,11 +219,11 @@
                         <!-- /tab1  -->
 
                         <!-- tab2  -->
-                        <div id="tab2" class="tab-pane fade in">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p></p>
-                                </div>
+                        <div class="row" id="tab2">
+                            <div class="col-md-12">
+                                {% for k, v in order.product.parameters.items %}
+                                <p>{{ k }} : {{ v }}</p>
+                                {% endfor %}
                             </div>
                         </div>
                         <!-- /tab2  -->
@@ -318,28 +318,7 @@
                                     <div id="reviews">
                                         <ul class="reviews">
 
-                                            {% for customer_order in customer_orders %}
-                                            {% if customer_order.review or customer_order.rating %}
-                                            <li>
-                                                <div class="review-heading">
-                                                    <h5 class="name">{{ customer_order.customer.first_name }}</h5>
-                                                    <p class="date">{{ customer_order.review.date }}</p>
-                                                    <div class="review-rating">
-                                                        {% for star in stars reversed %}
-                                                        {% if star.value <= customer_order.get_rating %}
-                                                        <i class="fa fa-star empty"></i>
-                                                        {% else %}
-                                                        <i class="fa fa-star-o empty"></i>
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                                <div class="review-body">
-                                                    <p>{{ customer_order.review.text }}</p>
-                                                </div>
-                                            </li>
-                                            {% endif %}
-                                            {% endfor %}
+
                                         </ul>
 <!--                                        <ul class="reviews-pagination">-->
 <!--                                            <li class="active">1</li>-->

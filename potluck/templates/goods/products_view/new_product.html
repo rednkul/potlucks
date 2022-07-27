@@ -1,0 +1,63 @@
+{% extends 'potlucks/base.html' %}
+{% block title %} Добавить товар "{{ product.name }}" {% endblock title %}
+{% load breadcrumbs static bootstrap4  %}
+
+{% block navigation %}
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li  class="active"><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
+
+{% url 'goods:products' as product_list %}
+{% breadcrumb_item product_list 'Products' 2 %}
+
+{% breadcrumb_active 'goods:new_product' 'New product' 3 %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+
+    <form action="{% url 'goods:new_product' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-lg-4">
+          {% bootstrap_field form.name %}
+          {% bootstrap_field form.vendors %}
+          {% bootstrap_field form.manufacturer %}
+          {% bootstrap_field form.image %}
+        </div>
+        <div class="col-lg-4">
+          {% bootstrap_field form.url %}
+          {% bootstrap_field form.category %}
+          {% bootstrap_field form.available %}
+          {% bootstrap_field form.stock %}
+          {% bootstrap_field form.price %}
+        </div>
+        <div class="col-lg-4">
+          {% bootstrap_field form.description %}
+          {% bootstrap_field form.tags %}
+        </div>
+
+
+
+
+       <div class="row">
+                        <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>
+       </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+</div>
+{% endblock content %}

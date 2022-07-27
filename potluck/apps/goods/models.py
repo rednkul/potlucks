@@ -75,7 +75,7 @@ class Product(models.Model):
                                      blank=True, null=True, related_name='manufacturer_products')
 
     image = models.ImageField('Изображение', upload_to="products/", blank=True)
-    parameters = JSONField("Характеристики", blank=True)
+    parameters = JSONField("Характеристики", blank=True, null=True)
     description = models.TextField('Описание')
     tags = models.TextField('Тэги товара', max_length=200, blank=True)
 

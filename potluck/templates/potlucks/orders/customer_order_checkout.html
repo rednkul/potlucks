@@ -1,33 +1,36 @@
 {% extends 'potlucks/base.html' %}
-
+{% load breadcrumbs %}
 {% block title %} Заказ {{ customer_order }} {% endblock title %}
 
+
+{% block navigation %}
+
+
+
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li ><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+
+
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+  {% url 'goods:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% url 'potlucks:orders' as orders %}
+  {% breadcrumb_item orders 'Orders' 2 %}
+
+  {% url 'potlucks:customer_order_checkout' customer_order.id as order_checkout %}
+  {% breadcrumb_active order_checkout 3 'Подтверждение заказа' %}
+
+
+{% endblock breadcrumbs %}
+
 {% block content %}
-<!-- NAVIGATION -->
-<nav id="navigation" >
-	<!-- container -->
-	<div class="container">
-		<!-- responsive-nav -->
 
-		<div id="responsive-nav">
-			<!-- NAV -->
-
-			<ul class="main-nav nav navbar-nav  navig ">
-
-				<li><a href="{% url 'goods:home_page' %}">Home</a></li>
-				<li ><a href="{% url 'goods:products' %}">Products</a></li>
-				<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
-				<li><a href="{% url 'goods:categories' %}">Categories</a></li>
-
-			</ul>
-			<!-- /NAV -->
-		</div>
-
-		<!-- /responsive-nav -->
-	</div>
-	<!-- /container -->
-</nav>
-<!-- /NAVIGATION -->
 
 <!-- SECTION -->
 <div class="section">
@@ -44,26 +47,33 @@
 					</div>
 
 					<div class="form-group">
-						<label>Имя</label><input class="check-input" value="{{ customer_order.customer.first_name }}">
+						<label for="id_first_name">Имя</label><input maxlength="30" name="first_name" type="text" required id="id_first_name" class="check-input"  value="{{ user.profile.first_name }}" >
 					</div>
 					<div class="form-group">
-						<label>Фамилия</label><input class="check-input" value="{{ customer_order.customer.last_name }}">
+						<label for="id_last_name">Фамилия</label><input maxlength="30" name="last_name" type="text" required id="id_last_name" class="check-input"  value="{{ user.profile.last_name }}">
 					</div>
 					<div class="form-group">
-						<label>Отчество</label><input class="check-input" value="{{ customer_order.customer.patronymic }}">
+						<label for="id_patronymic">Отчество</label><input maxlength="30" name="patronymic" type="text" required id="id_patronymic" class="check-input" value="{{ user.profile.patronymic }}">
 					</div>
 					<div class="form-group">
-						<label>Номер телефона</label><input class="check-input" value="{{ customer_order.customer.phone_number }}">
+						<label for="id_phone_number">Номер телефона</label><input maxlength="11" name="phone_number" type="text" required id="id_phone_number" class="check-input" value="{{ user.profile.phone_number }}">
 					</div>
 					<div class="form-group">
-						<label>Email</label><input class="check-input" value="{{ customer_order.customer.user.email }}">
+						<label for="id_email">Email</label><input maxlength="40" name="email" type="text" required id="id_email" class="check-input" value="{{ user.email }}">
 					</div>
 					<div class="form-group">
-						<label>Адрес доставки</label><input class="check-input" value="{{ customer_order.customer.address }}">
+						<label for="id_city">Город</label><input maxlength="30" name="city" type="text" required id="id_city" class="check-input" value="{{ user.profile.city }}">
+					</div>
+
+					<div class="form-group">
+						<label for="id_address">Адрес доставки</label><input maxlength="50" name="address" type="text" required id="id_address" class="check-input" value="{{ user.profile.address }}" placeholder="Улица, дом, квартира">
 					</div>
 					<div class="form-group">
-						<label>Почтовый индекс</label><input class="check-input" value="{{ customer_order.customer.post_index }}">
+						<label for="id_post_index">Почтовый индекс</label><input maxlength="6" name="post_index" type="text" required id="id_post_index" class="check-input" value="{{ user.profile.post_index }}">
 					</div>
+					<input type="hidden" id="id_customer" name="customer" value="{{ user.profile.id }}">
+
+
 
 
 				</div>
@@ -71,7 +81,7 @@
 
 				<!-- Order notes -->
 				<div class="order-notes">
-					<textarea class="input" placeholder="Примечания к заказу или доставка"></textarea>
+					<textarea maxlength="200" class="input" name="notes"  id="id_notes" placeholder="Примечания к заказу или доставка"></textarea>
 				</div>
 				<!-- /Order notes -->
 			</div>
@@ -85,19 +95,20 @@
 					<div class="order-col">
 						<div style="width:25%"><strong>Товар</strong></div>
 						<div style="width:25%"><strong>Цена за шт.</strong></div>
-						<div style="width:25%; text-align:right;"><strong>Количество</strong></div>
-                        <div style="width:25%"><strong>Цена</strong></div>
+						<div style="width:25%;text-align:right;"><strong>Количество</strong></div>
+						<div style="width:25%"><strong>Цена</strong></div>
 					</div>
 
 					<div class="order-col">
-						<div style="width:50%">{{ customer_order.order.product.name }}</div>
+						<div style="width:25%">{{ customer_order.order.product.name }}</div>
 						<div style="width:25%">{{ customer_order.order.unit_price }} ₽</div>
-						<div style="width:25%">{{ customer_order.goods_number }} ₽</div>
+						<div style="width:25%;text-align:right;">{{ customer_order.goods_number }} ₽</div>
+						<div style="width:25%;text-align:right;">{{ customer_order.total_cost }} ₽</div>
 					</div>
 
 
 					<div class="order-col">
-						<div>Shiping</div>
+						<div>Shipping</div>
 						<div><strong>FREE</strong></div>
 					</div>
 					<div class="order-col">

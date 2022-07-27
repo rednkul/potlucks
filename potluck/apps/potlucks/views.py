@@ -83,11 +83,11 @@ class OrderDetailView(Ratings,DetailView):
 
         for verb, value in ratings.items():
             context[f'{verb}'] = Rating.objects.filter(star__value=value,
-                                                       product=self.object.product).count()
+                                                       review__product__id=self.object.product.id).count()
 
         context['avg_rating'] = self.object.product.avg_rating
         context['stars'] = self.stars
-        context['customer_orders'] = CustomerOrder.objects.filter(send=True, order__product=self.object.product)
+
 
         return context
 
