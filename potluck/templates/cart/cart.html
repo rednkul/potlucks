@@ -1,8 +1,28 @@
 {% extends "potlucks/base.html" %}
-{% load static %}
+{% load static breadcrumbs %}
 {% block title %}
-    Your shopping cart
-{% endblock %}
+    Ваша корзина
+{% endblock title %}
+
+{% block navigation %}
+
+
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+
+{% endblock navigation %}
+{% block breadcrumbs %}
+
+  {% url 'goods:home_page' as home_page %}
+  {% breadcrumb_home home_page 'Home' %}
+
+  {% breadcrumb_active placeholder 'Корзина' 2 %}
+
+
+{% endblock breadcrumbs %}
+
 {% block content %}
     <h1>Your shopping cart</h1>
     <table class="cart">

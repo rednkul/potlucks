@@ -1,26 +1,26 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 
-from .models import CustomerOrder, Order
+from .models import Part, Potluck
 
-def join_an_order(request, pk):
-    order = Order.objects.get(id=pk)
+def join_potluck(request, pk):
+    potluck = Potluck.objects.get(id=pk)
     goods_number = request.POST.get('number')
-    customer_order = CustomerOrder.objects.create(customer=request.user.profile, order=order, goods_number=goods_number)
-    return redirect('potlucks:order_detail', pk=pk)
+    part = Part.objects.create(customer=request.user.profile, potluck=potluck, goods_number=goods_number)
+    return redirect('potlucks:potluck_detail', pk=pk)
 
-def update_customer_order(request, pk):
-    customer_order = CustomerOrder.objects.get(id=pk)
-    customer_order.goods_number = request.POST.get('number')
-    customer_order.save()
+def update_part(request, pk):
+    part = Part.objects.get(id=pk)
+    part.goods_number = request.POST.get('number')
+    part.save()
 
-    return redirect('potlucks:order_detail', pk=customer_order.order.id)
+    return redirect('potlucks:potluck_detail', pk=part.potluck.id)
 
 
 
-def cancel_customer_order(request, pk):
-    customer_order = CustomerOrder.objects.get(id=pk)
-    customer_order.delete()
+def cancel_part(request, pk):
+    part = Part.objects.get(id=pk)
+    part.delete()
 
     return redirect('users:profile_detail', pk=request.user.profile.pk)
 

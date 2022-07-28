@@ -13,16 +13,16 @@ from django.dispatch import receiver
 # Импорт моих модулей
 
 from users.models import Profile
-from send_notification.views import amass_order_send_emails
+from send_notification.views import amass_potluck_send_emails
 from goods.models import Category, Product, Vendor, Manufacturer
+from goods.mixins import OrderMixin
 
-
-class Order(models.Model):
-    product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='product_orders')
+class Potluck(models.Model):
+    product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='potlucks')
     creator = models.ForeignKey(Profile, verbose_name='Создатель', on_delete=models.SET_NULL,
-                                null=True, related_name='order_creators')
+                                null=True, related_name='potluck_creators')
     vendor = models.ForeignKey(Vendor, verbose_name='Поставщик', on_delete=models.CASCADE,
-                               null=True, related_name='order_vendor')
+                               null=True, related_name='potluck_vendor')
 
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
     unit_price = models.DecimalField('Цена за единицу товара', default=0, help_text='Сумма в рублях', max_digits=8, decimal_places=2)
@@ -39,82 +39,69 @@ class Order(models.Model):
 
     @property
     def partners(self):
-        return self.order_reserved.values_list('customer', flat=True)
+        return self.parts.values_list('customer', flat=True)
 
     def save(self, *args, **kwargs):
         self._get_price()
         super().save(*args, **kwargs)
 
-    def check_order_paid(self):
-        return all(self.order_reserved.all().values_list("paid", flat=True))
+    def check_potluck_paid(self):
+        return all(self.parts.all().values_list("paid", flat=True))
 
-    def get_order_fullness(self):
-        fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
+    def get_potluck_fullness(self):
+        fullness = self.parts.all().aggregate(Sum('goods_number'))['goods_number__sum']
         return fullness if fullness else 0
 
     @property
     def remaining_goods(self):
-        return self.size - self.get_order_fullness()
+        return self.size - self.get_potluck_fullness()
 
     @property
-    def get_order_fullness_for_tag(self):
-        fullness = self.order_reserved.all().aggregate(Sum('goods_number'))['goods_number__sum']
+    def get_potluck_fullness_for_tag(self):
+        fullness = self.parts.all().aggregate(Sum('goods_number'))['goods_number__sum']
         return fullness if fullness else 0
 
     def __str__(self):
         return f"{self.product.name}:{self.vendor} - {self.size} ({self.date})"
 
     class Meta:
-        verbose_name = "Заказ"
-        verbose_name_plural = "Заказы"
+        verbose_name = "Складчина"
+        verbose_name_plural = "Складчины"
         ordering = ['-id']
 
 
-@receiver(post_save, sender=Order)
+@receiver(post_save, sender=Potluck)
 def send_notification_if_amassed(sender, instance, created, **kwargs):
     if instance.amassed:
-        customers_emails = list(instance.order_reserved.all().values_list('customer__user__email', flat=True))
+        customers_emails = list(instance.parts.all().values_list('customer__user__email', flat=True))
         # Перевожу QuerySet в list, т.к. celery требует сериализуемый объект, которым QuerySet не является
         print('Сигнал')
-        amass_order_send_emails(customers_emails, instance.__str__())
+        amass_potluck_send_emails(customers_emails, instance.__str__())
 
 
-class CustomerOrder(models.Model):
-    """Customer's part of Order"""
+class Part(models.Model):
+    """Customer's part of Potluck"""
     customer = models.ForeignKey(Profile, verbose_name='Участник заказа',
                                  on_delete=models.CASCADE, )
-    order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE, related_name='order_reserved')
+    potluck = models.ForeignKey(Potluck, verbose_name='Заказ', on_delete=models.CASCADE, related_name='parts')
 
     goods_number = models.PositiveSmallIntegerField('Доля пользователя в заказе', default=0)
 
-    first_name = models.CharField('Имя', max_length=30)
-    last_name = models.CharField('Фамилия', max_length=30)
-    patronymic = models.CharField('Отчество', max_length=30, blank=True)
-
-    email = models.EmailField('Адрес электронной почты')
-    phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
-
-    city = models.CharField("Город", max_length=100)
-    post_index = models.CharField("Почтовый индекс", max_length=6, blank=True)
-    address = models.CharField('Адрес доставки', max_length=100, blank=True)
-
-    paid = models.BooleanField('Доля пользователя в заказе оплачена', default=False)
-    send = models.BooleanField('Заказ отправлен', default=False)
-
-    notes = models.TextField('Примечание к заказу', max_length=300, blank=True)
-    date_send = models.DateField('Дата отправления', blank=True, default=None, null=True)
-    confirmed = models.BooleanField("Подтвержден", default=False)
-
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    send = models.BooleanField('Заказ отправлен', default=False)
+    date_send = models.DateField('Дата отправления', blank=True, default=None, null=True)
+    confirmed_by_user = models.BooleanField("Подтвержден", default=False)
 
     @property
     def total_cost(self):
-        return self.goods_number * self.order.unit_price
+        return self.goods_number * self.potluck.unit_price
 
     @property
-    def check_amassing_order(self):
+    def check_amassing_potluck(self):
 
-        return True if self.order.get_order_fullness() == self.order.size else False
+        return True if self.potluck.get_potluck_fullness() == self.potluck.size else False
 
     @property
     def get_rating(self):
@@ -122,29 +109,51 @@ class CustomerOrder(models.Model):
             return self.rating.star.value
 
     def __str__(self):
-        return f"{self.customer} - {self.order} - {self.goods_number}"
+        return f"{self.customer} - {self.potluck} - {self.goods_number}"
 
     class Meta:
-        verbose_name = "Заказ пользователя"
-        verbose_name_plural = "Заказы пользователей"
-        unique_together = ('order', 'customer')
+        verbose_name = "Доля пользователя в складчине"
+        verbose_name_plural = "Доли пользователей в складчинах"
+        unique_together = ('potluck', 'customer')
 
 
-@receiver(post_save, sender=CustomerOrder)
-def update_order_amassing(sender, instance, created, **kwargs):
-    if instance.check_amassing_order:
-        instance.order.amassed = True
-        instance.order.date_amass = datetime.datetime.now()
+class PartOrder(OrderMixin):
+
+    part = models.OneToOneField(Part, verbose_name='Доля', on_delete=models.CASCADE, related_name='part_order')
+
+
+
+
+
+
+    def __str__(self):
+        return f"{self.part.customer} - {self.part.potluck} - {self.part.goods_number}"
+
+    class Meta:
+        verbose_name = "Заказ доли пользователя в складчине"
+        verbose_name_plural = "Заказы долей пользователей в складчинах"
+
+
+
+@receiver(post_save, sender=Part)
+def update_potluck_amassing(sender, instance, created, **kwargs):
+    if instance.check_amassing_potluck:
+        instance.potluck.amassed = True
+        instance.potluck.date_amass = datetime.datetime.now()
         print('ЗАЕБИС')
-    instance.order.save()
+    instance.potluck.save()
 
-@receiver(post_delete, sender=CustomerOrder)
-def cancel_order_amassing(sender, instance, *args, **kwargs):
-    if not instance.check_amassing_order:
-        instance.order.amassed = False
-        instance.order.date_amass = None
+@receiver(post_delete, sender=Part)
+def cancel_potluck_amassing(sender, instance, *args, **kwargs):
+    if not instance.check_amassing_potluck:
+        instance.potluck.amassed = False
+        instance.potluck.date_amass = None
         print('ЗАЕБИС')
-    instance.order.save()
+    instance.potluck.save()
 
 
-
+@receiver(post_save, sender=PartOrder)
+def confirm_part(sender, instance, created, **kwargs):
+    if created:
+        instance.part.confirmed_by_user = True
+    instance.part.save()

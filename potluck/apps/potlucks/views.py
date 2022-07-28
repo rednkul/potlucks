@@ -1,14 +1,17 @@
-from django.views.generic import ListView, DetailView, UpdateView
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
-from .models import Order, CustomerOrder
+from .models import Potluck, Part, PartOrder
 
 from goods.views import ProductFilterFields, Ratings
 from goods.models import Category, Rating
+from .forms import PartOrderCreateForm
 
 
-class OrderListView(ProductFilterFields, Ratings, ListView):
-    queryset = Order.objects.filter(amassed=False)
-    template_name = 'potlucks/orders/orders.html'
+class PotluckListView(ProductFilterFields, Ratings, ListView):
+    queryset = Potluck.objects.filter(amassed=False)
+    template_name = 'potlucks/potlucks/potlucks_list.html'
     paginate_by = 15
     paginate_orphans = 3
 
@@ -18,10 +21,8 @@ class OrderListView(ProductFilterFields, Ratings, ListView):
         return context
 
 
-
-
-class OrderFilterView(ProductFilterFields, ListView):
-    template_name = 'potlucks/orders/orders.html'
+class PotluckFilterView(ProductFilterFields, ListView):
+    template_name = 'potlucks/potlucks/potlucks_list.html'
     paginate_by = 15
     paginate_orphans = 3
 
@@ -46,10 +47,10 @@ class OrderFilterView(ProductFilterFields, ListView):
         vendors_filter = get_vendors if get_vendors else self.get_vendors()
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
 
-        queryset = Order.objects.filter(product__category__in=category_filter,
-                                        product__vendors__in=vendors_filter,
-                                        product__manufacturer__in=manufacturers_filter,
-                                        )
+        queryset = Potluck.objects.filter(product__category__in=category_filter,
+                                          product__vendors__in=vendors_filter,
+                                          product__manufacturer__in=manufacturers_filter,
+                                          )
 
         return queryset
 
@@ -65,19 +66,17 @@ class OrderFilterView(ProductFilterFields, ListView):
         return context
 
 
-class OrderDetailView(Ratings,DetailView):
-    model = Order
-    template_name = 'potlucks/orders/order_detail.html'
-
-
+class PotluckDetailView(Ratings, DetailView):
+    model = Potluck
+    template_name = 'potlucks/potlucks/potluck_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.object = self.get_object()
-        context['available'] = self.object.size - self.object.get_order_fullness()
+        context['available'] = self.object.size - self.object.get_potluck_fullness()
         context['categories'] = self.object.product.category.get_ancestors(include_self=True)
         context['is_partner'] = self.customer_ispartner()
-        context['customer_order'] = self.get_customer_order() if self.customer_ispartner() else None
+        context['part'] = self.get_part() if self.customer_ispartner() else None
 
         ratings = {'ones': 1, 'twos': 2, 'threes': 3, 'fours': 4, 'fives': 5}
 
@@ -88,32 +87,59 @@ class OrderDetailView(Ratings,DetailView):
         context['avg_rating'] = self.object.product.avg_rating
         context['stars'] = self.stars
 
-
         return context
 
-    def get_customer_order(self):
-        order = self.get_object()
-        customer_order = CustomerOrder.objects.get(order=order, customer=self.request.user.profile)
-        print(f"corder---------------{customer_order.id}------")
-        return customer_order
+    def get_part(self):
+        potluck = self.get_object()
+        part = Part.objects.get(potluck=potluck, customer=self.request.user.profile)
+        return part
 
     def customer_ispartner(self):
-
-        order = self.get_object()
-        print(f"Партнер---------------{self.request.user.profile.id in order.partners}------")
-        return self.request.user.profile.id in order.partners
-
-
-class CustomerOrderCheckoutView(UpdateView):
-    model = CustomerOrder
-    template_name = 'potlucks/orders/customer_order_checkout.html'
-    context_object_name = 'customer_order'
-    fields = ['notes', ]
+        potluck = self.get_object()
+        print(f"Партнер---------------{self.request.user.profile.id in potluck.partners}------")
+        return self.request.user.profile.id in potluck.partners
 
 
-class CustomerOrderUpdateView(UpdateView):
-    model = CustomerOrder
-    template_name = 'potlucks/orders/customer_order_update.html'
-    context_object_name = 'customer_order'
+def part_order_create(request, part_pk):
+    part = Part.objects.get(id=part_pk)
+    if request.method == 'POST':
+        form = PartOrderCreateForm(request.POST)
+        if form.is_valid():
+            part_order = form.save()
+
+            return redirect('potlucks:part_order_created', part_order_id=part_order.id)
+    else:
+        form = PartOrderCreateForm
+    return render(request, 'potlucks/potlucks/part_checkout.html', {'form': form, 'part': part})
+
+class PartOrderCreateView(CreateView):
+    form_class = PartOrderCreateForm
+    model = PartOrder
+    template_name = 'potlucks/potlucks/part_checkout.html'
+
+
+    def get_success_url(self):
+        print('ЧО?')
+        return reverse_lazy('potlucks:part_order_created', part_order_id=self.object.id)
+
+    def get(self, request, part_pk, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        part = Part.objects.get(pk=part_pk)
+        context['part'] = part
+        return self.render_to_response(context)
+
+def part_order_created(request, part_order_id):
+    return render(request, 'potlucks/potlucks/part_order_created.html', {'part_order': part_order_id})
+
+# class PartCheckoutView(UpdateView):
+#     model = Part
+#     template_name = 'potlucks/potlucks/part_checkout.html'
+#     context_object_name = 'part'
+#     fields = ['notes', ]
+
+
+class PartUpdateView(UpdateView):
+    model = Part
+    template_name = 'potlucks/potlucks/part_update.html'
+    context_object_name = 'part'
     fields = ['goods_number', ]
-

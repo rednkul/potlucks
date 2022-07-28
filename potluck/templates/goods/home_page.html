@@ -1,13 +1,13 @@
 {% extends 'potlucks/base.html' %}
 {% block title %}  НАЗВАНИЕ САЙТА  {% endblock title %}
-{% load static %}
-{% load breadcrumbs %}
+{% load static breadcrumbs %}
+
 
 {% block navigation %}
 
         <li class="active"><a href="{% url 'goods:home_page' %}">Home</a></li>
         <li><a href="{% url 'goods:products' %}">Products</a></li>
-        <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+        <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
         <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
@@ -86,7 +86,7 @@
                       <div class="product-body">
                         <p class="product-category">{{ product.category.name }}</p>
                         <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
-                        <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
+                        <h4 class="product-price">{{ product.potlucks.all.count }} заказов</h4>
 
                         <div class="product-btns">
                           <button>
@@ -163,7 +163,7 @@
                       <div class="product-body">
                         <p class="product-category">{{ product.category.name }}</p>
                         <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
-                        <h4 class="product-price">{{ product.product_orders.all.count }} заказов</h4>
+                        <h4 class="product-price">{{ product.potlucks.all.count }} заказов</h4>
                         <div class="product-rating">
                           {% for star in stars reversed %}
                           {% if star.value <= product.avg_rating %}

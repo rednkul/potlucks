@@ -3,9 +3,9 @@
     <div id="product-tab">
       <!-- product tab nav -->
       <ul class="tab-nav">
-        <li class="active"><a data-toggle="tab" href="#tab1">Действующие заказы</a></li>
-        <li><a data-toggle="tab" href="#tab2">Заполненные заказы</a></li>
-        <li><a data-toggle="tab" href="#tab3">Завершенные заказы</a></li>
+        <li class="active"><a data-toggle="tab" href="#tab1">Действующие складчины</a></li>
+        <li><a data-toggle="tab" href="#tab2">Заполненные складчины</a></li>
+        <li><a data-toggle="tab" href="#tab3">Подтвержденные доли складчины</a></li>
 
       </ul>
       <!-- /product tab nav -->
@@ -16,7 +16,7 @@
         <div id="tab1" class="tab-pane fade in active">
           <div class="row">
             <div class="col-md-12">
-              {% if not customer_orders_active %}
+              {% if not parts_active %}
               <h2>
                 Нет активных заказов
               </h2>
@@ -39,25 +39,25 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for customer_order in customer_orders_active %}
+                {% for part in parts_active %}
                 <tr>
-                  <td> {% if customer_order.order.product.image %}
-                    <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                  <td> {% if part.potluck.product.image %}
+                    <img src="{{ part.potluck.product.image.url }}"  class="product-mini-img"/>
                     {% endif %}
-                    <p><a href="{% url 'goods:product_detail' customer_order.order.product.url %}">
-                      {{ customer_order.order.product.name }}
+                    <p><a href="{% url 'goods:product_detail' part.potluck.product.url %}">
+                      {{ part.potluck.product.name }}
                     </a></p>
                   </td>
-                  <td>{{ customer_order.order.vendor }}</td>
-                  <td>{{ customer_order.order.creator }}</td>
-                  <td>{{ customer_order.order.unit_price }} р</td>
-                  <td>{{ customer_order.goods_number  }}</td>
-                  <td>{{  customer_order.total_cost }} р</td>
-                  <td>{{ customer_order.order.get_order_fullness }} / {{ customer_order.order.size }}</td>
-                  <td>{{ customer_order.date|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
-                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}">ПОДРОБНЕЕ</a></td>
-                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
+                  <td>{{ part.potluck.vendor }}</td>
+                  <td>{{ part.potluck.creator }}</td>
+                  <td>{{ part.potluck.unit_price }} р</td>
+                  <td>{{ part.goods_number  }}</td>
+                  <td>{{  part.total_cost }} р</td>
+                  <td>{{ part.potluck.get_potluck_fullness }} / {{ part.potluck.potluck.size }}</td>
+                  <td>{{ part.created|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:potluck_detail' part.potluck.id %}">ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{part.id}}">ОТМЕНИТЬ</a></td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -72,7 +72,7 @@
         <div id="tab2" class="tab-pane fade in">
           <div class="row">
             <div class="col-md-12">
-              {% if not customer_orders_amassed %}
+              {% if not parts_amassed %}
               <h2>
                 Нет заполненных заказов
               </h2>
@@ -96,28 +96,28 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for customer_order in customer_orders_amassed %}
+                {% for part in parts_amassed %}
                 <tr>
                   <td>
-                    {% if customer_order.order.product.image %}
-                    <img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
+                    {% if part.potluck.product.image %}
+                    <img src="{{ part.potluck.product.image.url }}"  class="product-mini-img"/>
                     {% endif %}
-                    <a href="{% url 'goods:product_detail' customer_order.order.product.url %}" >
-                      <p>{{ customer_order.order.product.name }}</p>
+                    <a href="{% url 'goods:product_detail' part.potluck.product.url %}" >
+                      <p>{{ part.potluck.product.name }}</p>
                     </a>
 
                   <td>
-                    {{ customer_order.order.vendor }} </td>
-                  <td>{{ customer_order.order.creator }}</td>
-                  <td>{{ customer_order.order.unit_price }} р</td>
-                  <td>{{ customer_order.goods_number  }}</td>
-                  <td>{{  customer_order.total_cost }} р</td>
-                  <td>{{ customer_order.created|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
-                  <td class="detail-cell"><a href="{% url 'potlucks:order_detail' customer_order.order.id %}" >ПОДРОБНЕЕ</a></td>
-                  <td class="detail-cell"><a href="{% url 'potlucks:customer_order_checkout' customer_order.id %}">ПОДТВЕРДИТЬ</a></td>
-                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{customer_order.id}}">ОТМЕНИТЬ</a></td>
+                    {{ part.potluck.vendor }} </td>
+                  <td>{{ part.potluck.creator }}</td>
+                  <td>{{ part.potluck.unit_price }} р</td>
+                  <td>{{ part.goods_number  }}</td>
+                  <td>{{  part.total_cost }} р</td>
+                  <td>{{ part.created|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date_amass|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:potluck_detail' part.potluck.id %}" >ПОДРОБНЕЕ</a></td>
+                  <td class="detail-cell"><a href="{% url 'potlucks:part_checkout' part.id %}">ПОДТВЕРДИТЬ</a></td>
+                  <td class="detail-cell"><a href="" class="js-open-modal" data-modal="{{part.id}}">ОТМЕНИТЬ</a></td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -132,9 +132,9 @@
         <div id="tab3" class="tab-pane fade in">
           <div class="row">
             <div class="col-md-12">
-              {% if not customer_orders_send %}
+              {% if not parts_confirmed %}
               <h2>
-                Нет завершенных заказов
+                Вы не подтвердили ни одного участия в складчине.
               </h2>
               {% else %}
               <table>
@@ -155,23 +155,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for customer_order in customer_orders_send %}
+                {% for part in parts_confirmed %}
                 <tr>
-                  <td><img src="{{ customer_order.order.product.image.url }}"  class="product-mini-img"/>
-                    <a href="{% url 'goods:product_detail' customer_order.order.product.url %}">
-                      <p>{{ customer_order.order.product.name }}</p>
+                  <td><img src="{{ part.potluck.product.image.url }}"  class="product-mini-img"/>
+                    <a href="{% url 'goods:product_detail' part.potluck.product.url %}">
+                      <p>{{ part.potluck.product.name }}</p>
                     </a>
                   </td>
                   <td>
-                    {{ customer_order.order.vendor }} </td>
-                  <td>{{ customer_order.order.creator }}</td>
-                  <td>{{ customer_order.order.unit_price }} р</td>
-                  <td>{{  customer_order.total_cost }} р</td>
-                  <td>{{ customer_order.date|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date_amass|date:"d M Y"  }}</td>
-                  <td>{{ customer_order.order.date_send|date:"d M Y"  }}</td>
-                  <td class="detail-cell"><a href="{% url 'goods:product_detail' customer_order.order.product.url %}">ПОДРОБНЕЕ</a></td>
+                    {{ part.potluck.vendor }} </td>
+                  <td>{{ part.potluck.creator }}</td>
+                  <td>{{ part.potluck.unit_price }} р</td>
+                  <td>{{  part.total_cost }} р</td>
+                  <td>{{ part.created|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date_amass|date:"d M Y"  }}</td>
+                  <td>{{ part.potluck.date_send|date:"d M Y"  }}</td>
+                  <td class="detail-cell"><a href="{% url 'goods:product_detail' part.potluck.product.url %}">ПОДРОБНЕЕ</a></td>
 
                 </tr>
                 {% endfor %}
@@ -196,23 +196,23 @@
 
 </div>
 <!-- /PopUp активных заказов -->
-{% for customer_order in customer_orders_active %}
-<div class="modal_p" data-modal="{{ customer_order.id }}" id="{{ customer_order.id }}">
+{% for part in parts_active %}
+<div class="modal_p" data-modal="{{ part.id }}" id="{{ part.id }}">
   <!--   Svg иконка для закрытия окна  -->
   <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
   <h3>Отменить заказ?</h3>
-  <p>{{ customer_order }}</p>
-  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_customer_order' customer_order.id %}">ДА</a></p>
+  <p>{{ part }}</p>
+  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_part' part.id %}">ДА</a></p>
 </div>
 {% endfor %}
 
-{% for customer_order in customer_orders_amassed %}
-<div class="modal_p" data-modal="{{ customer_order.id }}" id="{{ customer_order.id }}">
+{% for part in parts_amassed %}
+<div class="modal_p" data-modal="{{ part.id }}" id="{{ part.id }}">
   <!--   Svg иконка для закрытия окна  -->
   <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
   <h3>Отменить заказ?</h3>
-  <p>{{ customer_order }}</p>
-  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_customer_order' customer_order.id %}">ДА</a></p>
+  <p>{{ part }}</p>
+  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_part' part.id %}">ДА</a></p>
 </div>
 {% endfor %}
 

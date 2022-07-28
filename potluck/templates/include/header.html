@@ -53,7 +53,7 @@
             <form action="{% url 'goods:search' %}" method="get" class="d-flex editContent">
               <select class="input-select" name="search_option">
                 <option value="goods" {% if search_option == 'goods' %} selected="selected" {% endif %}>Товары</option>
-                <option value="orders" {% if search_option == 'orders' %} selected="selected" {% endif %}>Заказы</option>
+                <option value="potlucks" {% if search_option == 'potlucks' %} selected="selected" {% endif %}>Складчины</option>
 
               </select>
               <input class="input" name="q" placeholder={% if search %}"{{ search }}"{% else %}"Поиск"{% endif %}>

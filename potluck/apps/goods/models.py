@@ -35,7 +35,7 @@ class Vendor(models.Model):
     name = models.CharField('Наименование', max_length=50)
     description = models.TextField('Описание')
     image = models.ImageField("Логотип", upload_to="vendors/", blank=True)
-    finished_orders = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
+    finished_potlucks = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
     contact_phone = models.CharField('Номер телефона', max_length=12, blank=True)
     contact_site = models.CharField('Сайт', max_length=50, blank=True)
     contact_social = models.CharField('Социальные сети', max_length=200, blank=True)
@@ -93,20 +93,15 @@ class Product(models.Model):
         return round(self.reviews.aggregate(
             average_rating=Avg('rating__star'))['average_rating'], 1) if self.reviews.all() else 0
 
-    # @property
-    # def customer_orders(self):
-    #     customer_orders = []
-    #     for order in self.product_orders.all():
-    #         customer_orders.extend(order.order_reserved.all())
-    #     return customer_orders
+
 
     @property
     def max_price(self):
-        return self.product_orders.filter(amassed=False).aggregate(Max('unit_price'))['unit_price__max']
+        return self.potlucks.filter(amassed=False).aggregate(Max('unit_price'))['unit_price__max']
 
     @property
     def min_price(self):
-        return self.product_orders.filter(amassed=False).aggregate(Min('unit_price'))['unit_price__min']
+        return self.potlucks.filter(amassed=False).aggregate(Min('unit_price'))['unit_price__min']
 
     def is_reviewed_by_user(self, profile_id):
         return Review.objects.filter(product=self.id, customer=profile_id).exists()

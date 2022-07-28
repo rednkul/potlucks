@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
 
 from .models import Profile, CustomUser
-from potlucks.models import CustomerOrder
+from potlucks.models import Part
 from goods.models import Rating, RatingStar
 
 
@@ -23,14 +23,14 @@ class ProfileDetailView(UpdateView):
 
         context = super().get_context_data(**kwargs)
         customer = self.get_object()
-        customer_orders_active = CustomerOrder.objects.filter(customer=customer, order__amassed=False)
-        customer_orders_amassed = CustomerOrder.objects.filter(customer=customer, order__amassed=True, send=False)
-        customer_orders_send = CustomerOrder.objects.filter(customer=customer, send=True)
+        parts_active = Part.objects.filter(customer=customer, potluck__amassed=False)
+        parts_amassed = Part.objects.filter(customer=customer, potluck__amassed=True, confirmed_by_user=False)
+        parts_confirmed = Part.objects.filter(customer=customer, confirmed_by_user=True)
 
         context['stars'] = RatingStar.objects.all()
-        context['customer_orders_active'] = customer_orders_active
-        context['customer_orders_amassed'] = customer_orders_amassed
-        context['customer_orders_send'] = customer_orders_send
+        context['parts_active'] = parts_active
+        context['parts_amassed'] = parts_amassed
+        context['parts_confirmed'] = parts_confirmed
 
 
 

@@ -7,14 +7,14 @@ current_site = Site.objects.get_current()
 
 
 
-def amass_order_send_emails(costumers_emails, order):
+def amass_potluck_send_emails(costumers_emails, potluck):
     connection = mail.get_connection()
-    messages = amass_order_get_messages(costumers_emails, order)
+    messages = amass_potluck_get_messages(costumers_emails, potluck)
     connection.send_messages(messages)
     print('Письма отправлены')
     pass
 
-def amass_order_get_messages(costumers_emails, order):
+def amass_potluck_get_messages(costumers_emails, potluck):
     messages = []
 
     for customer_email in costumers_emails:
@@ -22,7 +22,7 @@ def amass_order_get_messages(costumers_emails, order):
 
         email = EmailMessage(
             'Заказ полностью забронирован',
-            f'Здравствуйте! Все позиции заказа {order} были забронированы! Осталось только оплатить вашу часть в нем!',
+            f'Здравствуйте! Все позиции складчины {potluck} были забронированы! Осталось только оплатить вашу часть в нем!',
             settings.EMAIL_HOST_USER,
             [customer_email, ],
         )

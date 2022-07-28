@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 
-from potlucks.models import Order, CustomerOrder
+from potlucks.models import Potluck, Part
 
 from goods.models import Wishlist
 
@@ -9,16 +9,16 @@ from users.models import CustomUser
 
 
 def validate_goods_number(request, pk):
-    order = Order.objects.get(id=pk)
+    potluck = Potluck.objects.get(id=pk)
     goods_number = request.GET.get('number', None)
 
-    customer_order = CustomerOrder.objects.filter(order=order, customer=request.user.profile)
-    print(customer_order.exists())
-    if not customer_order.exists():
+    part = Part.objects.filter(potluck=potluck, customer=request.user.profile)
+    print(part.exists())
+    if not part.exists():
 
-        max_number = order.size - order.get_order_fullness()
+        max_number = potluck.size - potluck.get_potluck_fullness()
     else:
-        max_number = order.size - order.get_order_fullness() + customer_order[0].goods_number
+        max_number = potluck.size - potluck.get_potluck_fullness() + part[0].goods_number
 
     try:
         goods_number_int = int(goods_number)
@@ -26,7 +26,7 @@ def validate_goods_number(request, pk):
         goods_number_int = 0
 
     response = {
-        'sum': goods_number_int * order.unit_price,
+        'sum': goods_number_int * potluck.unit_price,
         'is_available': max_number >= goods_number_int,
         'available_number': max_number,
         'is_integer': goods_number.isdigit(),
@@ -36,11 +36,11 @@ def validate_goods_number(request, pk):
 
 
 
-def cancel_customer_order(request, pk):
-    customer_order = CustomerOrder.objects.get(id=pk)
-    customer_order.delete()
+def cancel_part(request, pk):
+    part = Part.objects.get(id=pk)
+    part.delete()
 
-    response = {'is_deleted': True if not CustomerOrder.objects.filter(id=pk).exists() else False}
+    response = {'is_deleted': True if not Part.objects.filter(id=pk).exists() else False}
 
 
     return JsonResponse(response)

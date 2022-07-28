@@ -1,6 +1,6 @@
 {% extends 'potlucks/base.html' %}
 {% load breadcrumbs %}
-{% block title %} Заказ {{ customer_order }} {% endblock title %}
+{% block title %} Заказ {{ part }} {% endblock title %}
 
 
 {% block navigation %}
@@ -9,7 +9,7 @@
 
 <li><a href="{% url 'goods:home_page' %}">Home</a></li>
 <li ><a href="{% url 'goods:products' %}">Products</a></li>
-<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
 <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 
@@ -20,18 +20,19 @@
   {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
-  {% url 'potlucks:orders' as orders %}
-  {% breadcrumb_item orders 'Orders' 2 %}
+  {% url 'potlucks:potlucks' as potlucks %}
+  {% breadcrumb_item potlucks 'Складчины' 2 %}
 
-  {% url 'potlucks:customer_order_checkout' customer_order.id as order_checkout %}
-  {% breadcrumb_active order_checkout 3 'Подтверждение заказа' %}
+  {% url 'potlucks:part_checkout' part.id as part_checkout %}
+  {% breadcrumb_active part_checkout 3 'Подтверждение заказа' %}
 
 
 {% endblock breadcrumbs %}
 
 {% block content %}
 
-
+<form action="." method="post" class="order-form">
+	{% csrf_token %}
 <!-- SECTION -->
 <div class="section">
 	<!-- container -->
@@ -71,7 +72,7 @@
 					<div class="form-group">
 						<label for="id_post_index">Почтовый индекс</label><input maxlength="6" name="post_index" type="text" required id="id_post_index" class="check-input" value="{{ user.profile.post_index }}">
 					</div>
-					<input type="hidden" id="id_customer" name="customer" value="{{ user.profile.id }}">
+					<input type="hidden" id="id_part" name="part" value="{{ part.id }}">
 
 
 
@@ -100,10 +101,10 @@
 					</div>
 
 					<div class="order-col">
-						<div style="width:25%">{{ customer_order.order.product.name }}</div>
-						<div style="width:25%">{{ customer_order.order.unit_price }} ₽</div>
-						<div style="width:25%;text-align:right;">{{ customer_order.goods_number }} ₽</div>
-						<div style="width:25%;text-align:right;">{{ customer_order.total_cost }} ₽</div>
+						<div style="width:25%">{{ part.potluck.product.name }}</div>
+						<div style="width:25%">{{ part.potluck.unit_price }} ₽</div>
+						<div style="width:25%;text-align:right;">{{ part.goods_number }} ₽</div>
+						<div style="width:25%;text-align:right;">{{ part.total_cost }} ₽</div>
 					</div>
 
 
@@ -113,7 +114,7 @@
 					</div>
 					<div class="order-col">
 						<div><strong>СУММА</strong></div>
-						<div><strong class="order-total">{{ customer_order.total_cost }} ₽</strong></div>
+						<div><strong class="order-total">{{ part.total_cost }} ₽</strong></div>
 					</div>
 				</div>
 				<div class="payment-method">
@@ -155,7 +156,7 @@
 						I've read and accept the <a href="#">terms & conditions</a>
 					</label>
 				</div>
-				<a href="#" class="primary-btn order-submit">Place order</a>
+				<input type="submit" value="Place order" class="primary-btn order-submit">
 			</div>
 			<!-- /Order Details -->
 		</div>
@@ -163,5 +164,6 @@
 	</div>
 	<!-- /container -->
 </div>
+</form>
 <!-- /SECTION -->
 {% endblock content %}

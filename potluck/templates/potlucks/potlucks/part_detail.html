@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Заказ "{{ customer_order.order.product.name }}" {% endblock title %}
+{% block title %} Заказ "{{ part.potluck.product.name }}" {% endblock title %}
 {% load static %}
 
 {% block content %}
@@ -16,7 +16,7 @@
 
 						    <li><a href="{% url 'goods:home_page' %}">Home</a></li>
                             <li ><a href="{% url 'goods:products' %}">Products</a></li>
-                            <li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+                            <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
 						    <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 					    </ul>
@@ -39,9 +39,9 @@
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
                     <div class="product-preview">
-                        <img src="{{ order.product.image.url }}" alt="">
+                        <img src="{{ potluck.product.image.url }}" alt="">
                     </div>
-                        {% for image in customer_order.order.product.product_images.all %}
+                        {% for image in part.potluck.product.product_images.all %}
                             <div class="product-preview">
                                 <img src="{{ image.image.url }}" alt="">
                             </div>
@@ -55,11 +55,11 @@
             <div class="col-md-2  col-md-pull-5">
                 <div id="product-imgs">
                     <div class="product-preview">
-                        <img src="{{ order.product.image.url }}" alt="">
+                        <img src="{{ potluck.product.image.url }}" alt="">
                     </div>
 
 
-                        {% for image in order.product.product_images.all %}
+                        {% for image in potluck.product.product_images.all %}
                             <div class="product-preview">
                                 <img src="{{ image.image.url }}" alt="">
                             </div>
@@ -72,8 +72,8 @@
             <!-- Product details -->
             <div class="col-md-5">
                 <div class="product-details">
-                    <h2 class="product-name" id="product-name">{{ order.product.name }}</h2>
-                    {% if not order.amassed %}
+                    <h2 class="product-name" id="product-name">{{ potluck.product.name }}</h2>
+                    {% if not potluck.amassed %}
                     <p>Доступно позиций: {{  available }}</p>
                     {% else %}
                     <h2 style="color:red">Заказ заполнен</h2>
@@ -92,7 +92,7 @@
                         <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
 
                     </div>
-                    <p>{{ order.product.description }}</p>
+                    <p>{{ potluck.product.description }}</p>
 
 <!--                    <div class="product-options">-->
 <!--                        <label>-->
@@ -108,14 +108,14 @@
 <!--                            </select>-->
 <!--                        </label>-->
 <!--                    </div>-->
-                    <form action="{% url 'potlucks:join_an_order' order.pk %}" method="post" id="join-form">
+                    <form action="{% url 'potlucks:join_potluck' potluck.pk %}" method="post" id="join-form">
                         {% csrf_token %}
                         <div class="add-to-cart">
                             <div class="qty-label">
                                 Qty
                                 <div class="input-number" id="input-number">
-                                    <input type="number" name="number" id="number" {% if order.amassed %} disabled {% endif %}>
-                                    <input type="hidden" name="order-id" value="{{ order.id }}" >
+                                    <input type="number" name="number" id="number" {% if potluck.amassed %} disabled {% endif %}>
+                                    <input type="hidden" name="potluck-id" value="{{ potluck.id }}" >
                                     <span class="qty-up">+</span>
                                     <span class="qty-down">-</span>
 
@@ -169,7 +169,7 @@
                         <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>{{ order.product.description }}</p>
+                                    <p>{{ potluck.product.description }}</p>
                                 </div>
                             </div>
                         </div>
@@ -541,7 +541,7 @@
               $.ajax({
                   data: $(this).serialize(), // получаяем данные формы
 
-                  url: "{% url 'ajax:validate_goods_number' order.id %}",
+                  url: "{% url 'ajax:validate_goods_number' potluck.id %}",
                   // если успешно, то
                   success: function (response) {
                       if (response.is_integer == false || $('#number').val() == '0') {

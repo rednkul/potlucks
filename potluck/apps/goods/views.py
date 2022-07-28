@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.http import JsonResponse
 
-from potlucks.models import Order, CustomerOrder
+from potlucks.models import Potluck, Part
 from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
 
 from cart.forms import CartAddProductForm
@@ -33,7 +33,7 @@ class HomePageView(Ratings, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['new_products'] = Product.objects.order_by('id')[:5]
-        context['most_popular_products'] = sorted(Product.objects.all(), key=lambda x: x.product_orders.count(),
+        context['most_popular_products'] = sorted(Product.objects.all(), key=lambda x: x.potlucks.count(),
                                                   reverse=True)[:5]
 
         context['stars'] = self.stars
@@ -67,7 +67,7 @@ class SearchPage:
         search_option = self.request.GET['search_option']
 
         if int(search_option):
-            return 'potlucks/orders/orders.html'
+            return 'potlucks/potlucks/potlucks_list.html'
         else:
             return 'goods/products_view/products_view.html'
 
@@ -123,7 +123,7 @@ class ProductDetailView(Ratings, DetailView):
 
         context['avg_rating'] = self.object.avg_rating
         context['stars'] = self.stars
-        context['customer_orders'] = CustomerOrder.objects.filter(send=True, order__product=self.object)
+        context['parts'] = Part.objects.filter(send=True, potluck__product=self.object)
         context['categories'] = self.object.category.get_ancestors(include_self=True)
         context['cart_product_form'] = CartAddProductForm()
         context['is_ordered'] = self.is_ordered_by_user
@@ -284,8 +284,8 @@ class Search(ProductFilterFields, ListView):
 
         search_option = self.request.GET.get('search_option')
 
-        if search_option == 'orders':
-            return 'potlucks/orders/orders.html'
+        if search_option == 'potlucks':
+            return 'potlucks/potlucks/potlucks_list.html'
         else:
             return 'goods/products_view/products_view.html'
 
@@ -303,8 +303,8 @@ class Search(ProductFilterFields, ListView):
 
         categories = (categories | subcategories).distinct()
 
-        if option == 'orders':
-            return Order.objects.filter(Q(product__name__iregex=request) |
+        if option == 'potlucks':
+            return Potluck.objects.filter(Q(product__name__iregex=request) |
                                         Q(product__category__in=categories) |
                                         Q(product__description__iregex=request) |
                                         Q(product__tags__iregex=request)

@@ -7,14 +7,13 @@ app_name = 'potlucks'
 
 urlpatterns = [
 
-    path('orders/', views.OrderListView.as_view(), name='orders'),
-    path('order_filter/', views.OrderFilterView.as_view(), name='order_filter'),
-    path('orders/<int:pk>/', views.OrderDetailView.as_view(), name='order_detail'),
-    path('orders/<int:pk>/join/', services.join_an_order, name='join_an_order'),
-    path('update_customer_order/<int:pk>/', services.update_customer_order, name='update_customer_order'),
-    path('cancel_customer_order/<int:pk>/', services.cancel_customer_order, name='cancel_customer_order'),
-    path('customer_order_checkout/<int:pk>/', views.CustomerOrderCheckoutView.as_view(), name='customer_order_checkout'),
-
-
+    path('', views.PotluckListView.as_view(), name='potlucks'),
+    path('potluck_filter/', views.PotluckFilterView.as_view(), name='potluck_filter'),
+    path('potlucks/<int:pk>/', views.PotluckDetailView.as_view(), name='potluck_detail'),
+    path('potlucks/<int:pk>/join/', services.join_potluck, name='join_potluck'),
+    path('update_part/<int:pk>/', services.update_part, name='update_part'),
+    path('cancel_part/<int:pk>/', services.cancel_part, name='cancel_part'),
+    path('part_checkout/<int:part_pk>/', views.part_order_create, name='part_checkout'),
+    path('part_order_created/<int:part_order_id>/', views.part_order_created, name='part_order_created'),
 
 ]

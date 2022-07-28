@@ -4,7 +4,7 @@
 
 {% block navigation %}
 <li><a href="{% url 'goods:home_page' %}">Home</a></li>
-<li><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
 <li  class="active"><a href="{% url 'goods:products' %}">Products</a></li>
 <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 {% endblock navigation %}
@@ -150,7 +150,7 @@
 
                         <li><a href="#tab1">Description</a></li>
                         <li><a href="#tab2">Details</a></li>
-                        <li><a  href="#tab3">Orders</a></li>
+                        <li><a  href="#tab3">Складчины</a></li>
                         <li><a  href="#tab4">Reviews (3)</a></li>
                     </ul>
                     <!-- /product tab nav -->
@@ -195,16 +195,16 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for order in product.product_orders.all %}
+                                    {% for potluck in product.product_potlucks.all %}
                                     <tr>
-                                        <td>{{ order.vendor }}</td>
-                                        <td>{{ order.creator }}</td>
-                                        <td>{{ order.unit_price }}</td>
-                                        <td>{{ order.get_order_fullness }} / {{ order.size }}</td>
-                                        <td>{{ order.date|date:"d M Y"  }}
+                                        <td>{{ potluck.vendor }}</td>
+                                        <td>{{ potluck.creator }}</td>
+                                        <td>{{ potluck.unit_price }}</td>
+                                        <td>{{ potluck.get_potluck_fullness }} / {{ potluck.size }}</td>
+                                        <td>{{ potluck.date|date:"d M Y"  }}
 
                                         </td>
-                                        <td class="detail-cell"><a href="{% url 'potlucks:order_detail' order.id %}" onclick="window.open({% url 'potlucks:order_detail' order.id %})">ПОДРОБНЕЕ</a></td>
+                                        <td class="detail-cell"><a href="{% url 'potlucks:potluck_detail' potluck.id %}" onclick="window.open({% url 'potlucks:potluck_detail' potluck.id %})">ПОДРОБНЕЕ</a></td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

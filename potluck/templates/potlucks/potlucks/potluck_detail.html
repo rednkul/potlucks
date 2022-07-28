@@ -1,6 +1,6 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Заказ "{{ order.product.name }}" {% endblock title %}
-{% load static part_in_order_tag breadcrumbs %}
+{% block title %} Заказ "{{ potluck.product.name }}" {% endblock title %}
+{% load static part_in_potluck_tag breadcrumbs %}
 
 
 {% load breadcrumbs %}
@@ -9,7 +9,7 @@
 
 <li><a href="{% url 'goods:home_page' %}">Home</a></li>
 <li><a href="{% url 'goods:products' %}">Products</a></li>
-<li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li  class="active"><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
 <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
@@ -18,17 +18,17 @@
   {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
-  {% url 'potlucks:orders' as orders %}
-  {% breadcrumb_item orders 'Orders' 2 %}
+  {% url 'potlucks:potlucks' as potlucks %}
+  {% breadcrumb_item potlucks 'Складчины' 2 %}
 
-  {% ancestors_and_category order.product.category as categories %}
+  {% ancestors_and_category potluck.product.category as categories %}
   {% for category in categories %}
     {% url 'goods:category_detail' category.url as category_detail %}
     {% breadcrumb_item category_detail category.name forloop.counter|add:"2" %}
   {% endfor %}
 
-  {% url 'potlucks:order_detail' order.id as order_detail %}
-  {% breadcrumb_active order.id order.product.name order.product.category.ancestors_and_category.count|add:"2" %}
+  {% url 'potlucks:potluck_detail' potluck.id as potluck_detail %}
+  {% breadcrumb_active potluck.id potluck.product.name potluck.product.category.ancestors_and_category.count|add:"2" %}
 
 
 {% endblock breadcrumbs %}
@@ -43,12 +43,12 @@
             <!-- Product main img -->
             <div class="col-md-5 col-md-push-2">
                 <div id="product-main-img">
-                    {% if order.product.image %}
+                    {% if potluck.product.image %}
                     <div class="product-preview">
-                        <img src="{{ order.product.image.url }}" alt="">
+                        <img src="{{ potluck.product.image.url }}" alt="">
                     </div>
                     {% endif %}
-                    {% for image in order.product.product_images.all %}
+                    {% for image in potluck.product.product_images.all %}
                     {% if image %}
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
@@ -63,13 +63,13 @@
             <!-- Product thumb imgs -->
             <div class="col-md-2  col-md-pull-5">
                 <div id="product-imgs">
-                    {% if order.product.image %}
+                    {% if potluck.product.image %}
                     <div class="product-preview">
-                        <img src="{{ order.product.image.url }}" alt="">
+                        <img src="{{ potluck.product.image.url }}" alt="">
                     </div>
                     {% endif %}
 
-                    {% for image in order.product.product_images.all %}
+                    {% for image in potluck.product.product_images.all %}
                     {% if image %}
                     <div class="product-preview">
                         <img src="{{ image.image.url }}" alt="">
@@ -85,15 +85,15 @@
             <div class="col-md-5">
                 <div class="product-details">
                     <h2 class="product-name"  id="product-name">
-                        <a href="{% url 'goods:product_detail' order.product.url %}">{{ order.product.name }}</a>
+                        <a href="{% url 'goods:product_detail' potluck.product.url %}">{{ potluck.product.name }}</a>
                     </h2>
                     <div>
-                        <h3 class="product-price">{{ order.unit_price }} р/шт </h3>
+                        <h3 class="product-price">{{ potluck.unit_price }} р/шт </h3>
 
                     </div>
                     {% if not is_partner %}
 
-                    {% if not order.amassed %}
+                    {% if not potluck.amassed %}
                     <p>Доступно позиций: {{  available }}</p>
 
                     {% else %}
@@ -103,7 +103,7 @@
                     <div>
                         <div class="product-rating">
                             {% for star in stars reversed %}
-                            {% if star.value <= order.product.avg_rating %}
+                            {% if star.value <= potluck.product.avg_rating %}
                             <i class="fa fa-star empty"></i>
                             {% else %}
                             <i class="fa fa-star-o empty"></i>
@@ -117,14 +117,14 @@
 
 
 
-                    <form action="{% url 'potlucks:join_an_order' order.id %}" method="post" id="join-form">
+                    <form action="{% url 'potlucks:join_potluck' potluck.id %}" method="post" id="join-form">
                         {% csrf_token %}
                         <div class="add-to-cart">
                             <div class="qty-label">
 
                                 <div class="input-number" id="input-number">
-                                    <input type="number" name="number" id="number" {% if order.amassed %} disabled {% endif %}>
-                                    <input type="hidden" name="order-id" value="{{ order.id }}" >
+                                    <input type="number" name="number" id="number" {% if potluck.amassed %} disabled {% endif %}>
+                                    <input type="hidden" name="potluck-id" value="{{ potluck.id }}" >
                                     <span class="qty-up">+</span>
                                     <span class="qty-down">-</span>
 
@@ -137,16 +137,16 @@
                     </form>
                     {% else %}
 
-                    {% if not order.amassed %}
-                    <p>Можно добавить к заказу: {{  available }}</p>
-                    <form action="{% url 'potlucks:update_customer_order' customer_order.pk %}" method="post" id="change-form">
+                    {% if not potluck.amassed %}
+                    <p>Можно добавить в долю: {{  available }}</p>
+                    <form action="{% url 'potlucks:update_part' part.pk %}" method="post" id="change-form">
                         {% csrf_token %}
                         <div class="add-to-cart">
                             <div class="qty-label">
 
                                 <div class="input-number" id="input-number">
-                                    <input type="number" name="number" id="number" value="{{ customer_order.goods_number }}">
-                                    <input type="hidden" name="order-id" value="{{ order.id }}" >
+                                    <input type="number" name="number" id="number" value="{{ part.goods_number }}">
+                                    <input type="hidden" name="potluck-id" value="{{ potluck.id }}" >
                                     <span class="qty-up">+</span>
                                     <span class="qty-down">-</span>
 
@@ -159,13 +159,13 @@
                     </form>
                     {% else %}
                     <h2 style="color:red">Заказ заполнен</h2>
-                    <h2 style="color:red">Ваша доля в заказе: {% part_in_order user.profile order.id %} из {{ order.size }} </h2>
+                    <h2 style="color:red">Ваша доля в заказе: {% part_in_potluck user.profile potluck.id %} из {{ potluck.size }} </h2>
 
                     {% endif %}
                     <div>
                         <div class="product-rating">
                             {% for star in stars reversed %}
-                            {% if star.value <= order.product.avg_rating %}
+                            {% if star.value <= potluck.product.avg_rating %}
                             <i class="fa fa-star empty"></i>
                             {% else %}
                             <i class="fa fa-star-o empty"></i>
@@ -212,7 +212,7 @@
                         <div id="tab1" class="tab-pane fade in active">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p>{{ order.product.description }}</p>
+                                    <p>{{ potluck.product.description }}</p>
                                 </div>
                             </div>
                         </div>
@@ -221,7 +221,7 @@
                         <!-- tab2  -->
                         <div class="row" id="tab2">
                             <div class="col-md-12">
-                                {% for k, v in order.product.parameters.items %}
+                                {% for k, v in potluck.product.parameters.items %}
                                 <p>{{ k }} : {{ v }}</p>
                                 {% endfor %}
                             </div>
@@ -507,7 +507,7 @@
               $.ajax({
                   data: $(this).serialize(), // получаяем данные формы
 
-                  url: "{% url 'ajax:validate_goods_number' order.id %}",
+                  url: "{% url 'ajax:validate_goods_number' potluck.id %}",
                   // если успешно, то
                   success: function (response) {
                       if (response.is_integer == false || $('#number').val() == '0') {

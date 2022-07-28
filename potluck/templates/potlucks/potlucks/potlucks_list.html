@@ -6,7 +6,7 @@
 
 <li><a href="{% url 'goods:home_page' %}">Home</a></li>
 <li><a href="{% url 'goods:products' %}">Products</a></li>
-<li  class="active"><a href="{% url 'potlucks:orders' %}">Orders</a></li>
+<li  class="active"><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
 <li><a href="{% url 'goods:categories' %}">Categories</a></li>
 
 {% endblock navigation %}
@@ -15,8 +15,8 @@
   {% url 'goods:home_page' as home_page %}
   {% breadcrumb_home home_page 'Home' %}
 
-  {% url 'potlucks:orders' as orders %}
-  {% breadcrumb_active orders 'Orders' 2 %}
+  {% url 'potlucks:potlucks' as potlucks %}
+  {% breadcrumb_active potlucks 'Складчины' 2 %}
 
 
 {% endblock breadcrumbs %}
@@ -29,7 +29,7 @@
         <!-- row -->
         <div class="row">
             <!-- ASIDE -->
-            {% include 'potlucks/orders/orders_filter.html' %}
+            {% include 'potlucks/potlucks/potlucks_filter.html' %}
 
             <!-- STORE -->
             <div id="store" class="col-md-9">
@@ -62,8 +62,8 @@
                 <!-- store products -->
                 <div class="row">
                     <!-- product -->
-                    {% for order in order_list %}
-                    {% include 'include/order_card.html' %}
+                    {% for potluck in potluck_list %}
+                    {% include 'include/potluck_card.html' %}
                     {% endfor %}
                 </div>
                     <!-- /product -->
