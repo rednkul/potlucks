@@ -1,4 +1,5 @@
 from users.admin import admin
+from goods.utils import export_to_csv
 
 from .models import Potluck, Part, PartOrder
 
@@ -41,6 +42,7 @@ class PartOrderAdmin(admin.ModelAdmin):
     list_filter = ('part__potluck__vendor', 'part__potluck__product__name')
     search_fields = ('part__customer__user__email', 'part__potluck__product__name',
                      'part__potluck__vendor__name',)
+    actions = [export_to_csv]
 
     @staticmethod
     def potluck_size(obj):

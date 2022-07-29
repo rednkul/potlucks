@@ -1,6 +1,6 @@
 from users.admin import admin
 
-from .services import export_to_csv
+from goods.utils import export_to_csv
 from .models import OrderToRetail, OrderItem
 
 
