@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Добавить товар "{{ product.name }}" {% endblock title %}
+{% block title %} Редактировать товар "{{ product.name }}" {% endblock title %}
 {% load breadcrumbs static bootstrap4  %}
 
 {% block navigation %}
@@ -17,7 +17,7 @@
 {% url 'goods:products' as product_list %}
 {% breadcrumb_item product_list 'Products' 2 %}
 
-{% breadcrumb_active 'goods:new_product' 'New product' 3 %}
+{% breadcrumb_active 'goods:edit_product' 'Изменение товара' 3 %}
 
 {% endblock breadcrumbs %}
 
@@ -27,7 +27,7 @@
   <div class="container">
     <!-- row -->
 
-    <form action="{% url 'goods:new_product' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'goods:edit_product' product.url %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="row">
         <div class="col-lg-4">

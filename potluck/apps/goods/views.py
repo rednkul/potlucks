@@ -5,6 +5,8 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.http import JsonResponse
 
 from potlucks.models import Potluck, Part
+
+
 from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
 
 from cart.forms import CartAddProductForm
@@ -188,7 +190,7 @@ class FilterProductsView(ProductFilterFields, ListView):
         queryset = Product.objects.filter(category__in=category_filter,
                                           vendors__in=vendors_filter,
                                           manufacturer__in=manufacturers_filter,
-                                          )
+                                          ).distinct()
 
         return queryset
 
@@ -340,3 +342,57 @@ class ProductCreateView(CreateView):
     #form_class = AddProductForm
     fields = [ 'name', 'category', 'vendors', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
+
+class ProductEditView(UpdateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Product
+    slug_field = 'url'
+    template_name = 'goods/products_view/edit_product.html'
+    fields = [ 'name', 'category', 'vendors', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    success_url = reverse_lazy('goods:products')
+
+class CategoryCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Category
+    template_name = 'goods/categories/new_category.html'
+    #form_class = AddProductForm
+    fields = [ 'name', 'description', 'image', 'url', 'parent']
+    success_url = reverse_lazy('goods:categories')
+
+class ManufacturerCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Manufacturer
+    template_name = 'goods/manufacturers/new_manufacturer.html'
+    fields = [ 'name', 'description', 'image', 'url']
+    success_url = reverse_lazy('goods:products')
+
+class ManufacturerDetailView(DetailView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Manufacturer
+    slug_field = 'url'
+    template_name = 'goods/manufacturers/manufacturer_detail.html'
+
+class ManufacturerEditView(UpdateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Manufacturer
+    slug_field = 'url'
+    template_name = 'goods/manufacturers/edit_manufacturer.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse_lazy('goods:manufacturer_detail', self.object.id)
+
+class VendorCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    template_name = 'goods/vendors/new_vendor.html'
+    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    success_url = reverse_lazy('goods:products')
+
+class VendorDetailView(DetailView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    slug_field = 'url'
+    template_name = 'goods/vendors/vendor_detail.html'
+
+

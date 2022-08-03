@@ -2,8 +2,7 @@ from django.http import JsonResponse
 
 from potlucks.models import Potluck, Part
 
-from goods.models import Wishlist
-
+from goods.models import Wishlist, Product
 
 from users.models import CustomUser
 
@@ -35,13 +34,11 @@ def validate_goods_number(request, pk):
     return JsonResponse(response)
 
 
-
 def cancel_part(request, pk):
     part = Part.objects.get(id=pk)
     part.delete()
 
     response = {'is_deleted': True if not Part.objects.filter(id=pk).exists() else False}
-
 
     return JsonResponse(response)
 
@@ -70,8 +67,6 @@ def validate_email_to_reset_password(request):
 
 
 def add_product_to_wishlist(request, pk):
-
-
     wishlist = Wishlist.objects.get(customer=request.user.profile)
 
     wishlist.products.add(pk)
@@ -84,9 +79,31 @@ def add_product_to_wishlist(request, pk):
     return JsonResponse(response, status=200)
 
 
+def product_make_available(request, pk):
+    product = Product.objects.get(pk=pk)
+
+    product.available = True
+
+    product.save()
+
+    response = {"product": pk, "success": True}
+
+    return JsonResponse(response, status=200)
+
+
+def product_make_unavailable(request, pk):
+    product = Product.objects.get(pk=pk)
+
+    product.available = False
+
+    product.save()
+
+    response = {"product": pk, "success": True}
+
+    return JsonResponse(response, status=200)
+
+
 def delete_product_from_wishlist(request, pk):
-
-
     wishlist = Wishlist.objects.get(customer=request.user.profile)
 
     wishlist.products.remove(pk)

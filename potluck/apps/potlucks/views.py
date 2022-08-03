@@ -6,7 +6,7 @@ from .models import Potluck, Part, PartOrder
 
 from goods.views import ProductFilterFields, Ratings
 from goods.models import Category, Rating
-from .forms import PartOrderCreateForm
+from .forms import PartOrderCreateForm, PotluckCreateForm
 
 
 class PotluckListView(ProductFilterFields, Ratings, ListView):
@@ -143,3 +143,21 @@ class PartUpdateView(UpdateView):
     template_name = 'potlucks/potlucks/part_update.html'
     context_object_name = 'part'
     fields = ['goods_number', ]
+
+class PotluckCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Potluck
+    template_name = 'potlucks/potlucks/new_potluck.html'
+    form_class = PotluckCreateForm
+    success_url = reverse_lazy('potlucks:potlucks')
+
+class PotluckEditView(UpdateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Potluck
+    #slug_field = 'url'
+    template_name = 'potlucks/potlucks/edit_potluck.html'
+    fields = [ 'creator', 'vendor', 'unit_price']
+    success_url = reverse_lazy('potlucks:potlucks')
+
+
+

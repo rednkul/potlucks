@@ -20,6 +20,17 @@
         {% endif %}
         {% endfor %}
       </div>
+      {% if user.is_staff %}
+      <div class="product-btns">
+        <button>
+          <a href="{% url 'potlucks:edit_potluck' potluck.id %}">
+            <i class="fa fa-edit "></i>
+          </a>
+          <span class="tooltipp">Редактировать</span>
+        </button>
+      </div>
+      {% endif %}
+
     </div>
     <div class="add-to-cart">
       <button class="add-to-cart-btn"><a href="{% url 'potlucks:potluck_detail' potluck.id %}"><i class="fa fa-shopping-cart"></i>   участвовать</a></button>

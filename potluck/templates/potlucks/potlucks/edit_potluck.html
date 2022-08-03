@@ -1,0 +1,47 @@
+{% extends 'potlucks/base.html' %}
+{% block title %} Редактировать складчину "{{ potluck }}" {% endblock title %}
+{% load breadcrumbs static bootstrap4  %}
+
+{% block navigation %}
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
+
+{% url 'potlucks:potlucks' as potlucks %}
+{% breadcrumb_item potlucks 'Складчины' 2 %}
+
+{% breadcrumb_active 'potlucks:edit_potluck' 'Редактировать складчину' 3 %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+
+    <form action="{% url 'potlucks:edit_potluck' potluck.id %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-lg-4 col-lg-offset-4 ">
+          {% bootstrap_field form.vendor %}
+          {% bootstrap_field form.unit_price %}
+        </div>
+
+       <div class="row">
+         <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>
+       </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+</div>
+{% endblock content %}

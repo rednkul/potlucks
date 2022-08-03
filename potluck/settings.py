@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',
+    'spurl',
     'grappelli',
     'djcelery_email',
 

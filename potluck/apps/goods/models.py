@@ -3,6 +3,7 @@ from django.db.models import Sum, Max, Min, Avg, JSONField
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.text import slugify
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -24,6 +25,8 @@ class Category(MPTTModel):
 
     def __str__(self):
         return self.name
+
+
 
     class Meta:
         verbose_name = "Категория"
@@ -48,6 +51,11 @@ class Vendor(models.Model):
         verbose_name = "Поставщик"
         verbose_name_plural = "Поставщики"
 
+
+    def save(self):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save()
 
 class Manufacturer(models.Model):
     """Producer of a good"""

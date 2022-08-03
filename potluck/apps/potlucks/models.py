@@ -29,7 +29,6 @@ class Potluck(models.Model):
     price = models.DecimalField('Стоимость заказа', default=0, help_text='Сумма в рублях', max_digits=10, decimal_places=2)
     date = models.DateTimeField('Время создания', auto_now_add=True)
     date_amass = models.DateTimeField("Время заполнения", null=True, blank=True)
-    url = models.SlugField(max_length=160, unique=True)
     number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве", default=0)
     amassed = models.BooleanField("Все позиции заказа забронированы", default=False)
     paid = models.BooleanField("Заказ полностью оплачен", default=False)

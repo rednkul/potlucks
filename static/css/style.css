@@ -2456,3 +2456,55 @@ a.move-top span {
     color: #fff;
 }
 
+/*-- dropdown --*/
+.dropbtn {
+    background-color: inherit;
+    color: #2B2D42;
+    padding: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content>a:after {
+    content: "";
+    display: block;
+    width: 0%;
+    height: 2px;
+    background-color: #D10024;
+    -webkit-transition: 0.2s all;
+    transition: 0.2s all;
+}
+
+.dropdob:focus {
+    background-color: transparent;
+    color: #D10024;
+
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 20;
+    background-color: #fff;
+}
+
+.dropdown-content a {
+
+    padding: 12px 0px 12px 5px;
+    text-decoration: none;
+    display: block;
+}
+
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

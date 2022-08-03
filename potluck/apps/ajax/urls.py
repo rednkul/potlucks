@@ -10,4 +10,6 @@ urlpatterns = [
          name='validate_email_to_reset_password'),
     path('add_product_to_wishlist/<int:pk>', views.add_product_to_wishlist, name='add_product_to_wishlist'),
     path('delete_product_from_wishlist/<int:pk>', views.delete_product_from_wishlist, name='delete_product_from_wishlist'),
+    path('product_make_available/<int:pk>', views.product_make_available, name='product_make_available'),
+    path('product_make_unavailable/<int:pk>', views.product_make_unavailable, name='product_make_unavailable'),
 ]

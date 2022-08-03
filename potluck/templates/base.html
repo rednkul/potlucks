@@ -52,9 +52,23 @@
                 {% block navigation %}
                 {% endblock navigation %}
                 {% if user.is_staff %}
-                <li><a href="{% url 'goods:new_product' %}">Add product</a></li>
+
+                <li>
+
+                    <div class="dropdown">
+                        <button class="dropbtn"><span class="dropdob">Добавить</span></button>
+                        <div class="dropdown-content">
+                            <a href="{% url 'goods:new_product' %}">Добавить товар</a></option>
+                            <a href="{% url 'goods:new_category' %}">Добавить категорию</a>
+                            <a href="{% url 'potlucks:new_potluck' %}">Добавить складчину</a>
+                            <a href="{% url 'goods:new_vendor' %}">Добавить поставщика</a>
+                            <a href="{% url 'goods:new_manufacturer' %}">Добавить производителя</a>
+                        </div>
+                    </div>
+                </li>
                 {% endif %}
             </ul>
+
 
 
         </div>
@@ -109,6 +123,7 @@
 <script src="{% static 'js/script.js' %}"></script>
 {% block javascript %}
 <script src="{% static 'js/wishlist.js' %}"></script>
+
 {% endblock javascript %}
 
 <script src="{% static 'js/popup.js' %}"></script>

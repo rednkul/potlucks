@@ -3,7 +3,7 @@
   <a href="{% url 'goods:product_detail' product.url %}">
     <div class="product-img">
       {% if product.image %}
-      <img src="{{ product.image.url }}" href="{% url 'goods:product_detail' product.url %}" alt="" >
+      <img class="product-list-img" src="{{ product.image.url }}" href="{% url 'goods:product_detail' product.url %}" alt="" >
       {% endif %}
       <div class="product-label">
         {# <span class="sale">От {{ product.min_price }} р/шт</span> #}
@@ -26,17 +26,40 @@
       {% endfor %}
     </div>
     <div class="product-btns">
+      {% if user.is_staff %}
+      <button>
+        <a href="{% url 'goods:edit_product' product.url %}">
+          <i class="fa fa-edit "></i>
+        </a>
+        <span class="tooltipp">Редактировать</span>
+      </button>
 
       <button>
         <i
-                data-del="{% url 'ajax:delete_product_from_wishlist' product.id %}"
-                data-add="{% url 'ajax:add_product_to_wishlist' product.id %}"
+
+                {% if product.available %}
+                data-url="{% url 'ajax:product_make_unavailable' product.id %}"
+                class="fa fa-times availability"
+                {% else %}
+                data-url="{% url 'ajax:product_make_available' product.id %}"
+                class="fa fa-check availability"
+                {% endif %}
+                >
+
+        </i><span class="tooltipp">{% if product.available %} Убрать из каталога {% else %} Разместить в каталоге {% endif %}</span></button>
+      {% endif %}
+      <button>
+        <i
+                d
+
                 {% if product in user.profile.wishlist.products.all %}
+                data-url="{% url 'ajax:delete_product_from_wishlist' product.id %}"
                 class="fa fa-heart add-to-wishlist"
                 {% else %}
+                data-url="{% url 'ajax:add_product_to_wishlist' product.id %}"
                 class="fa fa-heart-o add-to-wishlist"
                 {% endif %}
-                id="{{product.id}}">
+                >
 
         </i><span class="tooltipp">Отложить</span></button>
 
@@ -46,7 +69,8 @@
   </div>
   <div class="add-to-cart">
 
-    <a href="{% url 'goods:product_detail' product.url %}#tab2"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Заказы</button>
+    <a href="{% url 'goods:product_detail' product.url %}"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Подробнее</button>
+
 
   </div>
 
