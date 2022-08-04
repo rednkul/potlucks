@@ -51,7 +51,6 @@ class Vendor(models.Model):
         verbose_name = "Поставщик"
         verbose_name_plural = "Поставщики"
 
-
     def save(self):
         if not self.slug:
             self.slug = slugify(self.name)

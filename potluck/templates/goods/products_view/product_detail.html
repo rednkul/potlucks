@@ -196,9 +196,9 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for potluck in product.product_potlucks.all %}
+                                    {% for potluck in product.potlucks.all %}
                                     <tr>
-                                        <td>{{ potluck.vendor }}</td>
+                                        <td><a href="{% url 'goods:vendor_detail' potluck.vendor.url %}">{{ potluck.vendor }}</a></td>
                                         <td>{{ potluck.creator }}</td>
                                         <td>{{ potluck.unit_price }}</td>
                                         <td>{{ potluck.get_potluck_fullness }} / {{ potluck.size }}</td>
@@ -239,7 +239,7 @@
 {% block javascript %}
 <script type="text/javascript">
 $(document).ready(function(){
-    $("#product-tab").on("click","a", function (event) {
+    $(".tab-nav").on("click","a", function (event) {
         event.preventDefault();
         var id  = $(this).attr('href'),
             top = $(id).offset().top;

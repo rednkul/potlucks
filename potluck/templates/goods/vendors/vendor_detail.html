@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} {{ manufacturer.name }} {% endblock title %}
+{% block title %} {{ vendor.name }} {% endblock title %}
 {% load breadcrumbs spurl %}
 
 {% block breadcrumbs %}
@@ -7,8 +7,8 @@
 {% url 'goods:home_page' as home_page %}
 {% breadcrumb_home home_page 'Home' %}
 
-{% url 'goods:manufacturer_detail' manufacturer.id as manufacturer_detail %}
-{% breadcrumb_active manufacturer_detail  manufacturer.name 2 %}
+{% url 'goods:vendor_detail' vendor.url as vendor_detail %}
+{% breadcrumb_active vendor_detail  vendor.name 2 %}
 
 
 {% endblock breadcrumbs %}
@@ -28,18 +28,21 @@
             <!-- product -->
 
             <div class="col-md-3 col-xs-4 col-lg-4 col-lg-offset-3">
-                <p>Наименование: {{ manufacturer.name }}</p>
-                <p>Описание: {{ manufacturer.description }}</p>
-                {% url 'goods:products_filter' as base_url %}
-                <p><a href="{% spurl base=base_url add_query='manufacturer={{manufacturer.id}}' %}">Товары производителя</a></p>
+                <p>Наименование: {{ vendor.name }}</p>
+                <p>Описание: {{ vendor.description }}</p>
+                <p>Телефон: {{ vendor.contact_phone }}</p>
+                <p>Сайт: {{ vendor.contact_site }}</p>
+                <p>Соц-сети: {{ vendor.contact_social }}</p>
+                {% url 'potlucks:potluck_filter' as base_url %}
+                <p><a href="{% spurl base=base_url add_query='vendor={{vendor.id}}' %}">Складчины поставщика</a></p>
                 {% if user.is_staff %}
-                <p><a href="{% url 'goods:edit_manufacturer' manufacturer.id %}">Редактировать</a></p>
+                <p><a href="{% url 'goods:edit_vendor' vendor.id %}">Редактировать</a></p>
                 {% endif %}
             </div>
             {% if manufacturer.image %}
 
             <div class="col-md-3 col-xs-4 col-lg-4">
-                <p>Логотип:<img src="{{ manufacturer.image.url }}" class="product-list-img" alt=""></p>
+                <p>Логотип:<img src="{{ vendor.image.url }}" class="product-list-img" alt=""></p>
             </div>
             {% endif %}
 

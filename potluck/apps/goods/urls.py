@@ -32,6 +32,7 @@ urlpatterns = [
 
     # Поставщики
     path('vendors/new_vendor/', views.VendorCreateView.as_view(), name='new_vendor'),
+    path('vendors/edit_vendor/<int:pk>/', views.VendorEditView.as_view(), name='edit_vendor'),
     path('vendors/<slug:slug>/', views.VendorDetailView.as_view(), name='vendor_detail'),
 
     # Производители

@@ -389,6 +389,17 @@ class VendorCreateView(CreateView):
     fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
     success_url = reverse_lazy('goods:products')
 
+class VendorEditView(UpdateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    template_name = 'goods/vendors/edit_vendor.html'
+    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    success_url = reverse_lazy('goods:products')
+
+    def get_success_url(self):
+        return reverse_lazy('goods:vendor_detail', self.object.get_absolute_url)
+
+
 class VendorDetailView(DetailView):
     #group_required = ['Уровень 0', 'Уровень 1']
     model = Vendor
