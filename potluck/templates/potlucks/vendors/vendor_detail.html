@@ -7,7 +7,7 @@
 {% url 'goods:home_page' as home_page %}
 {% breadcrumb_home home_page 'Home' %}
 
-{% url 'goods:vendor_detail' vendor.url as vendor_detail %}
+{% url 'potlucks:vendor_detail' vendor.url as vendor_detail %}
 {% breadcrumb_active vendor_detail  vendor.name 2 %}
 
 
@@ -36,7 +36,7 @@
                 {% url 'potlucks:potluck_filter' as base_url %}
                 <p><a href="{% spurl base=base_url add_query='vendor={{vendor.id}}' %}">Складчины поставщика</a></p>
                 {% if user.is_staff %}
-                <p><a href="{% url 'goods:edit_vendor' vendor.id %}">Редактировать</a></p>
+                <p><a href="{% url 'potlucks:edit_vendor' vendor.id %}">Редактировать</a></p>
                 {% endif %}
             </div>
             {% if manufacturer.image %}

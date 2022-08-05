@@ -1,13 +1,18 @@
 from users.admin import admin
 from goods.utils import export_to_csv
 
-from .models import Potluck, Part, PartOrder
+from .models import Potluck, Part, PartOrder, Vendor
 
 # Register your models here.
 
 admin.site.site_title = "Администрируй тут"
 admin.site.site_header = "Администрируй тут"
 
+
+class VendorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'image')
+    list_display_links = ('id', 'name')
+    search_fields = ("name",)
 
 class PotluckAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'size', 'vendor', 'creator', 'date', 'date_amass', 'number_finished')
@@ -52,6 +57,7 @@ class PartOrderAdmin(admin.ModelAdmin):
     def total_cost(obj):
         return obj.part.total_cost
 
+admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Potluck, PotluckAdmin)
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartOrder, PartOrderAdmin)

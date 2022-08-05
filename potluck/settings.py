@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'grappelli',
     'djcelery_email',
 
+
     # Custom apps
     'potlucks.apps.PotlucksConfig',
     'users.apps.UsersConfig',

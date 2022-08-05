@@ -17,4 +17,9 @@ urlpatterns = [
     path('part_order_created/<int:part_order_id>/', views.part_order_created, name='part_order_created'),
     path('new_potluck/', views.PotluckCreateView.as_view(), name='new_potluck'),
     path('edit_potluck/<int:pk>', views.PotluckEditView.as_view(), name='edit_potluck'),
+
+    # Поставщики
+    path('vendors/new_vendor/', views.VendorCreateView.as_view(), name='new_vendor'),
+    path('vendors/edit_vendor/<int:pk>/', views.VendorEditView.as_view(), name='edit_vendor'),
+    path('vendors/<slug:slug>/', views.VendorDetailView.as_view(), name='vendor_detail'),
 ]

@@ -4,8 +4,8 @@ from users.admin import admin
 
 from django_admin_json_editor import JSONEditorWidget
 
-from .models import Category, Product, ProductImages, Vendor, Manufacturer, Parameters, Wishlist, Rating, RatingStar, \
-    Review
+from .models import Category, Product, ProductImages, Manufacturer, Parameters, Wishlist, Rating, RatingStar, Review
+
 
 from .utils import parameters_to_data
 
@@ -36,10 +36,7 @@ class CategoryAdmin(MyModelAdmin):
 
 
 
-class VendorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'image')
-    list_display_links = ('id', 'name')
-    search_fields = ("name",)
+
 
 
 class ManufacturerAdmin(admin.ModelAdmin):
@@ -71,12 +68,11 @@ class ProductAdmin(MyModelAdmin):
     form = ProductAdminForm
     list_display = (
                     'id', 'name', 'get_image', 'price', 'stock',
-                    'available', 'manufacturer', 'get_vendors', 'get_categories',
+                    'available', 'manufacturer', 'get_categories',
     )
     list_display_links = ('id', 'name')
-    list_filter = ('vendors', 'manufacturer', 'category', 'available')
-    search_fields = ('name', 'vendors__name', 'manufacturer__name', 'category__name')
-    filter_horizontal = ("vendors",)
+    list_filter = ('manufacturer', 'category', 'available')
+    search_fields = ('name', 'manufacturer__name', 'category__name')
     save_on_top = True
     readonly_fields = ('created_at', 'updated_at', 'get_image')
     inlines = [ProductImagesInline]
@@ -91,7 +87,7 @@ class ProductAdmin(MyModelAdmin):
             "fields": (("url", "category",),)
         }),
         (None, {
-            "fields": (("vendors", "manufacturer",),), "classes": ("wide",)
+            "fields": (( "manufacturer",),), "classes": ("wide",)
         }),
         (None, {
             "fields": (("description", "image", "get_image"),)
@@ -108,11 +104,10 @@ class ProductAdmin(MyModelAdmin):
     def get_categories(self, obj):
         return " > ".join([i.name for i in obj.category.get_ancestors(include_self=True)]) if obj.category else ''
 
-    def get_vendors(self, obj):
-        return "\n".join([i.name for i in obj.vendors.all()])
+
 
     get_categories.short_description = ("Категории")
-    get_categories.get_vendors = ("Поставщики")
+
 
 class RatingInline(admin.TabularInline):
     model = Rating
@@ -150,7 +145,6 @@ admin.site.register(ProductImages)
 admin.site.register(Parameters)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Manufacturer, ManufacturerAdmin)
-admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Rating, RatingAdmin)
 admin.site.register(RatingStar)

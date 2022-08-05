@@ -15,7 +15,7 @@ urlpatterns = [
     path('categories/', views.CategoryListView.as_view(), name='categories'),
     path('categories/new_category/', views.CategoryCreateView.as_view(), name='new_category'),
     path('categories/<slug:slug>/', views.CategoryDetailView.as_view(), name='category_detail'),
-    path('category_filter/<slug:slug>/', views.CategoryProductsFilterView.as_view(), name='category_filter'),
+    path('category_filter/<slug:slug>/', views.CategoryDetailFilterView.as_view(), name='category_filter'),
 
     # Товары
     path('products/', views.ProductsView.as_view(), name='products'),
@@ -29,11 +29,6 @@ urlpatterns = [
     path('wishlist/<int:pk>/', views.WishlistView.as_view(), name='wishlist'),
     # Отзывы
     path('review_and_rate/<int:pk>/', services.review_and_rate, name='review_and_rate'),
-
-    # Поставщики
-    path('vendors/new_vendor/', views.VendorCreateView.as_view(), name='new_vendor'),
-    path('vendors/edit_vendor/<int:pk>/', views.VendorEditView.as_view(), name='edit_vendor'),
-    path('vendors/<slug:slug>/', views.VendorDetailView.as_view(), name='vendor_detail'),
 
     # Производители
     path('manufacturers/new_manufacturer/', views.ManufacturerCreateView.as_view(), name='new_manufacturer'),

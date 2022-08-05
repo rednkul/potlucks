@@ -198,7 +198,7 @@
                                     <tbody>
                                     {% for potluck in product.potlucks.all %}
                                     <tr>
-                                        <td><a href="{% url 'goods:vendor_detail' potluck.vendor.url %}">{{ potluck.vendor }}</a></td>
+                                        <td><a href="{% url 'potlucks:vendor_detail' potluck.vendor.url %}">{{ potluck.vendor }}</a></td>
                                         <td>{{ potluck.creator }}</td>
                                         <td>{{ potluck.unit_price }}</td>
                                         <td>{{ potluck.get_potluck_fullness }} / {{ potluck.size }}</td>

@@ -33,28 +33,7 @@ class Category(MPTTModel):
         verbose_name_plural = "Категории"
 
 
-class Vendor(models.Model):
-    """Wholesale supplier of product"""
-    name = models.CharField('Наименование', max_length=50)
-    description = models.TextField('Описание')
-    image = models.ImageField("Логотип", upload_to="vendors/", blank=True)
-    finished_potlucks = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
-    contact_phone = models.CharField('Номер телефона', max_length=12, blank=True)
-    contact_site = models.CharField('Сайт', max_length=50, blank=True)
-    contact_social = models.CharField('Социальные сети', max_length=200, blank=True)
-    url = models.SlugField(max_length=160)
 
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Поставщик"
-        verbose_name_plural = "Поставщики"
-
-    def save(self):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save()
 
 class Manufacturer(models.Model):
     """Producer of a good"""
@@ -77,7 +56,6 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name='Категория',
                                  null=True, on_delete=models.SET_NULL,
                                  related_name='category_products')
-    vendors = models.ManyToManyField(Vendor, verbose_name='Поставщики', related_name='vendor_products')
     manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.SET_NULL,
                                      blank=True, null=True, related_name='manufacturer_products')
 

@@ -2,14 +2,20 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
-from .models import Potluck, Part, PartOrder
+from .models import Potluck, Part, PartOrder, Vendor
 
 from goods.views import ProductFilterFields, Ratings
 from goods.models import Category, Rating
 from .forms import PartOrderCreateForm, PotluckCreateForm
 
 
-class PotluckListView(ProductFilterFields, Ratings, ListView):
+class PotluckFilterFields:
+    def get_vendors(self):
+        """"Поставщики"""
+        print('ekekekekkeke')
+        return Vendor.objects.all()
+
+class PotluckListView(ProductFilterFields, PotluckFilterFields, Ratings, ListView):
     queryset = Potluck.objects.filter(amassed=False)
     template_name = 'potlucks/potlucks/potlucks_list.html'
     paginate_by = 15
@@ -21,7 +27,7 @@ class PotluckListView(ProductFilterFields, Ratings, ListView):
         return context
 
 
-class PotluckFilterView(ProductFilterFields, ListView):
+class PotluckFilterView(ProductFilterFields, PotluckFilterFields, ListView):
     template_name = 'potlucks/potlucks/potlucks_list.html'
     paginate_by = 15
     paginate_orphans = 3
@@ -48,7 +54,7 @@ class PotluckFilterView(ProductFilterFields, ListView):
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
 
         queryset = Potluck.objects.filter(product__category__in=category_filter,
-                                          product__vendors__in=vendors_filter,
+                                          vendor__in=vendors_filter,
                                           product__manufacturer__in=manufacturers_filter,
                                           )
 
@@ -159,5 +165,28 @@ class PotluckEditView(UpdateView):
     fields = [ 'creator', 'vendor', 'unit_price']
     success_url = reverse_lazy('potlucks:potlucks')
 
+class VendorCreateView(CreateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    template_name = 'potlucks/vendors/new_vendor.html'
+    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    success_url = reverse_lazy('potlucks:potlucks')
+
+class VendorEditView(UpdateView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    template_name = 'potlucks/vendors/edit_vendor.html'
+    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    success_url = reverse_lazy('potlucks:potlucks')
+
+    def get_success_url(self):
+        return reverse_lazy('potlucks:vendor_detail', self.object.get_absolute_url)
+
+
+class VendorDetailView(DetailView):
+    #group_required = ['Уровень 0', 'Уровень 1']
+    model = Vendor
+    slug_field = 'url'
+    template_name = 'potlucks/vendors/vendor_detail.html'
 
 

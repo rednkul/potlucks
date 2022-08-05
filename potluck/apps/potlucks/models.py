@@ -14,8 +14,33 @@ from django.dispatch import receiver
 
 from users.models import Profile
 from send_notification.views import amass_potluck_send_emails
-from goods.models import Category, Product, Vendor, Manufacturer
+from goods.models import Category, Product, Manufacturer
 from goods.mixins import OrderMixin
+
+
+
+class Vendor(models.Model):
+    """Wholesale supplier of product"""
+    name = models.CharField('Наименование', max_length=50)
+    description = models.TextField('Описание')
+    image = models.ImageField("Логотип", upload_to="vendors/", blank=True)
+    finished_potlucks = models.PositiveSmallIntegerField("Завершенные заказы", default=0)
+    contact_phone = models.CharField('Номер телефона', max_length=12, blank=True)
+    contact_site = models.CharField('Сайт', max_length=50, blank=True)
+    contact_social = models.CharField('Социальные сети', max_length=200, blank=True)
+    url = models.SlugField(max_length=160)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Поставщик"
+        verbose_name_plural = "Поставщики"
+
+    # def save(self):
+    #     if not self.slug:
+    #         self.slug = slugify(self.name)
+    #     super().save()
 
 class Potluck(models.Model):
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='potlucks')

@@ -14,11 +14,11 @@
 {% url 'goods:home_page' as home_page %}
 {% breadcrumb_home home_page 'Home' %}
 
-{% url 'goods:vendor_detail' vendor.url as vendor_detail %}
+{% url 'potlucks:vendor_detail' vendor.url as vendor_detail %}
 {% breadcrumb_item vendor_detail  vendor.name 2 %}
 
 
-{% url 'goods:edit_vendor' vendor.id as edit_vendor %}
+{% url 'potlucks:edit_vendor' vendor.id as edit_vendor %}
 {% breadcrumb_active edit_vendor  'Редактирование' 3 %}
 
 
@@ -30,7 +30,7 @@
   <div class="container">
     <!-- row -->
 
-    <form action="{% url 'goods:edit_vendor' vendor.id %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'potlucks:edit_vendor' vendor.id %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="row">
         <div class="col-lg-4">

@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from potlucks.models import Potluck, Part
 
 
-from .models import Product, Category, Vendor, Manufacturer, RatingStar, Rating, Wishlist, Review
+from .models import Product, Category, Manufacturer, RatingStar, Rating, Wishlist, Review
+from .utils import get_subcategories_of_categories
 
 from cart.forms import CartAddProductForm
 from retail.models import OrderItem
@@ -43,18 +44,12 @@ class HomePageView(Ratings, ListView):
 
 class CategoryProductFilterFields:
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
-        self.product_list = []
-
-
-
-    def get_vendors(self, product_list):
-
-        vendors = Vendor.objects.filter(vendor_products__in=product_list).distinct()
-
-        return vendors
+    # def get_vendors(self, product_list):
+    #
+    #     vendors = Vendor.objects.filter(vendor_products__in=product_list).distinct()
+    #
+    #     return vendors
 
     def get_manufacturers(self, product_list):
         manufacturers = Manufacturer.objects.filter(manufacturer_products__in=product_list).distinct()
@@ -81,9 +76,6 @@ class ProductFilterFields:
         """Категории"""
         return Category.objects.all()
 
-    def get_vendors(self):
-        """"Поставщики"""
-        return Vendor.objects.all()
 
     def get_manufacturers(self):
         """"Производители"""
@@ -112,7 +104,8 @@ class ProductDetailView(Ratings, DetailView):
 
     @property
     def is_ordered_by_user(self):
-        return OrderItem.objects.filter(order__customer=self.request.user.profile.id, product=self.object.id).exists()
+        if self.request.user.is_authenticated:
+            return OrderItem.objects.filter(order__customer=self.request.user.profile.id, product=self.object.id).exists()
 
 
     def get_context_data(self, **kwargs):
@@ -158,6 +151,93 @@ class CategoryDetailView(CategoryProductFilterFields, DetailView):
 
         return self.render_to_response(context)
 
+class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
+    paginate_by = 15
+    model = Category
+    slug_field = 'url'
+    paginate_orphans = 3
+    template_name = 'goods/categories/category_detail.html'
+
+    def get_context_data(self, **kwargs):
+        get_manufacturers = self.request.GET.getlist("manufacturer")
+        category = self.object
+
+        category_list = category.get_descendants(include_self=True)
+
+        product_list = Product.objects.filter(category__in=category_list)
+
+        # Условием фильтрации задаю отмеченные в форме пункты либо при их отсутствии - списки
+        # производителей, связанных с полученным списком продуктов
+
+        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(product_list)
+
+        # Получаю продукты, принадлежащиии  к полученным категория и отвечающим условию фильтрации
+        product_list = Product.objects.filter(category__in=category_list,
+                                              manufacturer__in=manufacturers_filter)
+        context = super().get_context_data(**kwargs)
+        context['category_list'] = category_list
+        context['product_list'] = product_list
+        context['category'] = category
+        context['manufacturers'] = manufacturers_filter
+
+        context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturers])
+        return context
+
+
+
+# class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
+#     paginate_by = 15
+#     paginate_orphans = 3
+#     template_name = 'goods/categories/category_detail.html'
+#
+#     def get_category(self):
+#         url = self.request.path
+#         first_slash = url.find('/', 1)
+#         second_slash = url.rfind('/', 1)
+#
+#         category_url = url[first_slash + 1:second_slash]
+#
+#         category = Category.objects.get(url=category_url)
+#
+#         return category
+#
+#     def get_queryset(self):
+#         get_manufacturers = self.request.GET.getlist("manufacturer")
+#
+#         # Получаю категорию по ее url
+#         category = self.get_category()
+#
+#         # Получаю список, состоящий из категории и ее подкатегорий
+#         category_list = category.get_descendants(include_self=True)
+#
+#         # Создаю список всех продуктов категории и подкатегорий
+#         self.product_list = Product.objects.filter(category__in=category_list)
+#
+#         # Условием фильтрации задаю отмеченные в форме пункты либо при их отсутствии - списки
+#         #  производителей, связанных с полученным списком продуктов
+#         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(self.product_list)
+#
+#         # Получаю продукты, принадлежащиии  к полученным категория и отвечающим условию фильтрации
+#         product_list = Product.objects.filter(category__in=category_list,
+#                                               manufacturer__in=manufacturers_filter)
+#         return product_list
+#
+#     def get_context_data(self, *args, **kwargs):
+#         get_manufacturer = self.request.GET.getlist("manufacturer")
+#
+#         category = self.get_category()
+#
+#         context = super().get_context_data(*args, **kwargs)
+#         print(context)
+#
+#         manufacturers = self.get_manufacturers(self.product_list)
+#
+#         context['category'] = category
+#         context['manufacturers'] = manufacturers
+
+#         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
+#         return context
+
 
 class FilterProductsView(ProductFilterFields, ListView):
     """Фильтрация продуктов по категории/поставщику/производителю"""
@@ -167,28 +247,19 @@ class FilterProductsView(ProductFilterFields, ListView):
 
     def get_queryset(self):
         get_categories = self.request.GET.getlist("category")
-        get_vendors = self.request.GET.getlist("vendor")
         get_manufacturers = self.request.GET.getlist("manufacturer")
 
 
 
-        categories = Category.objects.filter(id__in=[int(i) for i in get_categories])
-        subcategories = Category.objects.none()
-
-        for category in categories:
-            subcategories = subcategories | category.get_descendants()
-
-        categories = (categories | subcategories).distinct()
+        categories = get_subcategories_of_categories(get_categories)
 
 
 
         print(f'-----------------------{categories}------------------')
         category_filter = categories if categories else self.get_categories()
-        vendors_filter = get_vendors if get_vendors else self.get_vendors()
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
 
         queryset = Product.objects.filter(category__in=category_filter,
-                                          vendors__in=vendors_filter,
                                           manufacturer__in=manufacturers_filter,
                                           ).distinct()
 
@@ -196,16 +267,14 @@ class FilterProductsView(ProductFilterFields, ListView):
 
     def get_context_data(self, *args, **kwargs):
         get_categories = self.request.GET.getlist("category")
-        get_vendors = self.request.GET.getlist("vendor")
         get_manufacturer = self.request.GET.getlist("manufacturer")
 
         context = super().get_context_data(*args, **kwargs)
+
         context['categories'] = [int(i) for i in get_categories]
-        context['vendors'] = [int(i) for i in get_vendors]
         context['manufacturers'] = [int(i) for i in get_manufacturer]
 
         context['category'] = ''.join([f"category={x}&" for x in get_categories])
-        context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
         return context
 
@@ -213,63 +282,7 @@ class FilterProductsView(ProductFilterFields, ListView):
 
 
 
-class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
-    paginate_by = 15
-    paginate_orphans = 3
-    template_name = 'goods/categories/category_detail.html'
 
-    def get_category(self):
-        url = self.request.path
-        first_slash = url.find('/', 1)
-        second_slash = url.rfind('/', 1)
-
-        category_url = url[first_slash + 1:second_slash]
-
-        category = Category.objects.get(url=category_url)
-
-        return category
-
-    def get_queryset(self):
-        get_vendors = self.request.GET.getlist("vendor")
-        get_manufacturers = self.request.GET.getlist("manufacturer")
-
-        # Получаю категорию по ее url
-        category = self.get_category()
-
-        # Получаю список, состоящий из категории и ее подкатегорий
-        category_list = category.get_descendants(include_self=True)
-
-        # Создаю список всех продуктов категории и подкатегорий
-        self.product_list = Product.objects.filter(category__in=category_list)
-
-        # Условием фильтрации задаю отмеченные в форме пункты либо при их отсутствии - списки поставщиков
-        # и производителей, связанных с полученным списком продуктов
-        vendors_filter = get_vendors if get_vendors else self.get_vendors(self.product_list)
-        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(self.product_list)
-
-        # Получаю продукты, принадлежащиии  к полученным категория и отвечающим условию фильтрации
-        product_list = Product.objects.filter(category__in=category_list, vendors__in=vendors_filter,
-                                              manufacturer__in=manufacturers_filter)
-        return product_list
-
-    def get_context_data(self, *args, **kwargs):
-        get_vendors = self.request.GET.getlist("vendor")
-        get_manufacturer = self.request.GET.getlist("manufacturer")
-
-        category = self.get_category()
-
-        context = super().get_context_data(*args, **kwargs)
-
-        vendors = self.get_vendors(self.product_list)
-        manufacturers = self.get_manufacturers(self.product_list)
-
-        context['category'] = category
-        context['vendors'] = vendors
-        context['manufacturers'] = manufacturers
-
-        context['vendor'] = ''.join([f"vendor={x}&" for x in get_vendors])
-        context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
-        return context
 
 
 class Search(ProductFilterFields, ListView):
@@ -340,7 +353,7 @@ class ProductCreateView(CreateView):
     model = Product
     template_name = 'goods/products_view/new_product.html'
     #form_class = AddProductForm
-    fields = [ 'name', 'category', 'vendors', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 
 class ProductEditView(UpdateView):
@@ -348,7 +361,7 @@ class ProductEditView(UpdateView):
     model = Product
     slug_field = 'url'
     template_name = 'goods/products_view/edit_product.html'
-    fields = [ 'name', 'category', 'vendors', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 
 class CategoryCreateView(CreateView):
@@ -382,28 +395,6 @@ class ManufacturerEditView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('goods:manufacturer_detail', self.object.id)
 
-class VendorCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
-    model = Vendor
-    template_name = 'goods/vendors/new_vendor.html'
-    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
-    success_url = reverse_lazy('goods:products')
 
-class VendorEditView(UpdateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
-    model = Vendor
-    template_name = 'goods/vendors/edit_vendor.html'
-    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
-    success_url = reverse_lazy('goods:products')
-
-    def get_success_url(self):
-        return reverse_lazy('goods:vendor_detail', self.object.get_absolute_url)
-
-
-class VendorDetailView(DetailView):
-    #group_required = ['Уровень 0', 'Уровень 1']
-    model = Vendor
-    slug_field = 'url'
-    template_name = 'goods/vendors/vendor_detail.html'
 
 

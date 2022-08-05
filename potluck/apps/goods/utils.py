@@ -1,4 +1,4 @@
-from .models import Parameters
+from .models import Parameters, Category
 
 def get_parameters_names():
     # Формируется список названий объектов модели Parameters
@@ -54,3 +54,13 @@ def export_to_csv(modeladmin, request, queryset):
 
 export_to_csv.short_description = 'Экспорт в CSV'
 
+def get_subcategories_of_categories(categories_ids):
+    categories = Category.objects.filter(id__in=[int(i) for i in categories_ids])
+    subcategories = Category.objects.none()
+
+    for category in categories:
+        subcategories = subcategories | category.get_descendants()
+
+    categories = (categories | subcategories).distinct()
+
+    return categories
