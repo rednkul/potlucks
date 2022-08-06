@@ -5,6 +5,7 @@ from users.models import Profile, CustomUser
 
 from .models import OrderToRetail, OrderItem
 from users.services import across_registration
+from send_notification.views import send_order_notification
 
 
 from cart.cart import Cart
@@ -32,7 +33,9 @@ def order_create(request):
             # по данным заказа создается новый пользователь со случайным паролем
             if order.email not in CustomUser.objects.values_list('email', flat=True):
                 across_registration(order)
+            send_order_notification(order)
             return redirect('retail:order_created', order_id=order.id)
+
     else:
         form = OrderCreateForm
     return render(request, 'retail/orders/order_create.html',
