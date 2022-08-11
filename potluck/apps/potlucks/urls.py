@@ -22,4 +22,6 @@ urlpatterns = [
     path('vendors/new_vendor/', views.VendorCreateView.as_view(), name='new_vendor'),
     path('vendors/edit_vendor/<int:pk>/', views.VendorEditView.as_view(), name='edit_vendor'),
     path('vendors/<slug:slug>/', views.VendorDetailView.as_view(), name='vendor_detail'),
+    path('part_orders/', views.PartOrderListView.as_view(), name='part_orders'),
+    path('part_orders/json_filter', views.JsonPartOrderFilterListView.as_view(), name='json_part_orders_filter'),
 ]

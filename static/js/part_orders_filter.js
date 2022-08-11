@@ -29,6 +29,9 @@ $(document).ready(function () {
                                             '<div class="col-lg-5"' +
                                                 '<p>В заказе:</p>' +
                                                 '<div id="order-items-' + order + '">' +
+                                                '<p>Товар: ' + values.product + '</p>' +
+                                                '<p>Цена за ед.: ' + values.product_price + ' р</p>' +
+                                                '<p>Количество: ' + values.goods_number + ' шт.</p>' +
 
                                                 '<p>Всего за заказ: ' + values.total_cost  + ' р</p>' +
                                                 '</div>' +
@@ -37,8 +40,8 @@ $(document).ready(function () {
                                             '<div class="col-lg-1">' +
                                                 '<label>Подтвержден</label>' +
                                             '<div' +
-                                                ' data-do="' + '/ajax/order_confirm/retail/' + order + '/"' +
-                                                ' data-undo="' + '/ajax/order_disconfirm/retail/' + order + '/"' +
+                                                ' data-do="' + '/ajax/order_confirm/potluck/' + order + '/"' +
+                                                ' data-undo="' + '/ajax/order_disconfirm/potluck/' + order + '/"' +
                                                 ' data-num="' + order + '"' +
                                                 ' class="col-lg-1 switch-btn red"' +
                                                 ' id="confirmed_switch-'+ order + '">' +
@@ -51,8 +54,8 @@ $(document).ready(function () {
 
                                             '<label for="paid_switch-' + order + '">Оплачен</label>' +
                                             '<div' +
-                                                ' data-do="' + '/ajax/order_paid/retail/' + order + '/"' +
-                                                ' data-undo="' + '/ajax/order_unpaid/retail/' + order + '/"' +
+                                                ' data-do="' + '/ajax/order_paid/potluck/' + order + '/"' +
+                                                ' data-undo="' + '/ajax/order_unpaid/potluck/' + order + '/"' +
                                                 ' data-num="' + order + '"' +
                                                 ' class="col-lg-1 switch-btn green"' +
                                                 ' id="paid_switch-'+ order + '">' +
@@ -69,10 +72,7 @@ $(document).ready(function () {
                         $('#paid_switch-'+ order).addClass('switch-on');
                         console.log('#paid_switch-'+ order);
                    }
-                   $.each(values.items, function(item, item_values){
-                        $('#order-items-' + order).prepend( '<p>Товар: ' + item_values.product + ' ' + item_values.quantity  + ' шт ' +
-                                                item_values.price + ' р/шт ' + item_values.item_cost + ' р </p>');
-                   });
+
                 console.log('перед уборкой');
                 if (Object.keys(response.orders).length <= response.paginate_by) {
                     $('#pagination').attr('style', 'display:none');

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 
-from .models import Part, Potluck
+from .models import Part, Potluck, PartOrder
 
 def join_potluck(request, pk):
     potluck = Potluck.objects.get(id=pk)
@@ -24,24 +24,39 @@ def cancel_part(request, pk):
 
     return redirect('users:profile_detail', pk=request.user.profile.pk)
 
-# def review_and_rate(request, pk):
+# def confirm_part_order(request, pk):
+#     print(f'---------------------{pk}')
+#     order = PartOrder.objects.get(id=pk)
+#     order.confirmed = True
+#     order.save()
+#     response = {'order': pk, 'message': 'Заказ подтвержден'}
+#     print(response)
+#     return JsonResponse(response, status=200)
 #
-#     review = request.POST.get(f'review{pk}')
-#     star = request.POST.get(f"star{pk}")
-#     customer_order = CustomerOrder.objects.get(id=pk)
+# def disconfirm_part_order(request, pk):
+#     print(f'---------------------{pk}')
+#     order = PartOrder.objects.get(id=pk)
+#     order.confirmed = False
+#     order.save()
+#     response = {'order': pk, 'message': 'Заказ отменен'}
+#     print(response)
+#     return JsonResponse(response, status=200)
 #
 #
-#     Rating.objects.update_or_create(
+# def paid_part_order(request, pk):
+#     print(f'---------------------{pk}')
+#     order = PartOrder.objects.get(id=pk)
+#     order.paid = True
+#     order.save()
+#     response = {'order': pk, 'message': 'Заказ оплачен'}
+#     print(response)
+#     return JsonResponse(response, status=200)
 #
-#         customer_order=customer_order,
-#         defaults={'star_id': int(star) if star else 5},
-#     )
-#
-#     if review:
-#         Review.objects.update_or_create(
-#
-#             customer_order=customer_order,
-#             text=review,
-#         )
-#
-#     return redirect('users:profile_detail', pk=request.user.profile.id)
+# def unpaid_part_order(request, pk):
+#     print(f'---------------------{pk}')
+#     order = PartOrder.objects.get(id=pk)
+#     order.paid = False
+#     order.save()
+#     response = {'order': pk, 'message': 'Оплата отменена'}
+#     print(response)
+#     return JsonResponse(response, status=200)

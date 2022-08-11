@@ -12,11 +12,11 @@ $(document).on('click', '.switch-btn', function () {
             $(this).toggleClass('switch-on');
             if ($(this).hasClass('switch-on')) {
                $(this).trigger('on.switch');
-               url = $(this).data('confirm');
+               url = $(this).data('do');
 
             } else {
                 $(this).trigger('off.switch');
-                url = $(this).data('disconfirm');
+                url = $(this).data('undo');
 
             };
 

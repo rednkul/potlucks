@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
@@ -7,6 +9,7 @@ from .models import Potluck, Part, PartOrder, Vendor
 from goods.views import ProductFilterFields, Ratings
 from goods.models import Category, Rating
 from .forms import PartOrderCreateForm, PotluckCreateForm
+from goods.utils import format_date
 
 
 class PotluckFilterFields:
@@ -190,3 +193,90 @@ class VendorDetailView(DetailView):
     template_name = 'potlucks/vendors/vendor_detail.html'
 
 
+class PartOrderListView(ListView):
+    queryset = PartOrder.objects.all().order_by('-created')
+    context_object_name = 'orders'
+    template_name = 'potlucks/parts/part_orders.html'
+    paginate_by = 4
+    paginate_orphans = 3
+
+
+class JsonPartOrderFilterListView(ListView):
+
+    template_name = 'potlucks/parts/part_orders_filter.html'
+    context_object_name = 'orders'
+    paginate_orphans = 3
+
+    def get_paginate_by(self):
+        return 5
+
+    def get_queryset(self):
+        get_confirmed = self.request.GET.getlist("confirmed")
+        get_paid = self.request.GET.getlist("paid")
+        request = self.request.GET.get('order_search')
+
+        confirmed_filter = get_confirmed if get_confirmed else (True, False)
+        paid_filter = get_paid if get_paid else (True, False)
+
+        queryset = PartOrder.objects.filter(
+            confirmed__in=confirmed_filter,
+            paid__in=paid_filter
+        ).order_by('-created')
+
+        if request:
+            print(request)
+            print(request.isdigit())
+            if request.isdigit():
+                queryset = queryset.filter(
+                    Q(id__exact=request) |
+                    Q(phone_number__exact=request) |
+                    Q(post_index__exact=request)
+                ).distinct()
+
+            else:
+                queryset = queryset.filter(
+                    Q(email__contains=request) |
+                    Q(notes__iregex=request) |
+                    Q(first_name__iregex=request) |
+                    Q(last_name__iregex=request) |
+                    Q(patronymic__iregex=request) |
+                    Q(city__iregex=request) |
+                    Q(address__iregex=request)
+                ).distinct()
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        response = {'paginate_by': self.get_paginate_by(), 'orders': {}}
+        for order in queryset:
+            response['orders'][f'{order.id}'] = {
+                'customer': str(order.part.customer.user.email) if order.part.customer else '',
+                'first_name': order.first_name,
+                'last_name': order.last_name,
+                'patronymic': order.patronymic,
+                'phone_number': str(order.phone_number),
+                'email': order.email,
+                'city': order.city,
+                'address': order.address,
+                'post_index': str(order.post_index),
+                'notes': order.notes,
+                'created': format_date(order.created),
+                'total_cost': str(order.part.total_cost),
+                'items': {},
+                'confirmed': order.confirmed,
+                'paid': order.paid,
+                'product': order.part.potluck.product.name,
+                'goods_number': str(order.part.goods_number),
+                'product_price': str(order.part.potluck.unit_price)
+
+            }
+            # for item in order.items.all():
+            #     response['orders'][f'{order.id}']['items'][f'{item.id}'] = {
+            #         'product': item.product.name,
+            #         'quantity': str(item.quantity),
+            #         'price': str(item.product.price),
+            #         'item_cost': str(item.get_cost),
+            #     }
+        print("успех")
+        return JsonResponse(response, safe=False, status=200)

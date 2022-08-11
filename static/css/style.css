@@ -2541,9 +2541,21 @@ a.move-top span {
   position: absolute;
   z-index: 1;
 }
-.switch-on {
+.switch-on.red {
   background: #D10024;
+
 }
+
+.red {
+    margin-bottom: 100%;
+}
+
+
+.switch-on.green {
+  background: #027a16;
+
+}
+
 .switch-on::after {
   left: 31px;
 }

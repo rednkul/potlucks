@@ -12,7 +12,9 @@ urlpatterns = [
     path('delete_product_from_wishlist/<int:pk>', views.delete_product_from_wishlist, name='delete_product_from_wishlist'),
     path('product_make_available/<int:pk>', views.product_make_available, name='product_make_available'),
     path('product_make_unavailable/<int:pk>', views.product_make_unavailable, name='product_make_unavailable'),
-    path('order_confirm/<int:pk>/', services.confirm_order, name='confirm_order'),
-    path('order_disconfirm/<int:pk>/', services.disconfirm_order, name='disconfirm_order'),
+    path('order_confirm/<str:order_type>/<int:pk>/', services.confirm_order, name='confirm_order'),
+    path('order_disconfirm/<str:order_type>/<int:pk>/', services.disconfirm_order, name='disconfirm_order'),
+    path('order_paid/<str:order_type>/<int:pk>/', services.paid_order, name='paid_order'),
+    path('order_unpaid/<str:order_type>/<int:pk>/', services.unpaid_order, name='unpaid_order'),
 
 ]

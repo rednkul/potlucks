@@ -1,5 +1,5 @@
 {% extends 'potlucks/base.html' %}
-{% block title %} Заказы: розница{% endblock title %}
+{% block title %} Заказы: складчины{% endblock title %}
 {% load breadcrumbs static bootstrap4  %}
 
 {% block navigation %}
@@ -14,8 +14,8 @@
 {% url 'goods:home_page' as home_page %}
 {% breadcrumb_home home_page 'Home' %}
 
-{% url 'retail:orders' as orders %}
-{% breadcrumb_active orders 'Заказы: розница' 2 %}
+{% url 'potlucks:part_orders' as orders %}
+{% breadcrumb_active orders 'Заказы: складчина' 2 %}
 
 {% endblock breadcrumbs %}
 
@@ -26,7 +26,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-2">
-        {% include 'retail/orders/orders_filter.html' %}
+        {% include 'potlucks/parts/part_orders_filter.html' %}
       </div>
       <div class="row col-lg-9 col-lg-offset-1 form-group" id="orders">
         <!-- product -->
@@ -50,17 +50,17 @@
 
             <p>В заказе:</p>
             <div id="order-items-{{order.id}}">
-              {% for item in order.items.all %}
-              <p>Товар:  {{ item.product.name }} {{ item.quantity }} шт {{ item.product.price }} р/шт {{ item.get_cost }} р </p>
-              {% endfor %}
-              <p>Всего за заказ:  {{ order.get_total_cost }} р</p>
+              <p>Товар:  {{ order.part.product.name }} р</p>
+              <p>Цена за ед.:  {{ order.part.potluck.unit_price }} р</p>
+              <p>Количество:  {{ order.part.goods_number }} р</p>
+              <p>Всего за заказ:  {{ order.part.total_cost }} р</p>
             </div>
           </div>
           <div class="col-lg-1">
             <label for="confirmed_switch-{{order.id}}">Подтвержден</label>
             <div
-                    data-do="{% url 'ajax:confirm_order' 'retail' order.id %}"
-                    data-undo="{% url 'ajax:disconfirm_order' 'retail' order.id  %}"
+                    data-do="{% url 'ajax:confirm_order' 'potluck' order.id %}"
+                    data-undo="{% url 'ajax:disconfirm_order' 'potluck' order.id  %}"
                     data-num="{{ order.id }}"
                     class="col-lg-1 switch-btn red {% if order.confirmed %} switch-on  {% endif %}"
                     id="confirmed_switch-{{order.id}}"
@@ -70,8 +70,8 @@
             </div>
             <label for="paid_switch-{{order.id}}">Оплачен</label>
             <div
-                    data-do="{% url 'ajax:paid_order' 'retail' order.id %}"
-                    data-undo="{% url 'ajax:unpaid_order' 'retail' order.id  %}"
+                    data-do="{% url 'ajax:paid_order' 'potluck' order.id %}"
+                    data-undo="{% url 'ajax:unpaid_order' 'potluck' order.id  %}"
                     data-num="{{ order.id }}"
                     class="col-lg-1 switch-btn green {% if order.paid %} switch-on {% endif %}"
                     id="paid_switch-{{order.id}}"
@@ -96,7 +96,7 @@
 
 {% block javascript %}
 <script src="{% static 'js/confirm_switch.js' %}"></script>
-<script src="{% static 'js/orders_filter.js' %}"></script>
+<script src="{% static 'js/part_orders_filter.js' %}"></script>
 
 
 

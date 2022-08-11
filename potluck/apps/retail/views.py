@@ -182,6 +182,7 @@ class JsonOrderFilterListView(ListView):
                 'confirmed': order.confirmed,
                 'paid': order.paid,
 
+
             }
             for item in order.items.all():
                 response['orders'][f'{order.id}']['items'][f'{item.id}'] = {
