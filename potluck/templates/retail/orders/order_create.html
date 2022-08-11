@@ -69,7 +69,9 @@
 						<div class="form-group">
 							<label for="id_post_index">Почтовый индекс</label><input maxlength="6" name="post_index" type="text" required id="id_post_index" class="check-input" value="{{ user.profile.post_index }}">
 						</div>
+						{% if user.profile %}
 						<input type="hidden" id="id_customer" name="customer" value="{{ user.profile.id }}">
+						{% endif %}
 
 
 

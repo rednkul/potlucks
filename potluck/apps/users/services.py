@@ -1,20 +1,21 @@
 from random import choice
 
+from django.contrib.auth import authenticate, login
 from django.utils.crypto import get_random_string
 
 from users.models import CustomUser
 from send_notification.views import across_registration_send_email
 
-def across_registration(order):
+def across_registration_and_login(order, request):
     """
     Сквозная регистрация
     """
     # Создаем юзера с email, указанным в форме заказа
     user = CustomUser(email=order.email)
-
+    print('DF{F{F{F{F{F{{F')
     # Даем юзеру случайный пароль
     password = get_random_string(length=12)
-    print(password)
+
     user.set_password(password)
     user.save()
 
@@ -31,6 +32,8 @@ def across_registration(order):
     profile.phone_number = order.phone_number
     profile.save()
 
+    user = authenticate(request, email=user.email, password=password)
+    login(request, user)
     # Отправляем письмо с паролем на указанный email
     across_registration_send_email(order.email, password)
 

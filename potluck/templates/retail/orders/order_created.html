@@ -12,21 +12,23 @@
 {% endblock navigation %}
 {% block breadcrumbs %}
 
-  {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Home' %}
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
 
-  {% breadcrumb_active placeholder 'Заказ' 2 %}
+{% breadcrumb_active placeholder 'Заказ' 2 %}
 
 
 {% endblock breadcrumbs %}
 
 
 {% block content %}
-    <div class="row">
+<div class="row">
     <div class="col-lg-12 col-lg-offset-4">
-    <h1>Thank you</h1>
-    <p>Your order has been successfully completed. Your order number is
-        <strong>{{ order }}</strong>.</p>
+        <h1>Спасибо за заказ!</h1>
+        <p>Your order has been successfully completed. Your order number is
+            <strong>{{ order.id }}</strong>. </p>
+        <p>В ближайшее время вам позвонит менеджер. Подробности отправлены на <strong>{{ order.email }}</strong>.</p>
+
     </div>
-    </div>
+</div>
 {% endblock %}

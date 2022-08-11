@@ -1,0 +1,84 @@
+{% load potluck_tag %}
+<div id="aside">
+    <!-- aside Widget -->
+    <form action="{% url 'retail:json_orders_filter' %}" method="get" id="orders-filter" name="orders_filter">
+        {% csrf_token %}
+        <div class="aside">
+
+            <h3 class="aside-title">Подтвержденные</h3>
+
+            <div class="checkbox-filter">
+                <ul class="ul_checkbox_filter">
+
+                    <li>
+                        <div class="input-checkbox">
+                            <input  type="checkbox" id="confirmed-true"
+                                    value="True" name="confirmed" {% if 'True' in confirmed %} checked {% endif %} >
+                            <label for="confirmed-true">
+                                <span></span>
+                                Да
+                                <small>(120)</small>
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="input-checkbox">
+                            <input  type="checkbox" id="confirmed-false"
+                                    value="False" name="confirmed" {% if 'False' in confirmed %} checked {% endif %}>
+                            <label for="confirmed-false">
+                                <span></span>
+                                Нет
+                                <small>(120)</small>
+                            </label>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+        <div class="aside">
+
+            <h3 class="aside-title">Оплаченные</h3>
+
+            <div class="checkbox-filter">
+                <ul class="ul_checkbox_filter">
+
+                    <li>
+                        <div class="input-checkbox">
+                            <input  type="checkbox" id="paid-true"
+                                    value="True" name="paid" {% if 'True' in paid %} checked {% endif %}>
+                            <label for="paid-true">
+                                <span></span>
+                                Да
+                                <small>(120)</small>
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="input-checkbox">
+                            <input  type="checkbox" id="paid-false"
+                                    value="False" name="paid" {% if 'False' in paid %} checked {% endif %}>
+                            <label for="paid-false">
+                                <span></span>
+                                Нет
+                                <small>(120)</small>
+                            </label>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- /aside Widget -->
+        {% include 'retail/orders/orders_search.html' %}
+
+        <div>
+            <button id="filter-btn" type="submit">Найти</button>
+        </div>
+    </form>
+    <!-- /aside Widget -->
+</div>
+<!-- /ASIDE -->

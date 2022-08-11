@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from . import services
 app_name = 'ajax'
 
 urlpatterns = [
@@ -12,4 +12,7 @@ urlpatterns = [
     path('delete_product_from_wishlist/<int:pk>', views.delete_product_from_wishlist, name='delete_product_from_wishlist'),
     path('product_make_available/<int:pk>', views.product_make_available, name='product_make_available'),
     path('product_make_unavailable/<int:pk>', views.product_make_unavailable, name='product_make_unavailable'),
+    path('order_confirm/<int:pk>/', services.confirm_order, name='confirm_order'),
+    path('order_disconfirm/<int:pk>/', services.disconfirm_order, name='disconfirm_order'),
+
 ]

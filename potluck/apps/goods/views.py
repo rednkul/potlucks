@@ -81,6 +81,8 @@ class ProductFilterFields:
         """"Производители"""
         return Manufacturer.objects.all()
 
+
+
     # def get_years(self):
     #     #print(sorted(Movie.objects.filter(draft=False).values_list("year", flat=True).distinct()))
     #     return sorted(Movie.objects.filter(draft=False).values_list("year", flat=True).distinct())
@@ -95,6 +97,9 @@ class ProductsView(ProductFilterFields, ListView):
     paginate_by = 15
     paginate_orphans = 3
     template_name = 'goods/products_view/products_view.html'
+
+    def get_queryset(self):
+        return Product.objects.all() if self.request.user.is_staff else Product.objects.filter(available=True)
 
 
 class ProductDetailView(Ratings, DetailView):
@@ -249,6 +254,8 @@ class FilterProductsView(ProductFilterFields, ListView):
         get_categories = self.request.GET.getlist("category")
         get_manufacturers = self.request.GET.getlist("manufacturer")
 
+        get_available = self.request.GET.getlist("available")
+
 
 
         categories = get_subcategories_of_categories(get_categories)
@@ -258,9 +265,11 @@ class FilterProductsView(ProductFilterFields, ListView):
         print(f'-----------------------{categories}------------------')
         category_filter = categories if categories else self.get_categories()
         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
+        availability_filter = get_available if self.request.user.is_staff else True
 
         queryset = Product.objects.filter(category__in=category_filter,
                                           manufacturer__in=manufacturers_filter,
+                                          available__in=availability_filter,
                                           ).distinct()
 
         return queryset

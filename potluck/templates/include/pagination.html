@@ -1,6 +1,6 @@
 
-    <span class="store-qty">Showing 20-100 products</span>
-    <ul class="store-pagination">
+
+    <ul class="store-pagination" id="pagination">
 
         {% if page_obj.has_previous %}
             {% if page_obj.number|add:'-3' > 1 %}

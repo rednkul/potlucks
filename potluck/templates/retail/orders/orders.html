@@ -1,0 +1,92 @@
+{% extends 'potlucks/base.html' %}
+{% block title %} Заказы: розница{% endblock title %}
+{% load breadcrumbs static bootstrap4  %}
+
+{% block navigation %}
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
+
+{% url 'retail:orders' as orders %}
+{% breadcrumb_active orders 'Заказы: розница' 2 %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-2">
+        {% include 'retail/orders/orders_filter.html' %}
+      </div>
+      <div class="row col-lg-9 col-lg-offset-1 form-group" id="orders">
+        <!-- product -->
+        {% for order in orders %}
+
+        <div class="row order-card">
+          <div class="col-lg-1">
+            <h1>{{ order.id }}</h1>
+          </div>
+          <div class="col-lg-5">
+            <p>Заказчик: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
+            <p>Телефон: {{ order.phone_number }}</p>
+            <p>Email: {{ order.email }}</p>
+            <p>Город: {{ order.city }}</p>
+            <p>Адрес: {{ order.post_index }}</p>
+            <p>Создан: {{ order.created }}</p>
+            <p>Примечания: {{ order.notes }}</p>
+          </div>
+
+          <div class="col-lg-5">
+
+            <p>В заказе:</p>
+            <div id="order-items-{{order.id}}">
+              {% for item in order.items.all %}
+              <p>Товар:  {{ item.product.name }} {{ item.quantity }} шт {{ item.product.price }} р/шт {{ item.get_cost }} р </p>
+              {% endfor %}
+              <p>Всего за заказ:  {{ order.get_total_cost }} р</p>
+            </div>
+          </div>
+          <div class="col-lg-1">
+            <label>Подтвержден</label>
+            <div
+                    data-confirm="{% url 'ajax:confirm_order' order.id %}"
+                    data-disconfirm="{% url 'ajax:disconfirm_order' order.id  %}"
+                    data-num="{{ order.id }}"
+                    class="col-lg-1 switch-btn confirmed_switch {% if order.confirmed %} switch-on {% endif %}"
+                    id="confirmed_switch-{{order.id}}"
+                    >
+
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="store-filter clearfix">
+        <span class="store-qty" id="store-qty">Получено результатов:  </span>
+        {% include "include/pagination.html" %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/confirm_switch.js' %}"></script>
+<script src="{% static 'js/orders_filter.js' %}"></script>
+
+
+
+{% endblock javascript %}

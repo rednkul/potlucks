@@ -2508,3 +2508,42 @@ a.move-top span {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+.order-card {
+
+    border-bottom: 1px solid #737373;
+    margin: 15px 0px;
+}
+/* Переключатель */
+.switch-btn {
+  display: inline-block;
+  width: 60px; /* ширина */
+  height: 30px; /* высота */
+  border-radius: 15px; /* радиус скругления */
+  background: #bfbfbf; /* цвет фона */
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition-duration: 300ms; /* анимация */
+}
+.switch-btn::after {
+  content: "";
+  height: 26px; /* высота кнопки */
+  width: 26px; /* ширина кнопки */
+  border-radius: 13px;
+  background: #fff; /* цвет кнопки */
+  top: 2px; /* положение кнопки по вертикали относительно основы */
+  left: 3px; /* положение кнопки по горизонтали относительно основы */
+  transition-duration: 300ms; /* анимация */
+  position: absolute;
+  z-index: 1;
+}
+.switch-on {
+  background: #D10024;
+}
+.switch-on::after {
+  left: 31px;
+}

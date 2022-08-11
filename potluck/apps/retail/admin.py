@@ -10,7 +10,7 @@ class OrderItemInline(admin.TabularInline):
 
 
 class OrderRetailAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created', 'updated', 'paid')
+    list_display = ('id', 'created', 'updated', 'confirmed', 'paid')
     search_fields = ('customer__first_name', 'customer__last_name')
     list_display_links = ('id',)
     list_filter = ('paid',)

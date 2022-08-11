@@ -10,7 +10,7 @@ from send_notification.views import send_order_notification
 
 class OrderToRetail(OrderMixin):
     customer = models.ForeignKey(Profile, verbose_name='Заказчик', related_name='customer_orders',
-                                 on_delete=models.SET_NULL, null=True)
+                                 on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
 
