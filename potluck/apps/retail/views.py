@@ -79,8 +79,7 @@ class OrderFilterListView(ListView):
         ).order_by('-created')
 
         if request:
-            print(request)
-            print(request.isdigit())
+
             if request.isdigit():
                 queryset = queryset.filter(
                     Q(id__exact=request) |
@@ -139,8 +138,7 @@ class JsonOrderFilterListView(ListView):
         ).order_by('-created')
 
         if request:
-            print(request)
-            print(request.isdigit())
+
             if request.isdigit():
                 queryset = queryset.filter(
                     Q(id__exact=request) |
@@ -191,7 +189,7 @@ class JsonOrderFilterListView(ListView):
                     'price': str(item.product.price),
                     'item_cost': str(item.get_cost),
                 }
-        print("успех")
+
         return JsonResponse(response, safe=False, status=200)
 
 # for order in orders:

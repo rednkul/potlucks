@@ -278,5 +278,5 @@ class JsonPartOrderFilterListView(ListView):
             #         'price': str(item.product.price),
             #         'item_cost': str(item.get_cost),
             #     }
-        print("успех")
+
         return JsonResponse(response, safe=False, status=200)

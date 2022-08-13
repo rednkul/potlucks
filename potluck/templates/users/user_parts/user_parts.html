@@ -1,0 +1,84 @@
+{% extends 'potlucks/base.html' %}
+{% block title %} Заказы: розница{% endblock title %}
+{% load breadcrumbs static bootstrap4  %}
+
+{% block navigation %}
+<li><a href="{% url 'goods:home_page' %}">Home</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:products' %}">Products</a></li>
+<li><a href="{% url 'goods:categories' %}">Categories</a></li>
+{% endblock navigation %}
+
+{% block breadcrumbs %}
+
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
+
+{% url 'user:user_parts' as parts %}
+{% breadcrumb_active orders 'Мои складчины: неподтвержденные' 2 %}
+
+{% endblock breadcrumbs %}
+
+{% block content %}
+
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <div class="row">
+      <div class="row col-lg-9 col-lg-offset-1 form-group" id="orders">
+        <!-- product -->
+        {% for part in parts %}
+
+        <div class="row order-card">
+          <div class="col-lg-1">
+            <h3>{{ part.id }}</h3>
+          </div>
+          <div class="col-lg-5">
+            <p>Товар: {{ part.potluck.product }}</p>
+            <p>Цена за ед.: {{ part.potluck.unit_price }}</p>
+            <p>Товаров в доле: {{ part.goods_number }}</p>
+            <p>Стоимость доли: {{ part.total_cost }}</p>
+          </div>
+
+          <div class="col-lg-5">
+            <p>
+            <a href="{% url 'potlucks:potluck_detail' part.potluck.id %}" >ПОДРОБНЕЕ</a>
+            </p>
+            <p>
+            <a href="" class="js-open-modal" data-modal="{{part.id}}">ОТМЕНИТЬ</a>
+            </p>
+            {% if part.potluck.amassed %}
+            <p>
+            <a href="{% url 'potlucks:part_checkout' part.id %}">ПОДТВЕРДИТЬ</a>
+            </p>
+            {% else %}
+            <p>Когда все позиции складчины будут забронированы, здесь можно будет подтвердить заказ</p>
+            {% endif %}
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+      <div class="store-filter clearfix">
+        
+        {% include "include/pagination.html" %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% for part in parts %}
+<div class="modal_p" data-modal="{{ part.id }}" id="{{ part.id }}">
+  <!--   Svg иконка для закрытия окна  -->
+  <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+  <h3>Отменить заказ?</h3>
+  <p>{{ part }}</p>
+  <p><a class='cancel_order js-modal-close' href="{% url 'potlucks:cancel_part' part.id %}">ДА</a></p>
+</div>
+{% endfor %}
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/popup.js' %}"></script>
+
+{% endblock javascript %}

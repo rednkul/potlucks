@@ -51,6 +51,19 @@
             <ul class="main-nav nav navbar-nav">
                 {% block navigation %}
                 {% endblock navigation %}
+                <li>
+
+                    <div class="dropdown">
+                        <button class="dropbtn"><span class="dropdob">Мои складчины</span></button>
+                        <div class="dropdown-content">
+                            <a href="{% url 'users:user_parts' %}">Не подтвержденные</a>
+                            <a href="{% url 'users:user_part_orders' %}">Подтвержденные</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href="{% url 'users:user_orders' %}">Розница</a>
+                </li>
                 {% if user.is_staff %}
 
                 <li>
@@ -58,7 +71,7 @@
                     <div class="dropdown">
                         <button class="dropbtn"><span class="dropdob">Добавить</span></button>
                         <div class="dropdown-content">
-                            <a href="{% url 'goods:new_product' %}">Добавить товар</a></option>
+                            <a href="{% url 'goods:new_product' %}">Добавить товар</a>
                             <a href="{% url 'goods:new_category' %}">Добавить категорию</a>
                             <a href="{% url 'potlucks:new_potluck' %}">Добавить складчину</a>
                             <a href="{% url 'potlucks:new_vendor' %}">Добавить поставщика</a>

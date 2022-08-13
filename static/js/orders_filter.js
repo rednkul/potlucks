@@ -13,7 +13,7 @@ $(document).ready(function () {
                    $('#orders').prepend(
                                             '<div class="row order-card">' +
                                             '<div class="col-lg-1">' +
-                                                '<h1>' + order + '</h1>' +
+                                                '<h3>' + order + '</h1>' +
                                             '</div>' +
                                             '<div class="col-lg-5">' +
                                                 '<p>Заказчик: ' + values.last_name + ' '  + values.first_name + ' ' +
@@ -63,23 +63,23 @@ $(document).ready(function () {
 
                    if (values.confirmed == true) {
                         $('#confirmed_switch-'+ order).addClass('switch-on');
-                        console.log('#confirmed_switch-'+ order);
+
                    }
                    if (values.paid == true) {
                         $('#paid_switch-'+ order).addClass('switch-on');
-                        console.log('#paid_switch-'+ order);
+
                    }
                    $.each(values.items, function(item, item_values){
                         $('#order-items-' + order).prepend( '<p>Товар: ' + item_values.product + ' ' + item_values.quantity  + ' шт ' +
                                                 item_values.price + ' р/шт ' + item_values.item_cost + ' р </p>');
                    });
-                console.log('перед уборкой');
+
                 if (Object.keys(response.orders).length <= response.paginate_by) {
                     $('#pagination').attr('style', 'display:none');
-                    console.log('убрано');
+
                 } else {
                     $('#pagination').attr('style', '');
-                    console.log('не убрано');;
+
                 }
                 $(document).on('change', 'select', function (event) {
                     event.preventDefault()});

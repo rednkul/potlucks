@@ -14,8 +14,8 @@
 {% url 'goods:home_page' as home_page %}
 {% breadcrumb_home home_page 'Home' %}
 
-{% url 'retail:orders' as orders %}
-{% breadcrumb_active orders 'Заказы: розница' 2 %}
+{% url 'user:user_orders' as orders %}
+{% breadcrumb_active orders 'Мои заказы: розница' 2 %}
 
 {% endblock breadcrumbs %}
 
@@ -25,9 +25,6 @@
   <!-- container -->
   <div class="container">
     <div class="row">
-      <div class="col-lg-2">
-        {% include 'retail/orders/orders_filter.html' %}
-      </div>
       <div class="row col-lg-9 col-lg-offset-1 form-group" id="orders">
         <!-- product -->
         {% for order in orders %}
@@ -37,9 +34,6 @@
             <h3>{{ order.id }}</h3>
           </div>
           <div class="col-lg-5">
-            <p>Заказчик: {{ order.last_name }} {{ order.first_name }} {{ order.patronymic }}</p>
-            <p>Телефон: {{ order.phone_number }}</p>
-            <p>Email: {{ order.email }}</p>
             <p>Город: {{ order.city }}</p>
             <p>Адрес: {{ order.post_index }}</p>
             <p>Создан: {{ order.created }}</p>
@@ -56,36 +50,12 @@
               <p>Всего за заказ:  {{ order.get_total_cost }} р</p>
             </div>
           </div>
-          <div class="col-lg-1">
 
-            <label for="confirmed_switch-{{order.id}}">Подтвержден</label>
-            <div
-                    data-do="{% url 'ajax:confirm_order' 'retail' order.id %}"
-                    data-undo="{% url 'ajax:disconfirm_order' 'retail' order.id  %}"
-                    data-num="{{ order.id }}"
-                    class="col-lg-1 switch-btn red {% if order.confirmed %} switch-on  {% endif %}"
-                    id="confirmed_switch-{{order.id}}"
-                    >
-
-
-            </div>
-            <label for="paid_switch-{{order.id}}">Оплачен</label>
-            <div
-                    data-do="{% url 'ajax:paid_order' 'retail' order.id %}"
-                    data-undo="{% url 'ajax:unpaid_order' 'retail' order.id  %}"
-                    data-num="{{ order.id }}"
-                    class="col-lg-1 switch-btn green {% if order.paid %} switch-on {% endif %}"
-                    id="paid_switch-{{order.id}}"
-                    >
-
-
-            </div>
-          </div>
         </div>
         {% endfor %}
       </div>
       <div class="store-filter clearfix">
-        <span class="store-qty" id="store-qty">Получено результатов:  </span>
+
         {% include "include/pagination.html" %}
       </div>
 

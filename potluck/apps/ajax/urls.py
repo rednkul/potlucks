@@ -16,5 +16,6 @@ urlpatterns = [
     path('order_disconfirm/<str:order_type>/<int:pk>/', services.disconfirm_order, name='disconfirm_order'),
     path('order_paid/<str:order_type>/<int:pk>/', services.paid_order, name='paid_order'),
     path('order_unpaid/<str:order_type>/<int:pk>/', services.unpaid_order, name='unpaid_order'),
+    path('order_delete/<str:order_type>/<int:pk>/', services.unpaid_order, name='delete_order'),
 
 ]

@@ -66,20 +66,20 @@ $(document).ready(function () {
 
                    if (values.confirmed == true) {
                         $('#confirmed_switch-'+ order).addClass('switch-on');
-                        console.log('#confirmed_switch-'+ order);
+
                    }
                    if (values.paid == true) {
                         $('#paid_switch-'+ order).addClass('switch-on');
-                        console.log('#paid_switch-'+ order);
+
                    }
 
                 console.log('перед уборкой');
                 if (Object.keys(response.orders).length <= response.paginate_by) {
                     $('#pagination').attr('style', 'display:none');
-                    console.log('убрано');
+
                 } else {
                     $('#pagination').attr('style', '');
-                    console.log('не убрано');;
+
                 }
                 $(document).on('change', 'select', function (event) {
                     event.preventDefault()});

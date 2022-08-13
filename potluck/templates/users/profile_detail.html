@@ -26,7 +26,7 @@
     <div class="container">
         <div class="row mt-4">
 
-                <form action="{% url 'users:profile_detail' profile.id %}" method="post">
+                <form action="{% url 'users:profile_detail' %}" method="post">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-lg-4">

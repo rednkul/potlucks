@@ -12,7 +12,7 @@ def across_registration_and_login(order, request):
     """
     # Создаем юзера с email, указанным в форме заказа
     user = CustomUser(email=order.email)
-    print('DF{F{F{F{F{F{{F')
+
     # Даем юзеру случайный пароль
     password = get_random_string(length=12)
 
@@ -37,14 +37,3 @@ def across_registration_and_login(order, request):
     # Отправляем письмо с паролем на указанный email
     across_registration_send_email(order.email, password)
 
-# def gen_password():
-#
-#     aplhabets = 'qwertyuiopasdfghjklzxcvbnm'
-#
-#     ABS = aplhabets.upper()
-#
-#     digits = '1234567890'
-#
-#     symbols = aplhabets + ABS + digits
-#
-#     return ''.join([choice(symbols) for i in range(12)])

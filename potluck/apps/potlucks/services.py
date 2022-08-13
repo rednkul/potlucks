@@ -19,10 +19,11 @@ def update_part(request, pk):
 
 
 def cancel_part(request, pk):
-    part = Part.objects.get(id=pk)
-    part.delete()
+    part = Part.objects.filter(id=pk)
+    if part:
+        part[0].delete()
 
-    return redirect('users:profile_detail', pk=request.user.profile.pk)
+    return redirect('users:user_part_orders')
 
 # def confirm_part_order(request, pk):
 #     print(f'---------------------{pk}')
