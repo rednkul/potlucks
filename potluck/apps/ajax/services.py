@@ -1,10 +1,15 @@
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 
 from retail.models import OrderToRetail
 from potlucks.models import PartOrder
 
+from users.services import user_check_group
+
 
 def confirm_order(request, pk, order_type):
+    if not user_check_group(request.user, 'Manager'):
+        raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
     order.confirmed = True
     order.save()
@@ -14,6 +19,8 @@ def confirm_order(request, pk, order_type):
 
 
 def disconfirm_order(request, pk, order_type):
+    if not user_check_group(request.user, 'Manager'):
+        raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
     order.confirmed = False
     order.save()
@@ -23,6 +30,8 @@ def disconfirm_order(request, pk, order_type):
 
 
 def paid_order(request, pk, order_type):
+    if not user_check_group(request.user, 'Manager'):
+        raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
     order.paid = True
     order.save()
@@ -31,6 +40,8 @@ def paid_order(request, pk, order_type):
 
 
 def unpaid_order(request, pk, order_type):
+    if not user_check_group(request.user, 'Manager'):
+        raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
     order.paid = False
     order.save()
@@ -38,6 +49,8 @@ def unpaid_order(request, pk, order_type):
     return JsonResponse(response, status=200)
 
 def delete_order(request, pk, order_type):
+    if not user_check_group(request.user, 'Manager'):
+        raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
     order.delete()
     response = {'order': pk, 'message': 'Заказ удален', 'type': order_type}

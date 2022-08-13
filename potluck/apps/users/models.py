@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -21,14 +21,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_confirmed = models.BooleanField('Подтвержден', default=False)
     is_active = models.BooleanField('Активный', default=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-
+    groups = models.ManyToManyField(Group, verbose_name='Группы', related_name='groups', blank=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+
+
     def __str__(self):
         return f"{self.email}"
+
+
 
     class Meta:
         verbose_name = 'Аккаунт'

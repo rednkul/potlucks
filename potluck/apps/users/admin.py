@@ -42,7 +42,9 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Разрешения', {'fields': ('is_staff', 'is_confirmed', 'is_active')}),
+        ('Группы', {'fields': ('groups',)}),
     )
+
     add_fieldsets = (
         (None, {
             'classes': ('wide',),

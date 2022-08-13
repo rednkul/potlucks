@@ -1,5 +1,6 @@
 from random import choice
 
+
 from django.contrib.auth import authenticate, login
 from django.utils.crypto import get_random_string
 
@@ -17,6 +18,7 @@ def across_registration_and_login(order, request):
     password = get_random_string(length=12)
 
     user.set_password(password)
+    user.is_confirmed = True
     user.save()
 
     # Создаем профиль юзера с данными, указанными в форме заказа
@@ -36,4 +38,8 @@ def across_registration_and_login(order, request):
     login(request, user)
     # Отправляем письмо с паролем на указанный email
     across_registration_send_email(order.email, password)
+
+
+def user_check_group(user, group):
+    return user.groups.filter(name=group).exists()
 

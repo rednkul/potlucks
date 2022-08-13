@@ -4,10 +4,10 @@
 {% load breadcrumbs %}
 
 {% block navigation %}
-    <li><a href="{% url 'goods:home_page' %}">Home</a></li>
+    <li><a href="{% url 'goods:home_page' %}">Главная</a></li>
     <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
-    <li><a href="{% url 'goods:products' %}">Products</a></li>
-    <li  class="active"><a href="{% url 'goods:categories' %}">Categories</a></li>
+    <li><a href="{% url 'goods:products' %}">Товары</a></li>
+    <li  class="active"><a href="{% url 'goods:categories' %}">Категории</a></li>
 {% endblock navigation %}
 
 {% block breadcrumbs %}

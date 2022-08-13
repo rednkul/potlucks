@@ -8,6 +8,7 @@ from users.models import Profile, CustomUser
 from .models import OrderToRetail, OrderItem
 from goods.utils import format_date
 from users.services import across_registration_and_login
+from users.mixins import GroupRequiredMixin
 from send_notification.views import send_order_notification
 
 from cart.cart import Cart
@@ -15,6 +16,7 @@ from .forms import OrderCreateForm
 
 
 def order_create(request):
+
     cart = Cart(request)
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
@@ -50,7 +52,8 @@ def order_created(request, order_id):
     return render(request, 'retail/orders/order_created.html', {'order': order})
 
 
-class OrderListView(ListView):
+class OrderListView(GroupRequiredMixin, ListView):
+    group_required = ['Manager', ]
     queryset = OrderToRetail.objects.all().order_by('-created')
     context_object_name = 'orders'
     template_name = 'retail/orders/orders.html'
@@ -58,8 +61,8 @@ class OrderListView(ListView):
     paginate_orphans = 3
 
 
-class OrderFilterListView(ListView):
-
+class OrderFilterListView(GroupRequiredMixin, ListView):
+    group_required = ['Manager', ]
     context_object_name = 'orders'
     template_name = 'retail/orders/orders.html'
     paginate_by = 4
@@ -115,10 +118,9 @@ class OrderFilterListView(ListView):
         context['orders_search'] = search
         return context
 
-class JsonOrderFilterListView(ListView):
-    """Фильтр фильмов json"""
+class JsonOrderFilterListView(GroupRequiredMixin, ListView):
+    group_required = ['Manager', ]
     context_object_name = 'orders'
-
     paginate_orphans = 3
 
     def get_paginate_by(self):
@@ -192,25 +194,4 @@ class JsonOrderFilterListView(ListView):
 
         return JsonResponse(response, safe=False, status=200)
 
-# for order in orders:
-#     response[f'{order.id}'] = {
-#         'customer': str(order.customer.id),
-#         'first_name': order.first_name,
-#         'last_name': order.last_name,
-#         'patronymic': order.patronymic,
-#         'phone_number': str(order.phone_number),
-#         'email': order.email,
-#         'city': order.city,
-#         'address': order.address,
-#         'post_index': str(order.post_index),
-#         'notes': order.notes,
-#         'created': format_date(order.created),
-#         'order_total_cost': order.get_total_cost,
-#     }
-#     for item in order.items.all():
-#         response[f'{order.id}'][f'{item.id}'] = {
-#             'product': item.product.name,
-#             'quantity': str(item.quantity),
-#             'price': str(item.product.price),
-#             'item_cost': str(item.get_cost),
-#         }
+

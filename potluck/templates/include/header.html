@@ -16,7 +16,7 @@
         <!--        <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>-->
         <li><a href="{% url 'users:profile_detail'  %}"><i class="fa fa-user-o"></i>{{ request.user.email }} </a></li>
         <li><a href=""  class="js-open-modal" data-modal="logout"><i class="fa fa-window-close"></i>Выход</a></li>
-        {% if request.user.is_superuser %}
+        {% if request.user.is_staff %}
         <li><a href="{% url 'admin:index'%}"><i class="fa fa-bank"></i>Администрирование</a></li>
         {% endif %}
         {% else %}

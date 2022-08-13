@@ -5,11 +5,12 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
 from .models import Potluck, Part, PartOrder, Vendor
+from .forms import PartOrderCreateForm, PotluckCreateForm
 
 from goods.views import ProductFilterFields, Ratings
 from goods.models import Category, Rating
-from .forms import PartOrderCreateForm, PotluckCreateForm
 from goods.utils import format_date
+from users.mixins import GroupRequiredMixin
 
 
 class PotluckFilterFields:
@@ -153,30 +154,30 @@ class PartUpdateView(UpdateView):
     context_object_name = 'part'
     fields = ['goods_number', ]
 
-class PotluckCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class PotluckCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager', ]
     model = Potluck
     template_name = 'potlucks/potlucks/new_potluck.html'
     form_class = PotluckCreateForm
     success_url = reverse_lazy('potlucks:potlucks')
 
-class PotluckEditView(UpdateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class PotluckEditView(GroupRequiredMixin, UpdateView):
+    group_required = ['Manager', ]
     model = Potluck
     #slug_field = 'url'
     template_name = 'potlucks/potlucks/edit_potluck.html'
     fields = [ 'creator', 'vendor', 'unit_price']
     success_url = reverse_lazy('potlucks:potlucks')
 
-class VendorCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class VendorCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager', ]
     model = Vendor
     template_name = 'potlucks/vendors/new_vendor.html'
     fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
     success_url = reverse_lazy('potlucks:potlucks')
 
-class VendorEditView(UpdateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class VendorEditView(GroupRequiredMixin, UpdateView):
+    group_required = ['Manager', ]
     model = Vendor
     template_name = 'potlucks/vendors/edit_vendor.html'
     fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
@@ -186,14 +187,15 @@ class VendorEditView(UpdateView):
         return reverse_lazy('potlucks:vendor_detail', self.object.get_absolute_url)
 
 
-class VendorDetailView(DetailView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class VendorDetailView(GroupRequiredMixin, DetailView):
+    group_required = ['Manager', ]
     model = Vendor
     slug_field = 'url'
     template_name = 'potlucks/vendors/vendor_detail.html'
 
 
-class PartOrderListView(ListView):
+class PartOrderListView(GroupRequiredMixin, ListView):
+    group_required = ['Manager', ]
     queryset = PartOrder.objects.all().order_by('-created')
     context_object_name = 'orders'
     template_name = 'potlucks/parts/part_orders.html'
@@ -201,8 +203,8 @@ class PartOrderListView(ListView):
     paginate_orphans = 3
 
 
-class JsonPartOrderFilterListView(ListView):
-
+class JsonPartOrderFilterListView(GroupRequiredMixin, ListView):
+    group_required = ['Manager', ]
     template_name = 'potlucks/parts/part_orders_filter.html'
     context_object_name = 'orders'
     paginate_orphans = 3

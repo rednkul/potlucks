@@ -2,6 +2,14 @@
 {% block title %} {{ manufacturer.name }} {% endblock title %}
 {% load breadcrumbs spurl %}
 
+{% block navigation %}
+<li><a href="{% url 'goods:home_page' %}">Главная</a></li>
+<li><a href="{% url 'goods:products' %}">Товары</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:categories' %}">Категории</a></li>
+{% endblock navigation %}
+
+
 {% block breadcrumbs %}
 
 {% url 'goods:home_page' as home_page %}

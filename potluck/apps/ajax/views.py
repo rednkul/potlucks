@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 
 from potlucks.models import Potluck, Part
@@ -5,6 +6,8 @@ from potlucks.models import Potluck, Part
 from goods.models import Wishlist, Product
 
 from users.models import CustomUser
+
+from users.services import user_check_group
 
 
 def validate_goods_number(request, pk):
@@ -36,8 +39,10 @@ def validate_goods_number(request, pk):
 
 def cancel_part(request, pk):
     part = Part.objects.get(id=pk)
-    part.delete()
-
+    if user_check_group(request.user, 'Manager') or part.customer.user == request.user:
+        part.delete()
+    else:
+        raise PermissionDenied
     response = {'is_deleted': True if not Part.objects.filter(id=pk).exists() else False}
 
     return JsonResponse(response)
@@ -92,6 +97,8 @@ def product_make_available(request, pk):
 
 
 def product_make_unavailable(request, pk):
+    if not user_check_group(request.user, 'Manager') :
+        raise PermissionDenied
     product = Product.objects.get(pk=pk)
 
     product.available = False

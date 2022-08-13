@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.http import JsonResponse
 
-from potlucks.models import Potluck, Part
+
 
 
 from .models import Product, Category, Manufacturer, RatingStar, Rating, Wishlist, Review
@@ -12,6 +12,8 @@ from .utils import get_subcategories_of_categories
 
 from cart.forms import CartAddProductForm
 from retail.models import OrderItem
+from potlucks.models import Potluck, Part
+from users.mixins import GroupRequiredMixin
 
 class Ratings:
 
@@ -357,45 +359,45 @@ class WishlistView(DetailView):
     template_name = 'goods/wishlist.html'
 
 
-class ProductCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class ProductCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager',]
     model = Product
     template_name = 'goods/products_view/new_product.html'
     #form_class = AddProductForm
     fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 
-class ProductEditView(UpdateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class ProductEditView(GroupRequiredMixin, UpdateView):
+    group_required = ['Manager',]
     model = Product
     slug_field = 'url'
     template_name = 'goods/products_view/edit_product.html'
     fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 
-class CategoryCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class CategoryCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager',]
     model = Category
     template_name = 'goods/categories/new_category.html'
     #form_class = AddProductForm
     fields = [ 'name', 'description', 'image', 'url', 'parent']
     success_url = reverse_lazy('goods:categories')
 
-class ManufacturerCreateView(CreateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class ManufacturerCreateView(GroupRequiredMixin, CreateView):
+    group_required = ['Manager',]
     model = Manufacturer
     template_name = 'goods/manufacturers/new_manufacturer.html'
     fields = [ 'name', 'description', 'image', 'url']
     success_url = reverse_lazy('goods:products')
 
-class ManufacturerDetailView(DetailView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class ManufacturerDetailView(GroupRequiredMixin, DetailView):
+    group_required = ['Manager',]
     model = Manufacturer
     slug_field = 'url'
     template_name = 'goods/manufacturers/manufacturer_detail.html'
 
-class ManufacturerEditView(UpdateView):
-    #group_required = ['Уровень 0', 'Уровень 1']
+class ManufacturerEditView(GroupRequiredMixin, UpdateView):
+    group_required = ['Manager',]
     model = Manufacturer
     slug_field = 'url'
     template_name = 'goods/manufacturers/edit_manufacturer.html'
