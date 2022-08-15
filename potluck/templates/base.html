@@ -52,24 +52,25 @@
                 {% block navigation %}
                 {% endblock navigation %}
                 <li>
+                    <a href="{% url 'users:user_orders' %}">Мои заказы</a>
+                </li>
+                <li>
 
                     <div class="dropdown">
-                        <button class="dropbtn"><span class="dropdob">Мои складчины</span></button>
+                        <button class="dropbtn"><span class="dropdob"><a href="">Мои складчины</a></span></button>
                         <div class="dropdown-content">
                             <a href="{% url 'users:user_parts' %}">Не подтвержденные</a>
                             <a href="{% url 'users:user_part_orders' %}">Подтвержденные</a>
                         </div>
                     </div>
                 </li>
-                <li>
-                    <a href="{% url 'users:user_orders' %}">Мои заказы</a>
-                </li>
+
                 {% if user.is_staff %}
 
                 <li>
 
                     <div class="dropdown">
-                        <button class="dropbtn"><span class="dropdob">Добавить</span></button>
+                        <button class="dropbtn"><a href="">Добавить</a></button>
                         <div class="dropdown-content">
                             <a href="{% url 'goods:new_product' %}">Добавить товар</a>
                             <a href="{% url 'goods:new_category' %}">Добавить категорию</a>
@@ -82,7 +83,7 @@
                 <li>
 
                     <div class="dropdown">
-                        <button class="dropbtn"><span class="dropdob">Заказы</span></button>
+                        <button class="dropbtn"><span class="dropdob"><a href="">Заказы</a></span></button>
                         <div class="dropdown-content">
                             <a href="{% url 'retail:orders' %}">Розница</a></option>
                             <a href="{% url 'potlucks:part_orders' %}">Складчины</a></option>

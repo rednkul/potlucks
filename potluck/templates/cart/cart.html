@@ -1,7 +1,7 @@
 {% extends "potlucks/base.html" %}
 {% load static breadcrumbs %}
 {% block title %}
-    Ваша корзина
+Ваша корзина
 {% endblock title %}
 
 {% block navigation %}
@@ -15,62 +15,63 @@
 {% endblock navigation %}
 {% block breadcrumbs %}
 
-  {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Home' %}
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
 
-  {% breadcrumb_active placeholder 'Корзина' 2 %}
+{% breadcrumb_active placeholder 'Корзина' 2 %}
 
 
 {% endblock breadcrumbs %}
 
 {% block content %}
-    <h1>Your shopping cart</h1>
-    <table class="cart">
-        <thead>
-        <tr>
-            <th>Image</th>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Remove</th>
-            <th>Unit price</th>
-            <th>Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in cart %}
-            {% with product=item.product %}
-                <tr>
-                    <td>
-                        <a href="{{ product.url }}">
-                            <img src="
+<h1>Ваши покупки</h1>
+<table>
+    <thead>
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in cart %}
+    {% with product=item.product %}
+    <tr>
+        <td>
+            <a href="{{ product.url }}">
+                <img class="cart-img" src="
                                 {% if product.image %}
                                     {{ product.image.url }}
                                 {% else %}
                                     {% static 'img/no_image.png' %}
                                 {% endif %}">
-                        </a>
-                    </td>
-                    <td>{{ product.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td><a href="{% url 'cart:cart_remove' product.id%}">Remove</a></td>
-                    <td class="num">${{ item.price }}</td>
-                    <td class="num">${{ item.total_price }}</td>
-                </tr>
-            {% endwith %}
-        {% endfor %}
-        <tr class="total">
-            <td>Total</td>
-            <td colspan="4"></td>
-            <td class="num">${{ cart.get_total_price }}</td>
-        </tr>
-        </tbody>
-    </table>
-    <p class="text-right">
-        <a href="{% url 'goods:products' %}" class="button light">Continue shopping</a>
-        {% if cart %}
-        <a href="{% url 'retail:order_create' %}" class="button">
-    Checkout
-</a>
-        {% endif %}
-    </p>
+            </a>
+        </td>
+        <td>{{ product.name }}</td>
+        <td>{{ item.quantity }} шт</td>
+        <td class="num">{{ item.price }} р/шт.</td>
+        <td class="num">{{ item.total_price }} р</td>
+        <td><a href="{% url 'cart:cart_remove' product.id%}"><i class="fa fa-4x fa-times"></i></a></td>
+    </tr>
+    {% endwith %}
+    {% endfor %}
+    <tr class="total">
+        <td><h3>Всего</h3></td>
+
+        <td colspan="4" class="num"><h3>{{ cart.get_total_price }} р</h3></td>
+    </tr>
+    </tbody>
+</table>
+<p class="text-right">
+    <a href="{% url 'goods:products' %}" class="button light">Продолжить покупки</a>
+    {% if cart %}
+    или
+    <a href="{% url 'retail:order_create' %}" class="button">
+        Оформить заказ
+    </a>
+    {% endif %}
+</p>
 {% endblock %}

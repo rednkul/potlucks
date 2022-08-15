@@ -26,7 +26,7 @@ urlpatterns = [
     path('products/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
 
     # Вишлист
-    path('wishlist/<int:pk>/', views.WishlistView.as_view(), name='wishlist'),
+    path('wishlist/', views.WishlistView.as_view(), name='wishlist'),
     # Отзывы
     path('review_and_rate/<int:pk>/', services.review_and_rate, name='review_and_rate'),
 
@@ -34,6 +34,7 @@ urlpatterns = [
     path('manufacturers/new_manufacturer/', views.ManufacturerCreateView.as_view(), name='new_manufacturer'),
     path('manufacturers/edit_manufacturer/<int:pk>/', views.ManufacturerEditView.as_view(), name='edit_manufacturer'),
     path('manufacturers/<slug:slug>/', views.ManufacturerDetailView.as_view(), name='manufacturer_detail'),
+
 
 
 ]

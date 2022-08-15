@@ -2,10 +2,7 @@ from django.db.models import Q, Count, Sum, Avg
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
-from django.http import JsonResponse
-
-
-
+from django.http import JsonResponse, HttpResponse, HttpResponseServerError
 
 from .models import Product, Category, Manufacturer, RatingStar, Rating, Wishlist, Review
 from .utils import get_subcategories_of_categories
@@ -331,10 +328,10 @@ class Search(ProductFilterFields, ListView):
 
         if option == 'potlucks':
             return Potluck.objects.filter(Q(product__name__iregex=request) |
-                                        Q(product__category__in=categories) |
-                                        Q(product__description__iregex=request) |
-                                        Q(product__tags__iregex=request)
-                                        )
+                                          Q(product__category__in=categories) |
+                                          Q(product__description__iregex=request) |
+                                          Q(product__tags__iregex=request)
+                                          )
 
         else:
             return Product.objects.filter(Q(name__iregex=request) |
@@ -354,9 +351,15 @@ class Search(ProductFilterFields, ListView):
         return context
 
 
+
+
+
 class WishlistView(DetailView):
     model = Wishlist
     template_name = 'goods/wishlist.html'
+
+    def get_object(self):
+        return Wishlist.objects.get(customer=self.request.user.profile.id)
 
 
 class ProductCreateView(GroupRequiredMixin, CreateView):

@@ -2559,3 +2559,9 @@ a.move-top span {
 .switch-on::after {
   left: 31px;
 }
+
+.cart-img {
+    width: 150px;
+    height: 150px;
+    margin: 1%;
+}

@@ -29,7 +29,7 @@
       {% if user.is_staff %}
       <button>
         <a href="{% url 'goods:edit_product' product.url %}">
-          <i class="fa fa-edit "></i>
+          <i class="fa fa-2x fa-edit "></i>
         </a>
         <span class="tooltipp">Редактировать</span>
       </button>
@@ -39,10 +39,10 @@
 
                 {% if product.available %}
                 data-url="{% url 'ajax:product_make_unavailable' product.id %}"
-                class="fa fa-times availability"
+                class="fa fa-2x fa-times availability"
                 {% else %}
                 data-url="{% url 'ajax:product_make_available' product.id %}"
-                class="fa fa-check availability"
+                class="fa fa-2x fa-check availability"
                 {% endif %}
                 >
 
@@ -54,10 +54,10 @@
 
                 {% if product in user.profile.wishlist.products.all %}
                 data-url="{% url 'ajax:delete_product_from_wishlist' product.id %}"
-                class="fa fa-heart add-to-wishlist"
+                class="fa fa-2x fa-heart add-to-wishlist"
                 {% else %}
                 data-url="{% url 'ajax:add_product_to_wishlist' product.id %}"
-                class="fa fa-heart-o add-to-wishlist"
+                class="fa fa-2x fa-heart-o add-to-wishlist"
                 {% endif %}
                 >
 

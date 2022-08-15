@@ -6,9 +6,9 @@
   <div id="top-header">
     <div class="container">
       <ul class="header-links pull-left">
-        <li><a href="#"><i class="fa fa-phone"></i> Место для телефона</a></li>
-        <li><a href="#"><i class="fa fa-envelope-o"></i> Место для эмейла</a></li>
-        <li><a href="#"><i class="fa fa-map-marker"></i> Место для адреса</a></li>
+        <li><a href="#"><i class="fa fa-phone"></i> {{ phone }}</a></li>
+        <li><a href="#"><i class="fa fa-envelope-o"></i> {{ email }}</a></li>
+        <li><a href="#"><i class="fa fa-map-marker"></i> {{ address }}</a></li>
       </ul>
 
       <ul class="header-links pull-right">
@@ -52,7 +52,7 @@
           <div class="header-search">
             <form action="{% url 'goods:search' %}" method="get" class="d-flex editContent">
               <select class="input-select" name="search_option">
-                <option value="goods" {% if search_option == 'goods' %} selected="selected" {% endif %}>Товары</option>
+                <option value="goods" {% if search_option == 'products' %} selected="selected" {% endif %}>Товары</option>
                 <option value="potlucks" {% if search_option == 'potlucks' %} selected="selected" {% endif %}>Складчины</option>
 
               </select>
@@ -69,7 +69,7 @@
             {% if user.is_authenticated %}
             <!-- Wishlist -->
             <div>
-              <a href="{% url 'goods:wishlist' user.profile.wishlist.id %}">
+              <a href="{% url 'goods:wishlist' %}">
                 <i class="fa fa-heart-o"></i>
                 <span>Отложенные товары</span>
                 <div id="wishlist-qty" class="qty">{{ user.profile.wishlist.products.all.count }}</div>

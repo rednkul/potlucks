@@ -38,7 +38,7 @@ class PartAdmin(admin.ModelAdmin):
     def total_cost(obj):
         return obj.total_cost
 
-    potluck_size.short_description = ("Товаров в складчине")
+    potluck_size.short_description = "Товаров в складчине"
 
 class PartOrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'part', 'total_cost', 'email', 'phone_number', 'first_name',
