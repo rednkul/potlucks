@@ -3,19 +3,19 @@
 {% block title %} Личный кабинет {% endblock title %}
 
 {% block navigation %}
-    <li><a href="{% url 'goods:home_page' %}">Home</a></li>
-    <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
-    <li><a href="{% url 'goods:products' %}">Products</a></li>
-    <li><a href="{% url 'goods:categories' %}">Categories</a></li>
+<li><a href="{% url 'goods:home_page' %}">Главная</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:products' %}">Товары</a></li>
+<li><a href="{% url 'goods:categories' %}">Категории</a></li>
 {% endblock navigation %}
 
 {% block breadcrumbs %}
 
-  {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Home' %}
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Главная' %}
 
-  {% url 'users:profile_detail' profile.user.id as profile_detail %}
-  {% breadcrumb_active profile_detail 'Profile' 2 %}
+{% url 'users:profile_detail' as profile_detail %}
+{% breadcrumb_active profile_detail 'Профиль' 2 %}
 
 
 {% endblock breadcrumbs %}
@@ -26,52 +26,52 @@
     <div class="container">
         <div class="row mt-4">
 
-                <form action="{% url 'users:profile_detail' %}" method="post">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <h4 class="text-center">Личные данные</h4>
-                            {% bootstrap_field form.first_name %}
-                            {% bootstrap_field form.last_name %}
-                            {% bootstrap_field form.patronymic %}
-                            <a href="{% url 'users:change_password' %}">Изменить пароль</a>
-                        </div>
-                        <div class="col-lg-4">
-                            <h4 class="text-center">Контактная информация</h4>
-                            {% bootstrap_field form.phone_number %}
-                            {% bootstrap_field form.vk %}
-                            {% bootstrap_field form.telegram %}
-
-                        </div>
-                        <div class="col-lg-4">
-                            <h4 class="text-center">Доставка</h4>
-                            {% bootstrap_field form.city %}
-                            {% bootstrap_field form.address %}
-                            {% bootstrap_field form.post_index %}
-                        </div>
+            <form action="{% url 'users:profile_detail' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-4">
+                        <h4 class="text-center">Личные данные</h4>
+                        {% bootstrap_field form.first_name %}
+                        {% bootstrap_field form.last_name %}
+                        {% bootstrap_field form.patronymic %}
+                        <a href="{% url 'account_change_password' %}">Изменить пароль</a>
+                    </div>
+                    <div class="col-lg-4">
+                        <h4 class="text-center">Контактная информация</h4>
+                        {% bootstrap_field form.phone_number %}
+                        {% bootstrap_field form.vk %}
+                        {% bootstrap_field form.telegram %}
 
                     </div>
-                    <div class="row">
-                        <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>
+                    <div class="col-lg-4">
+                        <h4 class="text-center">Доставка</h4>
+                        {% bootstrap_field form.city %}
+                        {% bootstrap_field form.address %}
+                        {% bootstrap_field form.post_index %}
                     </div>
-                </form>
+
+                </div>
+                <div class="row">
+                    <button type="submit" class="save-btn col-xs-offset-5 col-sm-offset-5 col-lg-offset-5 col-lg-2 col-xs-3 col-sm-3 ">Сохранить</button>
+                </div>
+            </form>
 
         </div>
 
         <!-- Product tab -->
 
-        {% include 'users/parts_tab.html' %}
+    </div>
 
 
-{% endblock content %}
-
-
-
-
-{% block javascript %}
-<script src="{% static 'js/popup.js' %}"></script>
+        {% endblock content %}
 
 
 
-{% endblock javascript %}
+
+        {% block javascript %}
+        <script src="{% static 'js/popup.js' %}"></script>
+
+
+
+        {% endblock javascript %}
 

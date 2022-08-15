@@ -1,7 +1,7 @@
 <div class="col-md-4 col-xs-6">
   <div class="product">
     <div class="product-img">
-      {% if potluck.product.image %}<img src="{{ potluck.product.image.url }}" class="product-list-img" alt="">{% endif %}
+      {% if potluck.product.image %}<img src="{{ potluck.product.image.url }}" class="product-list-img img-responsive" alt="">{% endif %}
       <div class="product-label">
 
         <span class="new">{{ potluck.unit_price }} р/шт</span>
@@ -33,7 +33,7 @@
 
     </div>
     <div class="add-to-cart">
-      <button class="add-to-cart-btn"><a href="{% url 'potlucks:potluck_detail' potluck.id %}"><i class="fa fa-shopping-cart"></i>   участвовать</a></button>
+      <a href="{% url 'potlucks:potluck_detail' potluck.id %}"><button class="add-to-cart-btn"><i class="fa fa-2x fa-shopping-cart"></i>участвовать</button></a>
     </div>
   </div>
 </div>

@@ -51,6 +51,7 @@
             <ul class="main-nav nav navbar-nav">
                 {% block navigation %}
                 {% endblock navigation %}
+                {% if user.is_authenticated %}
                 <li>
                     <a href="{% url 'users:user_orders' %}">Мои заказы</a>
                 </li>
@@ -64,7 +65,7 @@
                         </div>
                     </div>
                 </li>
-
+                {% endif %}
                 {% if user.is_staff %}
 
                 <li>
@@ -108,7 +109,7 @@
     <div class="container">
         <!-- row -->
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 col-xs-12">
 
                 <ul class="breadcrumb-tree">
                     {% block breadcrumbs %}
