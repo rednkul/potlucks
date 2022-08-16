@@ -805,7 +805,8 @@ textarea.input {
 }
 
 .shop .shop-img>img {
-  width: 100%;
+  width: 300px;
+  height: 300px;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }

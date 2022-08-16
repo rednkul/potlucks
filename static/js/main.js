@@ -147,21 +147,30 @@
 	}
 
 	// Price Slider
+	// max_ и min_price - цены, выбранные пользователем, либо наибольшая и наименьшая
+	// цены товаров; max_range - наибольшая цена товаров
 	var priceSlider = document.getElementById('price-slider');
+	var min_price = document.getElementById('price-min').value;
+	var max_price = document.getElementById('price-max').value;
+	var max_range = document.getElementById('price-max').getAttribute('data-max')
+	console.log(parseInt(min_price), parseInt(max_price));
 	if (priceSlider) {
+
 		noUiSlider.create(priceSlider, {
-			start: [1, 999],
+			start: [min_price, max_price],
 			connect: true,
 			step: 1,
 			range: {
-				'min': 1,
-				'max': 999
+				'min': 0,
+				'max': parseInt(max_range)
 			}
 		});
 
 		priceSlider.noUiSlider.on('update', function( values, handle ) {
 			var value = values[handle];
-			handle ? priceInputMax.value = value : priceInputMin.value = value
+			document.getElementById('price-min').setAttribute('value', values[0]);
+			document.getElementById('price-max').setAttribute('value', values[1]);
+			handle ? priceInputMax.value = value : priceInputMin.value = value;
 		});
 	}
 

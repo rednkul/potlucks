@@ -14,10 +14,10 @@
 
 
   {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Home' %}
+  {% breadcrumb_home home_page 'Главная' %}
 
   {% url 'goods:categories' as categories %}
-  {% breadcrumb_active categories 'Categories' 2 %}
+  {% breadcrumb_active categories 'Категории' 2 %}
 
 {% endblock breadcrumbs %}
 {% block content %}
@@ -30,16 +30,16 @@
     <div class="row">
       <!-- shop -->
       {% for category in categories %}
-      <div class="col-md-4 col-xs-6">
+      <div class="col-lg-4 col-xs-6">
         <div class="shop">
           {% if category.image %}
           <div class="shop-img">
-            <img src="{{ category.image.url }}" style="width:450px;height:300px;" alt="">
+            <img src="{{ category.image.url }}" class='img-responsive' alt="">
           </div>
           {% endif %}
           <div class="shop-body">
-            <h3><a style="color:white;font-weight: 700;" href="{% url 'goods:category_detail' category.url %}">{{ category.name }}<br>Collection</a></h3>
-            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+            <h3><a style="color:white;font-weight: 700;" href="{% url 'goods:category_detail' category.url %}">{{ category.name }}<br></a></h3>
+            <a href="#" class="cta-btn"> <i class="fa fa-4x fa-arrow-circle-right"></i></a>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-from django.db.models import Q, Count, Sum, Avg
+from django.db.models import Q, Count, Sum, Avg, Max, Min
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
@@ -7,10 +7,12 @@ from django.http import JsonResponse, HttpResponse, HttpResponseServerError
 from .models import Product, Category, Manufacturer, RatingStar, Rating, Wishlist, Review
 from .utils import get_subcategories_of_categories
 
+from .templatetags.product_tag import get_most_popular_products
 from cart.forms import CartAddProductForm
 from retail.models import OrderItem
 from potlucks.models import Potluck, Part
 from users.mixins import GroupRequiredMixin
+
 
 class Ratings:
 
@@ -24,10 +26,7 @@ class Ratings:
         return ratings
 
 
-
-
 class HomePageView(Ratings, ListView):
-
     queryset = Category.objects.filter(parent=None, ).order_by('id')[:3]
 
     template_name = 'goods/home_page.html'
@@ -35,20 +34,13 @@ class HomePageView(Ratings, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['new_products'] = Product.objects.order_by('id')[:5]
-        context['most_popular_products'] = sorted(Product.objects.all(), key=lambda x: x.potlucks.count(),
-                                                  reverse=True)[:5]
+        context['most_popular_products'] = get_most_popular_products()['most_popular_products']
 
         context['stars'] = self.stars
         return context
 
+
 class CategoryProductFilterFields:
-
-
-    # def get_vendors(self, product_list):
-    #
-    #     vendors = Vendor.objects.filter(vendor_products__in=product_list).distinct()
-    #
-    #     return vendors
 
     def get_manufacturers(self, product_list):
         manufacturers = Manufacturer.objects.filter(manufacturer_products__in=product_list).distinct()
@@ -72,23 +64,16 @@ class ProductFilterFields:
     """Поля для фильтров"""
 
     def get_categories(self):
-        """Категории"""
         return Category.objects.all()
 
-
     def get_manufacturers(self):
-        """"Производители"""
         return Manufacturer.objects.all()
 
+    def get_max_price(self):
+        return Product.objects.aggregate(Max('price'))['price__max']
 
-
-    # def get_years(self):
-    #     #print(sorted(Movie.objects.filter(draft=False).values_list("year", flat=True).distinct()))
-    #     return sorted(Movie.objects.filter(draft=False).values_list("year", flat=True).distinct())
-
-
-
-
+    def get_min_price(self):
+        return Product.objects.aggregate(Min('price'))['price__min']
 
 
 class ProductsView(ProductFilterFields, ListView):
@@ -99,6 +84,63 @@ class ProductsView(ProductFilterFields, ListView):
 
     def get_queryset(self):
         return Product.objects.all() if self.request.user.is_staff else Product.objects.filter(available=True)
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['min_price'] = self.get_min_price()
+        context['max_price'] = self.get_max_price()
+        return context
+
+class FilterProductsView(ProductFilterFields, ListView):
+    """Фильтрация продуктов по категории/поставщику/производителю"""
+    paginate_by = 15
+    paginate_orphans = 3
+    template_name = 'goods/products_view/products_view.html'
+
+    def get_queryset(self):
+        get_categories = self.request.GET.getlist("category")
+        get_manufacturers = self.request.GET.getlist("manufacturer")
+        get_available = self.request.GET.getlist("available")
+        min_price = self.request.GET.get('price-min')
+        max_price = self.request.GET.get('price-max')
+
+        categories = get_subcategories_of_categories(get_categories)
+        category_filter = categories if categories else self.get_categories()
+        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
+
+        if self.request.user.is_staff and get_available:
+            availability_filter = get_available
+        elif self.request.user.is_staff:
+            availability_filter = (True, False)
+        else:
+            availability_filter = (True,)
+
+
+        queryset = Product.objects.filter(category__in=category_filter,
+                                          manufacturer__in=manufacturers_filter,
+                                          available__in=availability_filter,
+                                          price__range=(min_price, max_price)
+                                          ).distinct()
+        print(queryset)
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        get_categories = self.request.GET.getlist("category")
+        get_manufacturers = self.request.GET.getlist("manufacturer")
+        get_available = self.request.GET.getlist("available")
+        min_price = self.request.GET.get('price-min')
+        max_price = self.request.GET.get('price-max')
+
+        context = super().get_context_data(*args, **kwargs)
+
+        context['categories'] = [int(i) for i in get_categories]
+        context['manufacturers'] = [int(i) for i in get_manufacturers]
+        context['available'] = get_available
+        context['min_price'] = min_price
+        context['max_price'] = max_price
+
+
+        return context
 
 
 class ProductDetailView(Ratings, DetailView):
@@ -109,12 +151,11 @@ class ProductDetailView(Ratings, DetailView):
     @property
     def is_ordered_by_user(self):
         if self.request.user.is_authenticated:
-            return OrderItem.objects.filter(order__customer=self.request.user.profile.id, product=self.object.id).exists()
-
+            return OrderItem.objects.filter(order__customer=self.request.user.profile.id,
+                                            product=self.object.id).exists()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
 
         for verb, value in Ratings.number_of_ratings().items():
             context[f'{verb}'] = Rating.objects.filter(star__value=value,
@@ -155,6 +196,7 @@ class CategoryDetailView(CategoryProductFilterFields, DetailView):
 
         return self.render_to_response(context)
 
+
 class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
     paginate_by = 15
     model = Category
@@ -186,7 +228,6 @@ class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
 
         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturers])
         return context
-
 
 
 # class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
@@ -241,53 +282,6 @@ class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
 
 #         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
 #         return context
-
-
-class FilterProductsView(ProductFilterFields, ListView):
-    """Фильтрация продуктов по категории/поставщику/производителю"""
-    paginate_by = 15
-    paginate_orphans = 3
-    template_name = 'goods/products_view/products_view.html'
-
-    def get_queryset(self):
-        get_categories = self.request.GET.getlist("category")
-        get_manufacturers = self.request.GET.getlist("manufacturer")
-
-        get_available = self.request.GET.getlist("available")
-
-
-
-        categories = get_subcategories_of_categories(get_categories)
-
-
-
-        print(f'-----------------------{categories}------------------')
-        category_filter = categories if categories else self.get_categories()
-        manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers()
-        availability_filter = get_available if self.request.user.is_staff else True
-
-        queryset = Product.objects.filter(category__in=category_filter,
-                                          manufacturer__in=manufacturers_filter,
-                                          available__in=availability_filter,
-                                          ).distinct()
-
-        return queryset
-
-    def get_context_data(self, *args, **kwargs):
-        get_categories = self.request.GET.getlist("category")
-        get_manufacturer = self.request.GET.getlist("manufacturer")
-
-        context = super().get_context_data(*args, **kwargs)
-
-        context['categories'] = [int(i) for i in get_categories]
-        context['manufacturers'] = [int(i) for i in get_manufacturer]
-
-        context['category'] = ''.join([f"category={x}&" for x in get_categories])
-        context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
-        return context
-
-
-
 
 
 
@@ -351,9 +345,6 @@ class Search(ProductFilterFields, ListView):
         return context
 
 
-
-
-
 class WishlistView(DetailView):
     model = Wishlist
     template_name = 'goods/wishlist.html'
@@ -363,44 +354,49 @@ class WishlistView(DetailView):
 
 
 class ProductCreateView(GroupRequiredMixin, CreateView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Product
     template_name = 'goods/products_view/new_product.html'
-    #form_class = AddProductForm
-    fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    # form_class = AddProductForm
+    fields = ['name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 
+
 class ProductEditView(GroupRequiredMixin, UpdateView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Product
     slug_field = 'url'
     template_name = 'goods/products_view/edit_product.html'
-    fields = [ 'name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
+    fields = ['name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
+
 
 class CategoryCreateView(GroupRequiredMixin, CreateView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Category
     template_name = 'goods/categories/new_category.html'
-    #form_class = AddProductForm
-    fields = [ 'name', 'description', 'image', 'url', 'parent']
+    # form_class = AddProductForm
+    fields = ['name', 'description', 'image', 'url', 'parent']
     success_url = reverse_lazy('goods:categories')
 
+
 class ManufacturerCreateView(GroupRequiredMixin, CreateView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Manufacturer
     template_name = 'goods/manufacturers/new_manufacturer.html'
-    fields = [ 'name', 'description', 'image', 'url']
+    fields = ['name', 'description', 'image', 'url']
     success_url = reverse_lazy('goods:products')
 
+
 class ManufacturerDetailView(GroupRequiredMixin, DetailView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Manufacturer
     slug_field = 'url'
     template_name = 'goods/manufacturers/manufacturer_detail.html'
 
+
 class ManufacturerEditView(GroupRequiredMixin, UpdateView):
-    group_required = ['Manager',]
+    group_required = ['Manager', ]
     model = Manufacturer
     slug_field = 'url'
     template_name = 'goods/manufacturers/edit_manufacturer.html'
@@ -408,7 +404,3 @@ class ManufacturerEditView(GroupRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('goods:manufacturer_detail', self.object.id)
-
-
-
-
