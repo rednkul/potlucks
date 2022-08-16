@@ -6,25 +6,17 @@
       <img class="product-list-img img-responsive" src="{{ product.image.url }}" href="{% url 'goods:product_detail' product.url %}" alt="" >
       {% endif %}
       <div class="product-label">
-        {# <span class="sale">От {{ product.min_price }} р/шт</span> #}
-        <span class="new">От {{ product.min_price }} р/шт</span>
+
+        {% if product.min_price %} <span class="new">Складчины от {{ product.min_price }} ₽/шт</span> {% endif %}
 
       </div>
     </div>
   </a>
   <div class="product-body">
     <p class="product-category">{{ product.category.name }}</p>
-    <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
-    <h4 class="product-price">{{ product.potlucks.all.count }} заказов</h4>
-    <div class="product-rating">
-      {% for star in stars reversed %}
-      {% if star.value <= avg_rating %}
-      <i class="fa fa-star empty"></i>
-      {% else %}
-      <i class="fa fa-star-o empty"></i>
-      {% endif %}
-      {% endfor %}
-    </div>
+    <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a> </h3>
+    <h4 class="product-price">{{ product.price }} ₽</h4>
+
     <div class="product-btns">
       {% if user.is_staff %}
       <button>

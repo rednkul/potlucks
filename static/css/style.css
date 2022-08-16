@@ -1464,8 +1464,8 @@ font-size: 20px;
 }
 
 .product-list-img {
-    width: 600px;
-    height: 400px;
+    width: 200px;
+    height: 200px;
     }
 
 #product-main-img .slick-next {
@@ -2391,7 +2391,7 @@ font-size: 20px;
 .tabs {
     margin-bottom: 25px;
     border-radius: 10px;
-    border: 1px solid #1E1F29;
+    border: 1px solid #E4E7ED;
     padding: 20px;
 }
 

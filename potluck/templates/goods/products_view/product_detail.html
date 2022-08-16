@@ -97,7 +97,7 @@
                         </div>
 
                     </div>
-                    <p class="price">${{ product.price }}</p>
+                    <h4 class="product-price">{{ product.price }} ₽</h4>
 
                     <form action="{% url 'cart:cart_add' product.id %}" method="post" id="join-form">
                         {% csrf_token %}
@@ -120,8 +120,8 @@
                     </form>
                     <div id="hhhh"></div>
                     <div id="to-product-tab">
-                        <span>или принять участие в одном из <a  href="#tab3">заказов</a> при стоимости</span>
-                        <h3 class="product-price">от {{ product.min_price }} до {{ product.max_price }} ₽/шт.</h3>
+                        <span>или принять участие в одной из <a  href="#tab3">складчин</a> при стоимости</span>
+                        <h4 class="product-price">от {{ product.min_price }} до {{ product.max_price }} ₽/шт.</h4>
                     </div>
                     <p>{{ product.description }}</p>
                     <p>Производитель: <a href="{% url 'goods:manufacturer_detail' product.manufacturer.url %}">{{ product.manufacturer }}</a></p>
@@ -200,7 +200,7 @@
                                     <tr>
                                         <td><a href="{% url 'potlucks:vendor_detail' potluck.vendor.url %}">{{ potluck.vendor }}</a></td>
                                         <td>{{ potluck.creator }}</td>
-                                        <td>{{ potluck.unit_price }}</td>
+                                        <td>{{ potluck.unit_price }} ₽</td>
                                         <td>{{ potluck.get_potluck_fullness }} / {{ potluck.size }}</td>
                                         <td>{{ potluck.date|date:"d M Y"  }}
 

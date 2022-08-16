@@ -3,19 +3,19 @@
 {% block title %} Поиск товара {% endblock title %}
 
 {% block navigation %}
-    <li><a href="{% url 'goods:home_page' %}">Главная</a></li>
-    <li  class="active"><a href="{% url 'goods:products' %}">Товары</a></li>
-    <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
-    <li><a href="{% url 'goods:categories' %}">Категории</a></li>
+<li><a href="{% url 'goods:home_page' %}">Главная</a></li>
+<li  class="active"><a href="{% url 'goods:products' %}">Товары</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:categories' %}">Категории</a></li>
 {% endblock navigation %}
 
 {% block breadcrumbs %}
 
-  {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Главная' %}
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Главная' %}
 
-  {% url 'goods:products' as product_list %}
-  {% breadcrumb_active product_list 'Товары' 2 %}
+{% url 'goods:products' as product_list %}
+{% breadcrumb_active product_list 'Товары' 2 %}
 
 {% endblock breadcrumbs %}
 
@@ -32,31 +32,31 @@
             <!-- STORE -->
 
 
-                <!-- store products -->
-                <div class="row">
-                    <!-- product -->
-                    {% for product in product_list %}
-                        <div class="col-md-4 col-xs-6">
-                        {% include 'include/product_card.html' %}
-                        </div>
-                    {% endfor %}
-                </div>
-                    <!-- /product -->
+            <!-- store products -->
 
-
-                <!-- /store products -->
-
-                <!-- store bottom filter -->
-                <div class="store-filter clearfix">
-                    {% include "include/pagination.html" %}
-                </div>
-                <!-- /store bottom filter -->
+            <!-- product -->
+            {% for product in product_list %}
+            <div class="col-lg-3 col-xs-4">
+                {% include 'include/product_card.html' %}
             </div>
-            <!-- /STORE -->
+            {% endfor %}
+
+            <!-- /product -->
+
+
+            <!-- /store products -->
+
+            <!-- store bottom filter -->
+            <div class="store-filter clearfix">
+                {% include "include/pagination.html" %}
+            </div>
+            <!-- /store bottom filter -->
         </div>
-        <!-- /row -->
+        <!-- /STORE -->
     </div>
-    <!-- /container -->
+    <!-- /row -->
+</div>
+<!-- /container -->
 </div>
 <!-- /SECTION -->
 

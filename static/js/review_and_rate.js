@@ -33,7 +33,7 @@ $(document).ready(function () {
                                             '</div>' +
                                             '<div class="review-body">' +
                                                 '<p class="review-text">' + response.review.text + '</p>' +
-                                                '<p class="date">Отзыв обновлен' + response.review.updated_at + '</p>' +
+                                                '<p class="date">Отзыв обновлен ' + response.review.updated_at + '</p>' +
                                             '</div>'
                                 );
                 }
