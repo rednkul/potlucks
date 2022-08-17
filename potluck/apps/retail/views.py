@@ -34,9 +34,7 @@ def order_create(request):
             cart.clear()
             # Если email не принадлежит уже зарегистрированному пользователю,
             # по данным заказа создается новый пользователь со случайным паролем
-            print(order.email)
             if order.email not in CustomUser.objects.values_list('email', flat=True):
-                print(order.email)
                 across_registration_and_login(order, request)
             send_order_notification(order)
             return redirect('retail:order_created', order_id=order.id)

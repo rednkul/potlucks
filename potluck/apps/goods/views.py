@@ -76,7 +76,7 @@ class ProductFilterFields:
         return Product.objects.aggregate(Min('price'))['price__min']
 
 
-class ProductsView(ProductFilterFields, ListView):
+class ProductsView(ProductFilterFields, Ratings, ListView):
     queryset = Product.objects.all()
     paginate_by = 15
     paginate_orphans = 3
@@ -88,9 +88,10 @@ class ProductsView(ProductFilterFields, ListView):
         context = super().get_context_data()
         context['min_price'] = self.get_min_price()
         context['max_price'] = self.get_max_price()
+        context['stars'] = self.stars
         return context
 
-class FilterProductsView(ProductFilterFields, ListView):
+class FilterProductsView(ProductFilterFields, Ratings, ListView):
     """Фильтрация продуктов по категории/поставщику/производителю"""
     paginate_by = 15
     paginate_orphans = 3
@@ -120,7 +121,6 @@ class FilterProductsView(ProductFilterFields, ListView):
                                           available__in=availability_filter,
                                           price__range=(min_price, max_price)
                                           ).distinct()
-        print(queryset)
 
         return queryset
 
@@ -138,6 +138,7 @@ class FilterProductsView(ProductFilterFields, ListView):
         context['available'] = get_available
         context['min_price'] = min_price
         context['max_price'] = max_price
+        context['stars'] = self.stars
 
 
         return context
@@ -230,59 +231,6 @@ class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
         return context
 
 
-# class CategoryProductsFilterView(CategoryProductFilterFields, ListView):
-#     paginate_by = 15
-#     paginate_orphans = 3
-#     template_name = 'goods/categories/category_detail.html'
-#
-#     def get_category(self):
-#         url = self.request.path
-#         first_slash = url.find('/', 1)
-#         second_slash = url.rfind('/', 1)
-#
-#         category_url = url[first_slash + 1:second_slash]
-#
-#         category = Category.objects.get(url=category_url)
-#
-#         return category
-#
-#     def get_queryset(self):
-#         get_manufacturers = self.request.GET.getlist("manufacturer")
-#
-#         # Получаю категорию по ее url
-#         category = self.get_category()
-#
-#         # Получаю список, состоящий из категории и ее подкатегорий
-#         category_list = category.get_descendants(include_self=True)
-#
-#         # Создаю список всех продуктов категории и подкатегорий
-#         self.product_list = Product.objects.filter(category__in=category_list)
-#
-#         # Условием фильтрации задаю отмеченные в форме пункты либо при их отсутствии - списки
-#         #  производителей, связанных с полученным списком продуктов
-#         manufacturers_filter = get_manufacturers if get_manufacturers else self.get_manufacturers(self.product_list)
-#
-#         # Получаю продукты, принадлежащиии  к полученным категория и отвечающим условию фильтрации
-#         product_list = Product.objects.filter(category__in=category_list,
-#                                               manufacturer__in=manufacturers_filter)
-#         return product_list
-#
-#     def get_context_data(self, *args, **kwargs):
-#         get_manufacturer = self.request.GET.getlist("manufacturer")
-#
-#         category = self.get_category()
-#
-#         context = super().get_context_data(*args, **kwargs)
-#         print(context)
-#
-#         manufacturers = self.get_manufacturers(self.product_list)
-#
-#         context['category'] = category
-#         context['manufacturers'] = manufacturers
-
-#         context['manufacturer'] = ''.join([f"manufacturer={x}&" for x in get_manufacturer])
-#         return context
-
 
 
 
@@ -338,7 +286,6 @@ class Search(ProductFilterFields, ListView):
         context = super().get_context_data(*args, **kwargs)
         option = self.request.GET.get('search_option')
         context['search_option'] = option
-        print(context['search_option'])
         context['search'] = self.request.GET.get('q')
         context['q'] = f"q={self.request.GET.get('q')}&"
 

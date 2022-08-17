@@ -5,18 +5,18 @@
 
 {% block navigation %}
 
-        <li class="active"><a href="{% url 'goods:home_page' %}">Главная</a></li>
-        <li><a href="{% url 'goods:products' %}">Товары</a></li>
-        <li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
-        <li><a href="{% url 'goods:categories' %}">Категории</a></li>
+<li class="active"><a href="{% url 'goods:home_page' %}">Главная</a></li>
+<li><a href="{% url 'goods:products' %}">Товары</a></li>
+<li><a href="{% url 'potlucks:potlucks' %}">Складчины</a></li>
+<li><a href="{% url 'goods:categories' %}">Категории</a></li>
 
 {% endblock navigation %}
 
 {% block breadcrumbs %}
 
 
-  {% url 'goods:home_page' as home_page %}
-  {% breadcrumb_home home_page 'Home' %}
+{% url 'goods:home_page' as home_page %}
+{% breadcrumb_home home_page 'Home' %}
 
 {% endblock breadcrumbs %}
 {% block content %}
@@ -73,42 +73,7 @@
                   <div class="products-slick" data-nav="#slick-nav-1">
                     <!-- product -->
                     {% for product in new_products %}
-                    <div class="product">
-
-                      <div class="product-img">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="">
-                        {% endif %}
-                        <div class="product-label">
-                          <span class="new">От {{ product.min_price }} р/шт</span>
-                        </div>
-                      </div>
-                      <div class="product-body">
-                        <p class="product-category">{{ product.category.name }}</p>
-                        <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
-                        <h4 class="product-price">{{ product.potlucks.all.count }} заказов</h4>
-
-                        <div class="product-btns">
-                          <button>
-                            <i
-                                    data-del="{% url 'ajax:delete_product_from_wishlist' product.id %}"
-                                    data-add="{% url 'ajax:add_product_to_wishlist' product.id %}"
-                                    {% if product in user.profile.wishlist.products.all %}
-                                    class="fa fa-heart add-to-wishlist"
-                                    {% else %}
-                                    class="fa fa-heart-o add-to-wishlist"
-                                    {% endif %}
-                                    id="{{product.id}}">
-
-                            </i><span class="tooltipp">Отложить</span></button>
-                          <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                          <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-                        </div>
-                      </div>
-                      <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                      </div>
-                    </div>
+                    {% include 'include/product_card.html' %}
                     {% endfor %}
                     <!-- /product -->
 
@@ -151,49 +116,7 @@
                   <div class="products-slick" data-nav="#slick-nav-2">
                     <!-- product -->
                     {% for product in most_popular_products %}
-                    <div class="product">
-                      <div class="product-img">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="">
-                        {% endif %}
-                        <div class="product-label">
-                          <span class="new">От {{ product.min_price }} р/шт</span>
-                        </div>
-                      </div>
-                      <div class="product-body">
-                        <p class="product-category">{{ product.category.name }}</p>
-                        <h3 class="product-name"><a href="{% url 'goods:product_detail' product.url %}">{{ product.name }}</a></h3>
-                        <h4 class="product-price">{{ product.potlucks.all.count }} заказов</h4>
-                        <div class="product-rating">
-                          {% for star in stars reversed %}
-                          {% if star.value <= product.avg_rating %}
-                          <i class="fa fa-star empty"></i>
-                          {% else %}
-                          <i class="fa fa-star-o empty"></i>
-                          {% endif %}
-                          {% endfor %}
-                        </div>
-                        <div class="product-btns">
-                          <button>
-                            <i
-                                    data-del="{% url 'ajax:delete_product_from_wishlist' product.id %}"
-                                    data-add="{% url 'ajax:add_product_to_wishlist' product.id %}"
-                                    {% if product in user.profile.wishlist.products.all %}
-                                    class="fa fa-heart add-to-wishlist"
-                                    {% else %}
-                                    class="fa fa-heart-o add-to-wishlist"
-                                    {% endif %}
-                                    id="{{product.id}}">
-
-                            </i><span class="tooltipp">Отложить</span></button>
-                          <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                          <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-                        </div>
-                      </div>
-                      <div class="add-to-cart">
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                      </div>
-                    </div>
+                    {% include 'include/product_card.html' %}
                     {% endfor %}
                     <!-- /product -->
                   </div>
@@ -212,9 +135,9 @@
     <!-- /SECTION -->
   </div>
 
+</div>
+{% endblock content %}
 
-  {% endblock content %}
-
-  {% block javascript %}
-  <script src="{% static 'js/wishlist.js' %}"></script>
-  {% endblock javascript %}
+{% block javascript %}
+<script src="{% static 'js/wishlist.js' %}"></script>
+{% endblock javascript %}

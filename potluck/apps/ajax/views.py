@@ -15,7 +15,7 @@ def validate_goods_number(request, pk):
     goods_number = request.GET.get('number', None)
 
     part = Part.objects.filter(potluck=potluck, customer=request.user.profile)
-    print(part.exists())
+
     if not part.exists():
 
         max_number = potluck.size - potluck.get_potluck_fullness()
@@ -33,7 +33,7 @@ def validate_goods_number(request, pk):
         'available_number': max_number,
         'is_integer': goods_number.isdigit(),
     }
-    print(f'response---------------------------- {response}')
+
     return JsonResponse(response)
 
 
@@ -51,12 +51,11 @@ def cancel_part(request, pk):
 def validate_email(request):
     """Проверка доступности email"""
     email = request.GET.get('email', None)
-    print('КРЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ')
-    print(email)
+
     response = {
         'is_taken': CustomUser.objects.filter(email__iexact=email).exists()
     }
-    print(response)
+
     return JsonResponse(response)
 
 
@@ -67,7 +66,7 @@ def validate_email_to_reset_password(request):
     response = {
         'exists': CustomUser.objects.filter(email__iexact=email).exists()
     }
-    print(response)
+
     return JsonResponse(response)
 
 
@@ -79,7 +78,7 @@ def add_product_to_wishlist(request, pk):
     wishlist.save()
 
     response = {"product": pk, "wishlist_qty": wishlist.products.count()}
-    print(wishlist.products.count())
+
 
     return JsonResponse(response, status=200)
 
@@ -118,6 +117,6 @@ def delete_product_from_wishlist(request, pk):
     wishlist.save()
 
     response = {"product": pk, "wishlist_qty": wishlist.products.count()}
-    print(wishlist.products.count())
+
 
     return JsonResponse(response, status=200)

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Side apps
     'allauth',
     'allauth.account',
-    #'allauth.socialaccount',
+    # 'allauth.socialaccount',
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',
@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'djcelery_email',
     'ckeditor',
     'ckeditor_uploader',
-
 
     # Custom apps
     'potlucks.apps.PotlucksConfig',
@@ -61,7 +60,6 @@ INSTALLED_APPS = [
     'goods.apps.GoodsConfig',
     'cart.apps.CartConfig',
     'contacts.apps.ContactsConfig',
-
 
     # Standard apps
 
@@ -121,17 +119,6 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -181,7 +168,7 @@ STATIC_URL = '/static/'
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
-#STATIC_ROOT = STATIC_DIR
+# STATIC_ROOT = STATIC_DIR
 
 MEDIA_URL = '/media/'
 
@@ -214,7 +201,7 @@ CELERY_BROKER_URL = 'amqp://localhost'
 
 CART_SESSION_ID = 'cart'
 
-#CKEDITOR_BASEPATH = os.path.join(STATIC_DIR, 'ckeditor/ckeditor')
+# CKEDITOR_BASEPATH = os.path.join(STATIC_DIR, 'ckeditor/ckeditor')
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
 CKEDITOR_CONFIGS = {
@@ -265,7 +252,7 @@ CKEDITOR_CONFIGS = {
         # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
         'tabSpaces': 4,
         'extraPlugins': ','.join([
-            'uploadimage', # the upload image feature
+            'uploadimage',  # the upload image feature
             # your extra plugins here
             'div',
             'autolink',

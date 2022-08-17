@@ -16,7 +16,6 @@ from users.mixins import GroupRequiredMixin
 class PotluckFilterFields:
     def get_vendors(self):
         """"Поставщики"""
-        print('ekekekekkeke')
         return Vendor.objects.all()
 
 class PotluckListView(ProductFilterFields, PotluckFilterFields, Ratings, ListView):
@@ -106,7 +105,6 @@ class PotluckDetailView(Ratings, DetailView):
 
     def customer_ispartner(self):
         potluck = self.get_object()
-        print(f"Партнер---------------{self.request.user.profile.id in potluck.partners}------")
         return self.request.user.profile.id in potluck.partners
 
 
@@ -129,7 +127,6 @@ class PartOrderCreateView(CreateView):
 
 
     def get_success_url(self):
-        print('ЧО?')
         return reverse_lazy('potlucks:part_order_created', part_order_id=self.object.id)
 
     def get(self, request, part_pk, *args, **kwargs):
@@ -226,8 +223,6 @@ class JsonPartOrderFilterListView(GroupRequiredMixin, ListView):
         ).order_by('-created')
 
         if request:
-            print(request)
-            print(request.isdigit())
             if request.isdigit():
                 queryset = queryset.filter(
                     Q(id__exact=request) |

@@ -41,38 +41,7 @@ class ProfileDetailView(UpdateView):
         return context
 
 
-# class UserChangePasswordView(UpdateView):
-#     model = CustomUser
-#     fields = ['password', ]
-#     template_name = 'users/change_password.html'
 
-
-# def change_password(request):
-#     u = CustomUser.objects.get(email=request.user.email)
-#     if request.method == 'POST':
-#         form = ChangePasswordForm(request.POST)
-#         if form.is_valid():
-#             old_password = request.POST.get("old_password")
-#             new_pass = request.POST.get("new_password")
-#             new_pass_rep = request.POST.get("new_password_repeat")
-#             if check_password(old_password, u.password):
-#                 u.set_password(new_pass)
-#                 u.save()
-#                 return HttpResponse('Пароль успешно изменен')
-#             else:
-#                 return HttpResponse('bad')
-#     else:
-#             form = ChangePasswordForm()
-#
-#     return render(request, 'users/change_password.html',
-#               {'form': form, 'user': u})
-
-
-# def change_password(request, profile_pk):
-#     user = Profile.objecst.get(id=profile_pk).user
-#     password = request.POST.get('password')
-#     user.password = password
-#     user.save()
 
 class UserOrdersListView(ListView):
     context_object_name = 'orders'
