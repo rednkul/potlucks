@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
+
 from .models import CustomUser, Profile
 
 

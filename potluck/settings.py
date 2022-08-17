@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Side apps
     'allauth',
     'allauth.account',
-    # 'allauth.socialaccount',
+
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'djcelery_email',
     'ckeditor',
     'ckeditor_uploader',
+
 
     # Custom apps
     'potlucks.apps.PotlucksConfig',
@@ -270,3 +271,12 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+
+# recaptcha
+
+RECAPTCHA_PRIVATE_KEY = '6LerNuIcAAAAAKPHkI5tzws8QK6LmSKoKeASjji5'
+RECAPTCHA_PUBLIC_KEY = '6LerNuIcAAAAAM88OZHHLjCRKq1cBygI2hP2t2nT'
+RECAPTCHA_DEFAULT_ACTION = 'generic'
+RECAPTCHA_SCORE_THRESHOLD = 0.5
+RECAPTCHA_LANGUAGE = 'ru'
