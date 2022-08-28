@@ -10,7 +10,9 @@ register = template.Library()
 
 @register.inclusion_tag('goods/tags/most_popular_products.html')
 def get_most_popular_products(count=5):
-    """Вывод 5 продуктов с наибольшим количеством заказов"""
+    """
+    5 products with the largest number of orders
+    """
     order_items = OrderItem.objects.filter(order__confirmed=True).distinct()
     products = Product.objects.filter(available=True, order_items__in=order_items).distinct()
     products = sorted(

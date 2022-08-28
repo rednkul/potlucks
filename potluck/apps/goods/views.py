@@ -61,7 +61,6 @@ class SearchPage:
 
 
 class ProductFilterFields:
-    """Поля для фильтров"""
 
     def get_categories(self):
         return Category.objects.all()
@@ -84,12 +83,14 @@ class ProductsView(ProductFilterFields, Ratings, ListView):
 
     def get_queryset(self):
         return Product.objects.all() if self.request.user.is_staff else Product.objects.filter(available=True)
+
     def get_context_data(self):
         context = super().get_context_data()
         context['min_price'] = self.get_min_price()
         context['max_price'] = self.get_max_price()
         context['stars'] = self.stars
         return context
+
 
 class FilterProductsView(ProductFilterFields, Ratings, ListView):
     """Фильтрация продуктов по категории/поставщику/производителю"""
@@ -115,7 +116,6 @@ class FilterProductsView(ProductFilterFields, Ratings, ListView):
         else:
             availability_filter = (True,)
 
-
         queryset = Product.objects.filter(category__in=category_filter,
                                           manufacturer__in=manufacturers_filter,
                                           available__in=availability_filter,
@@ -139,7 +139,6 @@ class FilterProductsView(ProductFilterFields, Ratings, ListView):
         context['min_price'] = min_price
         context['max_price'] = max_price
         context['stars'] = self.stars
-
 
         return context
 
@@ -231,16 +230,10 @@ class CategoryDetailFilterView(CategoryProductFilterFields, DetailView):
         return context
 
 
-
-
-
-
 class Search(ProductFilterFields, ListView):
-    """Поиск по названию"""
     paginate_by = 15
     paginate_orphans = 3
 
-    # paginate_orphans = 3
 
     def get_template_names(self):
         return self.define_search_page()
@@ -304,7 +297,6 @@ class ProductCreateView(GroupRequiredMixin, CreateView):
     group_required = ['Manager', ]
     model = Product
     template_name = 'goods/products_view/new_product.html'
-    # form_class = AddProductForm
     fields = ['name', 'category', 'manufacturer', 'description', 'tags', 'url', 'available', 'stock', 'price', 'image']
     success_url = reverse_lazy('goods:products')
 

@@ -6,7 +6,6 @@ from django.shortcuts import redirect
 
 from .utils import format_date
 
-
 from .models import Product, Rating, Review
 from .views import Ratings
 
@@ -23,7 +22,6 @@ def review_and_rate(request, pk):
 
     )
 
-
     review.updated_at = datetime.today() if not created else None
 
     review.save()
@@ -34,7 +32,6 @@ def review_and_rate(request, pk):
     )
 
     avg_rating = product.avg_rating
-
 
     number_of_ratings = {}
 
@@ -60,5 +57,3 @@ def review_and_rate(request, pk):
     }
 
     return JsonResponse(response, status=200)
-
-

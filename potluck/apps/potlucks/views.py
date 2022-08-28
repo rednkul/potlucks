@@ -18,6 +18,7 @@ class PotluckFilterFields:
         """"Поставщики"""
         return Vendor.objects.all()
 
+
 class PotluckListView(ProductFilterFields, PotluckFilterFields, Ratings, ListView):
     queryset = Potluck.objects.filter(amassed=False)
     template_name = 'potlucks/potlucks/potlucks_list.html'
@@ -120,11 +121,11 @@ def part_order_create(request, part_pk):
         form = PartOrderCreateForm
     return render(request, 'potlucks/potlucks/part_checkout.html', {'form': form, 'part': part})
 
+
 class PartOrderCreateView(CreateView):
     form_class = PartOrderCreateForm
     model = PartOrder
     template_name = 'potlucks/potlucks/part_checkout.html'
-
 
     def get_success_url(self):
         return reverse_lazy('potlucks:part_order_created', part_order_id=self.object.id)
@@ -135,14 +136,9 @@ class PartOrderCreateView(CreateView):
         context['part'] = part
         return self.render_to_response(context)
 
+
 def part_order_created(request, part_order_id):
     return render(request, 'potlucks/potlucks/part_order_created.html', {'part_order': part_order_id})
-
-# class PartCheckoutView(UpdateView):
-#     model = Part
-#     template_name = 'potlucks/potlucks/part_checkout.html'
-#     context_object_name = 'part'
-#     fields = ['notes', ]
 
 
 class PartUpdateView(UpdateView):
@@ -151,6 +147,7 @@ class PartUpdateView(UpdateView):
     context_object_name = 'part'
     fields = ['goods_number', ]
 
+
 class PotluckCreateView(GroupRequiredMixin, CreateView):
     group_required = ['Manager', ]
     model = Potluck
@@ -158,26 +155,29 @@ class PotluckCreateView(GroupRequiredMixin, CreateView):
     form_class = PotluckCreateForm
     success_url = reverse_lazy('potlucks:potlucks')
 
+
 class PotluckEditView(GroupRequiredMixin, UpdateView):
     group_required = ['Manager', ]
     model = Potluck
-    #slug_field = 'url'
+    # slug_field = 'url'
     template_name = 'potlucks/potlucks/edit_potluck.html'
-    fields = [ 'creator', 'vendor', 'unit_price']
+    fields = ['creator', 'vendor', 'unit_price']
     success_url = reverse_lazy('potlucks:potlucks')
+
 
 class VendorCreateView(GroupRequiredMixin, CreateView):
     group_required = ['Manager', ]
     model = Vendor
     template_name = 'potlucks/vendors/new_vendor.html'
-    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    fields = ['name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
     success_url = reverse_lazy('potlucks:potlucks')
+
 
 class VendorEditView(GroupRequiredMixin, UpdateView):
     group_required = ['Manager', ]
     model = Vendor
     template_name = 'potlucks/vendors/edit_vendor.html'
-    fields = [ 'name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
+    fields = ['name', 'description', 'image', 'contact_phone', 'contact_site', 'contact_social', 'url']
     success_url = reverse_lazy('potlucks:potlucks')
 
     def get_success_url(self):
@@ -268,12 +268,5 @@ class JsonPartOrderFilterListView(GroupRequiredMixin, ListView):
                 'product_price': str(order.part.potluck.unit_price)
 
             }
-            # for item in order.items.all():
-            #     response['orders'][f'{order.id}']['items'][f'{item.id}'] = {
-            #         'product': item.product.name,
-            #         'quantity': str(item.quantity),
-            #         'price': str(item.product.price),
-            #         'item_cost': str(item.get_cost),
-            #     }
 
         return JsonResponse(response, safe=False, status=200)

@@ -8,6 +8,9 @@ from users.services import user_check_group
 
 
 def confirm_order(request, pk, order_type):
+    """
+    After the customer creates an order, the manager contacts the customer and confirms the order
+    """
     if not user_check_group(request.user, 'Manager'):
         raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
@@ -19,6 +22,9 @@ def confirm_order(request, pk, order_type):
 
 
 def disconfirm_order(request, pk, order_type):
+    """
+    Cancellation of a confirmed order
+    """
     if not user_check_group(request.user, 'Manager'):
         raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
@@ -30,6 +36,9 @@ def disconfirm_order(request, pk, order_type):
 
 
 def paid_order(request, pk, order_type):
+    """
+    After the order is paid, the manager sets this flag
+    """
     if not user_check_group(request.user, 'Manager'):
         raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)
@@ -40,6 +49,9 @@ def paid_order(request, pk, order_type):
 
 
 def unpaid_order(request, pk, order_type):
+    """
+    Cancellation of a paid order
+    """
     if not user_check_group(request.user, 'Manager'):
         raise PermissionDenied
     order = OrderToRetail.objects.get(id=pk) if order_type == 'retail' else PartOrder.objects.get(id=pk)

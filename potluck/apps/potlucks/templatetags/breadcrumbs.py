@@ -33,6 +33,7 @@ def breadcrumb_active(url, title, position):
         'position': position
     }
 
+
 @register.simple_tag(name='ancestors_and_category')
 def ancestors_and_category(category):
     return category.get_ancestors(ascending=False, include_self=True)

@@ -1,8 +1,10 @@
 from .models import Parameters, Category
 
+
 def get_parameters_names():
     # Формируется список названий объектов модели Parameters
     return [i for i in Parameters.objects.values_list('name', flat=True)]
+
 
 def parameters_to_data():
     # Формируется схема json
@@ -17,19 +19,17 @@ def parameters_to_data():
     return DATA_SCHEMA
 
 
-
 def format_date(date):
-
     month_names = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября',
                    'ноября', 'декабря']
     return f'{date.day} {month_names[date.month - 1]} {date.year} г.'
-
 
 
 import csv
 import urllib
 import datetime
 from django.http import HttpResponse
+
 
 def export_to_csv(modeladmin, request, queryset):
     options = modeladmin.model._meta
@@ -52,7 +52,9 @@ def export_to_csv(modeladmin, request, queryset):
         writer.writerow(data_row)
     return response
 
+
 export_to_csv.short_description = 'Экспорт в CSV'
+
 
 def get_subcategories_of_categories(categories_ids):
     categories = Category.objects.filter(id__in=[int(i) for i in categories_ids])

@@ -11,6 +11,9 @@ from users.services import user_check_group
 
 
 def validate_goods_number(request, pk):
+    """
+    Validation of quantity of goods in potluck form
+    """
     potluck = Potluck.objects.get(id=pk)
     goods_number = request.GET.get('number', None)
 
@@ -38,6 +41,9 @@ def validate_goods_number(request, pk):
 
 
 def cancel_part(request, pk):
+    """
+    Cancellation of a partnership in potluck
+    """
     part = Part.objects.get(id=pk)
     if user_check_group(request.user, 'Manager') or part.customer.user == request.user:
         part.delete()
@@ -49,18 +55,9 @@ def cancel_part(request, pk):
 
 
 def validate_email(request):
-    """Проверка доступности email"""
-    email = request.GET.get('email', None)
+    """
 
-    response = {
-        'is_taken': CustomUser.objects.filter(email__iexact=email).exists()
-    }
-
-    return JsonResponse(response)
-
-
-def validate_email_to_reset_password(request):
-    """Проверка доступности email"""
+    """
     email = request.GET.get('email', None)
 
     response = {
@@ -68,6 +65,7 @@ def validate_email_to_reset_password(request):
     }
 
     return JsonResponse(response)
+
 
 
 def add_product_to_wishlist(request, pk):

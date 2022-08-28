@@ -2,7 +2,6 @@ from django.db import models
 
 
 class OrderMixin(models.Model):
-
     email = models.EmailField('Адрес электронной почты')
     phone_number = models.CharField("Номер телефона", max_length=15, blank=True)
 
@@ -23,6 +22,3 @@ class OrderMixin(models.Model):
     class Meta:
         ordering = ('-created',)
         abstract = True
-
-
-

@@ -9,11 +9,7 @@ from mptt.models import MPTTModel
 
 from users.models import Profile
 
-
 class Category(MPTTModel):
-    """
-    Category of product
-    """
     name = models.CharField('Категория', max_length=50)
     description = models.TextField('Описание')
     image = models.ImageField("Изображение", upload_to="categories/", blank=True)
@@ -36,7 +32,6 @@ class Category(MPTTModel):
 
 
 class Manufacturer(models.Model):
-    """Producer of a good"""
     name = models.CharField('Наименование', max_length=50)
     description = models.TextField('Описание')
     image = models.ImageField("Логотип", upload_to="manufacturers/", blank=True)
@@ -153,7 +148,6 @@ class Review(models.Model):
 
 
 class RatingStar(models.Model):
-    """Звезда рейтинга"""
     value = models.SmallIntegerField("Значение", default=0)
 
     def __str__(self):
@@ -166,7 +160,6 @@ class RatingStar(models.Model):
 
 
 class Rating(models.Model):
-    """Рейтинг"""
     review = models.OneToOneField(Review, verbose_name="Оценка", related_name="rating", on_delete=models.CASCADE)
     star = models.ForeignKey(RatingStar, verbose_name="Звезда рейтинга", on_delete=models.CASCADE)
 
@@ -179,7 +172,6 @@ class Rating(models.Model):
 
 
 class Wishlist(models.Model):
-    """Список пожеланий (отложенные товары)"""
     customer = models.OneToOneField(Profile, verbose_name='Клиент', on_delete=models.CASCADE, related_name='wishlist')
     products = models.ManyToManyField(Product, verbose_name='Товары', blank=True)
 

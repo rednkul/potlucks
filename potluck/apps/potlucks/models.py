@@ -8,15 +8,12 @@ from django.db.models import Sum
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-
-
 # Импорт моих модулей
 
 from users.models import Profile
 from send_notification.views import amass_potluck_send_emails
 from goods.models import Category, Product, Manufacturer
 from goods.mixins import OrderMixin
-
 
 
 class Vendor(models.Model):
@@ -42,6 +39,7 @@ class Vendor(models.Model):
     #         self.slug = slugify(self.name)
     #     super().save()
 
+
 class Potluck(models.Model):
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='potlucks')
     creator = models.ForeignKey(Profile, verbose_name='Создатель', on_delete=models.SET_NULL,
@@ -50,11 +48,14 @@ class Potluck(models.Model):
                                null=True, related_name='potluck_vendor')
 
     size = models.PositiveSmallIntegerField('Количество единиц товара в заказе', default=0)
-    unit_price = models.DecimalField('Цена за единицу товара', default=0, help_text='Сумма в рублях', max_digits=8, decimal_places=2)
-    price = models.DecimalField('Стоимость заказа', default=0, help_text='Сумма в рублях', max_digits=10, decimal_places=2)
+    unit_price = models.DecimalField('Цена за единицу товара', default=0, help_text='Сумма в рублях', max_digits=8,
+                                     decimal_places=2)
+    price = models.DecimalField('Стоимость заказа', default=0, help_text='Сумма в рублях', max_digits=10,
+                                decimal_places=2)
     date = models.DateTimeField('Время создания', auto_now_add=True)
     date_amass = models.DateTimeField("Время заполнения", null=True, blank=True)
-    number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве", default=0)
+    number_finished = models.PositiveSmallIntegerField("Завершено заказов такого же товара в таком же количестве",
+                                                       default=0)
     amassed = models.BooleanField("Все позиции заказа забронированы", default=False)
     paid = models.BooleanField("Заказ полностью оплачен", default=False)
 
@@ -124,7 +125,6 @@ class Part(models.Model):
 
     @property
     def check_amassing_potluck(self):
-
         return True if self.potluck.get_potluck_fullness() == self.potluck.size else False
 
     @property
@@ -142,13 +142,10 @@ class Part(models.Model):
 
 
 class PartOrder(OrderMixin):
-
+    """
+    Order of a part
+    """
     part = models.OneToOneField(Part, verbose_name='Доля', on_delete=models.CASCADE, related_name='part_order')
-
-
-
-
-
 
     def __str__(self):
         return f"{self.part.customer} - {self.part.potluck} - {self.part.goods_number}"
@@ -158,21 +155,19 @@ class PartOrder(OrderMixin):
         verbose_name_plural = "Заказы долей пользователей в складчинах"
 
 
-
 @receiver(post_save, sender=Part)
 def update_potluck_amassing(sender, instance, created, **kwargs):
     if instance.check_amassing_potluck:
         instance.potluck.amassed = True
         instance.potluck.date_amass = datetime.datetime.now()
-        print('ЗАЕБИС')
     instance.potluck.save()
+
 
 @receiver(post_delete, sender=Part)
 def cancel_potluck_amassing(sender, instance, *args, **kwargs):
     if not instance.check_amassing_potluck:
         instance.potluck.amassed = False
         instance.potluck.date_amass = None
-        print('ЗАЕБИС')
     instance.potluck.save()
 
 

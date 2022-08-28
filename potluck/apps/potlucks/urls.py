@@ -1,13 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-
 from . import views
 from . import services
+
 app_name = 'potlucks'
-
-
-
 
 urlpatterns = [
 
@@ -22,7 +19,7 @@ urlpatterns = [
     path('new_potluck/', views.PotluckCreateView.as_view(), name='new_potluck'),
     path('edit_potluck/<int:pk>', views.PotluckEditView.as_view(), name='edit_potluck'),
 
-    # Поставщики
+    # Vendors
     path('vendors/new_vendor/', views.VendorCreateView.as_view(), name='new_vendor'),
     path('vendors/edit_vendor/<int:pk>/', views.VendorEditView.as_view(), name='edit_vendor'),
     path('vendors/<slug:slug>/', views.VendorDetailView.as_view(), name='vendor_detail'),

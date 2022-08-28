@@ -10,12 +10,11 @@ from goods.models import Rating, RatingStar
 from retail.models import OrderToRetail
 
 
-
 class ProfileDetailView(UpdateView):
-
     model = Profile
     template_name = 'users/profile_detail.html'
-    fields = ['first_name', 'last_name', 'patronymic', 'address', 'phone_number', 'vk', 'telegram', 'post_index', 'city']
+    fields = ['first_name', 'last_name', 'patronymic', 'address', 'phone_number', 'vk', 'telegram', 'post_index',
+              'city']
 
     def get_object(self, queryset=None):
         return Profile.objects.get(id=self.request.user.profile.id)
@@ -24,7 +23,6 @@ class ProfileDetailView(UpdateView):
         return self.get_object().get_absolute_url()
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data(**kwargs)
         customer = self.get_object()
         parts_active = Part.objects.filter(customer=customer, potluck__amassed=False)
@@ -36,12 +34,7 @@ class ProfileDetailView(UpdateView):
         context['parts_amassed'] = parts_amassed
         context['parts_confirmed'] = parts_confirmed
 
-
-
-
         return context
-
-
 
 
 class UserOrdersListView(ListView):
@@ -53,6 +46,7 @@ class UserOrdersListView(ListView):
     def get_queryset(self):
         return OrderToRetail.objects.filter(customer=self.request.user.profile.id)
 
+
 class UserPartsListView(ListView):
     context_object_name = 'parts'
     template_name = 'users/user_parts/user_parts.html'
@@ -61,6 +55,7 @@ class UserPartsListView(ListView):
 
     def get_queryset(self):
         return Part.objects.filter(customer=self.request.user.profile.id)
+
 
 class UserPartOrdersListView(ListView):
     context_object_name = 'orders'

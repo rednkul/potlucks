@@ -1,5 +1,5 @@
 import os
-
+from django.apps import apps
 from celery import Celery
 
 from django.conf import settings
@@ -9,7 +9,7 @@ from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'potluck.settings')
 
-app = Celery('apps.send_notification')
+app = Celery('apps.send_notification.')
 
 
 app.config_from_object('django.conf:settings', namespace='CELERY')

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.mail import send_mail
 from django.db import models
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
@@ -9,7 +10,7 @@ from django.urls import reverse
 from .managers import CustomUserManager
 
 
-# Authentification
+# Authentication
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -27,35 +28,31 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-
-
     def __str__(self):
         return f"{self.email}"
-
-
 
     class Meta:
         verbose_name = 'Аккаунт'
         verbose_name_plural = 'Аккаунты'
 
-    # def get_full_name(self):
-    #     '''
-    #     Returns the first_name plus the last_name, with a space in between.
-    #     '''
-    #     full_name = '%s %s' % (self.first_name, self.last_name)
-    #     return full_name.strip()
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
 
-    # def get_short_name(self):
-    #     '''
-    #     Returns the short name for the user.
-    #     '''
-    #     return self.first_name
+    def get_short_name(self):
+        '''
+        Returns the short name for the user.
+        '''
+        return self.first_name
 
-    # def email_user(self, subject, message, from_email=None, **kwargs):
-    #     '''
-    #     Sends an email to this User.
-    #     '''
-    #     send_mail(subject, message, from_email, [self.email], **kwargs)
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        '''
+        Sends an email to this User.
+        '''
+        send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
 # Profiles

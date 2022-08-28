@@ -1,16 +1,13 @@
 from random import choice
 
-
 from django.contrib.auth import authenticate, login
 from django.utils.crypto import get_random_string
 
 from users.models import CustomUser
 from send_notification.views import across_registration_send_email
 
+
 def across_registration_and_login(order, request):
-    """
-    Сквозная регистрация
-    """
     # Создаем юзера с email, указанным в форме заказа
     user = CustomUser(email=order.email)
 
@@ -42,4 +39,3 @@ def across_registration_and_login(order, request):
 
 def user_check_group(user, group):
     return user.groups.filter(name=group).exists()
-

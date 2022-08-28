@@ -23,25 +23,47 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$#ddhcj_yvz21fq2u^lk_x_p#uke-xfs)pmrjyq(&d$q6&e3j='
+#
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+
+
+# DEBUG = False
+DEBUG = int(os.environ.get("DEBUG", default=0))
+
+if DEBUG:
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    ALLOWED_HOSTS = ['*']
+
+    RABBITMQ_HOST = 'localhost'
+    RABBITMQ_PORT = '15672'
+    CELERY_BROKER_URL = 'amqp://localhost'
+
+    STATIC_DIR = os.path.join(BASE_DIR, 'static')
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+else:
+    ALLOWED_HOSTS = 'localhost 127.0.0.1 potluck'.split(" ")
+    CELERY_BROKER_URL = 'amqp://guest:guest@rabbit:5672'
+    SECRET_KEY = 'django-insecure-$#ddhcj_yvz21fq2u^lk_x_p#uke-xfs)pmrjyq(&d$q6&e3j='
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    STATICFILES_FINDERS = (
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    )
+
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = '/'
-# Application definition
+
 
 INSTALLED_APPS = [
-    # Side apps
+# Side apps
     'allauth',
     'allauth.account',
-
     'bootstrap4',
     'mptt',
     'django_admin_json_editor',
@@ -72,6 +94,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+
+
 
 ]
 
@@ -120,14 +144,15 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'potlucks',
-        'USER': 'postgres',
-        'PASSWORD': '1',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql_psycopg2"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "potlucks")),
+        "USER": os.environ.get("SQL_USER", "postgres"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "1"),
+        "HOST": os.environ.get("SQL_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
 
@@ -166,10 +191,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
-# STATIC_ROOT = STATIC_DIR
+#STATIC_ROOT = STATIC_DIR
 
 MEDIA_URL = '/media/'
 
@@ -196,9 +218,7 @@ EMAIL_HOST_PASSWORD = "kiwnqxlwsndoyntu"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-RABBITMQ_HOST = 'localhost'
-RABBITMQ_PORT = '15672'
-CELERY_BROKER_URL = 'amqp://localhost'
+
 
 CART_SESSION_ID = 'cart'
 
@@ -273,10 +293,8 @@ CKEDITOR_CONFIGS = {
 }
 
 
-# recaptcha
 
-RECAPTCHA_PRIVATE_KEY = '6LerNuIcAAAAAKPHkI5tzws8QK6LmSKoKeASjji5'
-RECAPTCHA_PUBLIC_KEY = '6LerNuIcAAAAAM88OZHHLjCRKq1cBygI2hP2t2nT'
-RECAPTCHA_DEFAULT_ACTION = 'generic'
-RECAPTCHA_SCORE_THRESHOLD = 0.5
-RECAPTCHA_LANGUAGE = 'ru'
+
+
+
+

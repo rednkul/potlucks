@@ -14,12 +14,13 @@ class VendorAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'name')
     search_fields = ("name",)
 
+
 class PotluckAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'size', 'vendor', 'creator', 'date', 'date_amass', 'number_finished')
     list_display_links = ('id', 'product', 'vendor',)
     list_filter = ('product__name', 'vendor__name',)
     search_fields = ('vendor__name', 'size', 'creator__user__email', 'product__name')
-    readonly_fields = ('price', )
+    readonly_fields = ('price',)
 
 
 class PartAdmin(admin.ModelAdmin):
@@ -40,6 +41,7 @@ class PartAdmin(admin.ModelAdmin):
 
     potluck_size.short_description = "Товаров в складчине"
 
+
 class PartOrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'part', 'total_cost', 'email', 'phone_number', 'first_name',
                     'created', 'confirmed', 'paid')
@@ -57,9 +59,11 @@ class PartOrderAdmin(admin.ModelAdmin):
     def total_cost(obj):
         return obj.part.total_cost
 
+
+"""
+   Because of using custom admin, registration without decorator 
+"""
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Potluck, PotluckAdmin)
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartOrder, PartOrderAdmin)
-
-

@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./
+    image: potlucks
+    container_name: potlucks
+    command: python server.py
+#    bash -c "
+#        python manage.py runserver 0.0.0.0:8000 &&
+#        celery -A potluck worker -l info -P eventlet &&
+#        celery flower"
+    volumes:
+      - ./usr/src/app/potluck/logs
+
+
+    ports:
+      - '8000:8000'
+    expose:
+      - '8000'
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+    networks:
+      - default
+      - nginx-proxy
+  db:
+    image: potlucks_pg
+    container_name: potlucks_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    expose:
+      - '5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=potlucks
+
+  rabbit:
+    restart: always
+    image: "rabbitmq:3-management"
+    container_name: rabbit
+    hostname: rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "5682:5672"
+      - "15672:15672"
+
+  nginx:
+    #build: ./potluck_nginx
+    image: nginx:latest
+    expose:
+      - 8080
+    ports:
+      - 80:8080
+    depends_on:
+      - app
+    volumes:
+      - ./potluck_nginx:/etc/nginx/conf.d
+      - ./static:/usr/src/app/potluck/static
+      - ./media:/usr/src/app/potluck/media
+      - ./logs:/usr/src/app/potluck/logs
+    networks:
+      - nginx-proxy
+
+volumes:
+  postgres_data:
+
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy
+
+
+

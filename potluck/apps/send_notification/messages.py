@@ -11,7 +11,8 @@ def amass_potluck_get_messages(costumers_emails, potluck):
     for customer_email in costumers_emails:
         email = EmailMessage(
             'Заказ полностью забронирован',
-            f'Здравствуйте! Все позиции складчины {potluck} были забронированы! Осталось только оплатить вашу часть в нем!',
+            f'Здравствуйте! Все позиции складчины {potluck} были забронированы! Осталось только оплатить вашу часть в '
+            f'нем!',
             settings.EMAIL_HOST_USER,
             [customer_email, ],
         )
