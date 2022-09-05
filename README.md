@@ -16,4 +16,6 @@ Features:
 
 <li>Containerized with docker-compose.</li>
 </ul>
+<p>
 The next step will be to rewrite this service in the restful api with django-restframework.
+</p>
