@@ -1,12 +1,19 @@
 Potlucks is service that provide an unusual for e-commerce functional. Customers can not only buy, they can cooperate with other customers to buy big batch of good with lower unit price. This is achieved due to the fact that a wholesale batch of goods is purchased directly from a large supplier, and not at retail from a store.
 The possibility of retail purchase is also provided.
 
-Some functions using ajax with dynamic page filling.
+<ul>
+Features:
 
-For asynchronous sending emails using celery with rabbitmq.
+<li>Authorization/authentication, password reset, registration confirmation, across registartion, order notification </li>
 
-Using postgres as data base.
+<li>Some functions using ajax with dynamic page filling.</li>
 
-For WSGI using waitress and nginx for proxy.
+<li>For asynchronous sending emails using celery with rabbitmq.</li>
 
-Containerized with docker-compose.
+<li>Using postgres as data base.</li>
+
+<li>For WSGI using waitress and nginx for proxy.</li>
+
+<li>Containerized with docker-compose.</li>
+</ul>
+The next step will be to rewrite this service in the restful api with django-restframework.
